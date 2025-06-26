@@ -35,6 +35,13 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('publication/maxfiles', get_string('maxfiles', 'publication'),
             get_string('configmaxfiles', 'publication'), 5, PARAM_INT));
 
+    $options = [
+        '1' => get_string('filesarepersonal_yes', 'publication'),
+        '0' => get_string('filesarepersonal_no', 'publication')
+    ];
+
+    $settings->add(new admin_setting_configselect('publication/filesarepersonal', get_string('filesarepersonal_admin', 'publication'),
+    get_string('filesarepersonal_admin_desc', 'publication'), 1, $options));
 
     $options = [
         '0' => get_string('obtainapproval_automatic', 'publication'),
@@ -77,4 +84,7 @@ if ($ADMIN->fulltree) {
         $settings->add(new admin_setting_configselect('publication/maxbytes', get_string('maxbytes', 'publication'),
                 get_string('configmaxbytes', 'publication'), 5242880, get_max_upload_sizes($CFG->maxbytes)));
     }
+
+    $settings->add(new admin_setting_configselect('publication/availabilityrestriction', get_string('availabilityrestriction_admin', 'publication'),
+            get_string('availabilityrestriction_admin_desc', 'publication'), 1, [get_string('no'), get_string('yes')]));
 }

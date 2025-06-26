@@ -84,6 +84,7 @@ class base extends \table_sql {
 
     protected $obtainteacherapproval;
     protected $obtainstudentapproval;
+    protected $filesarepersonal;
 
     protected $totalfilescount = 0;
     /**
@@ -102,6 +103,8 @@ class base extends \table_sql {
         $this->fs = get_file_storage();
         $this->publication = $publication;
         $instance = $publication->get_instance();
+
+        // $this->filesarepersonal = $instance->filesarepersonal;
         $this->obtainteacherapproval = $instance->obtainteacherapproval;
         $this->obtainstudentapproval = $instance->obtainstudentapproval;
 
@@ -251,6 +254,8 @@ class base extends \table_sql {
         list($sqluserids, $userparams) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED, 'user');
         $params = $params + $userparams + ['publication' => $this->cm->instance];
 
+        /* TODO: Add filter for filesarepersonal ?? */
+
         $having = '';
         if ($this->filter == PUBLICATION_FILTER_NOFILTER) {
             $from = '{user} u ' .
@@ -310,7 +315,7 @@ FROM
      * @param array $params (optional) params for query
      * @param string $groupby (optional) groupby clause (SQL snippet)
      */
-    public function set_sql($fields, $from, $where, array $params = null, $groupby = '') {
+    public function set_sql($fields, $from, $where, ?array $params = null, $groupby = '') {
         parent::set_sql($fields, $from, $where, $params);
         $this->sql->groupby = $groupby;
     }

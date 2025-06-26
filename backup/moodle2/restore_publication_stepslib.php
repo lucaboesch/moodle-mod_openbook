@@ -59,6 +59,10 @@ class restore_publication_activity_structure_step extends restore_activity_struc
                     '/activity/publication/extduedates/extduedate');
 
             $paths[] = $extduedates;
+
+            $overrides = new restore_path_element('publication_overrides',
+                    '/activity/publication/overrides/override');
+            $paths[] = $overrides;
         }
 
         return $this->prepare_activity_structure($paths);
@@ -81,13 +85,17 @@ class restore_publication_activity_structure_step extends restore_activity_struc
 
         if (!isset($data->cutoffdate)) {
             $data->cutoffdate = 0;
-        }
-
-        if (!empty($data->preventlatesubmissions)) {
-            $data->cutoffdate = $data->duedate;
         } else {
             $data->cutoffdate = $this->apply_date_offset($data->cutoffdate);
         }
+
+        if ($data->approvalfromdate != 0) {
+            $data->approvalfromdate = $this->apply_date_offset($data->approvalfromdate);
+        }
+        if ($data->approvaltodate != 0) {
+            $data->approvaltodate = $this->apply_date_offset($data->approvaltodate);
+        }
+
 
         // Delete importfrom after restore.
         $data->importfrom = -1;
@@ -143,6 +151,42 @@ class restore_publication_activity_structure_step extends restore_activity_struc
         // Flags mailed and locked need no translation on restore.
 
         $DB->insert_record('publication_extduedates', $data);
+    }
+
+    /**
+     * Process a user_flags restore
+     *
+     * @param object $data The data in object form
+     * @return void
+     */
+    protected function process_publication_overrides($data) {
+        global $DB;
+
+        $data = (object)$data;
+
+        $data->publication = $this->get_new_parentid('publication');
+
+        if ($data->userid != 0) {
+            $data->userid = $this->get_mappingid('user', $data->userid);
+        }
+        if ($data->groupid != 0) {
+            $data->groupid = $this->get_mappingid('group', $data->groupid);
+        }
+        if ($data->allowsubmissionsfromdate) {
+            $data->allowsubmissionsfromdate = $this->apply_date_offset($data->allowsubmissionsfromdate);
+        }
+        if ($data->duedate) {
+            $data->duedate = $this->apply_date_offset($data->duedate);
+        }
+        if ($data->approvalfromdate) {
+            $data->approvalfromdate = $this->apply_date_offset($data->approvalfromdate);
+        }
+        if ($data->approvaltodate) {
+            $data->approvaltodate = $this->apply_date_offset($data->approvaltodate);
+        }
+        // Flags mailed and locked need no translation on restore.
+
+        $DB->insert_record('publication_overrides', $data);
     }
 
     /**

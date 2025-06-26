@@ -55,9 +55,11 @@ class backup_publication_activity_structure_step extends backup_activity_structu
                 'alwaysshowdescription',
                 'duedate',
                 'allowsubmissionsfromdate',
-                'timemodified',
                 'completionupload',
+                'timemodified',
                 'cutoffdate',
+                'approvalfromdate',
+                'approvaltodate',
                 'mode',
                 'importfrom',
                 'obtainstudentapproval',
@@ -65,8 +67,12 @@ class backup_publication_activity_structure_step extends backup_activity_structu
                 'maxbytes',
                 'allowedfiletypes',
                 'obtainteacherapproval',
-                'notifyteacher',
-                'notifystudents',
+                'filesarepersonal',
+                'autoimport',
+                'groupapproval',
+                'notifystatuschange',
+                'notifyfilechange',
+                'availabilityrestriction',
         ]);
 
         $extduedates = new backup_nested_element('extduedates');
@@ -75,6 +81,17 @@ class backup_publication_activity_structure_step extends backup_activity_structu
                 'userid',
                 'publication',
                 'extensionduedate',
+        ]);
+
+        $overrides = new backup_nested_element('overrides');
+        $override = new backup_nested_element('override', ['id'], [
+                'publication',
+                'userid',
+                'groupid',
+                'allowsubmissionsfromdate',
+                'duedate',
+                'approvalfromdate',
+                'approvaltodate',
         ]);
 
         $files = new backup_nested_element('files');
@@ -97,10 +114,13 @@ class backup_publication_activity_structure_step extends backup_activity_structu
             // Build the tree.
             $publication->add_child($extduedates);
             $extduedates->add_child($extduedate);
+            $publication->add_child($overrides);
+            $overrides->add_child($override);
             $publication->add_child($files);
             $files->add_child($file);
 
             $extduedate->set_source_table('publication_extduedates', ['publication' => backup::VAR_PARENTID]);
+            $override->set_source_table('publication_overrides', ['publication' => backup::VAR_PARENTID]);
 
             $file->set_source_table('publication_file', ['publication' => backup::VAR_PARENTID]);
 
@@ -108,6 +128,8 @@ class backup_publication_activity_structure_step extends backup_activity_structu
 
             // Define id annotations.
             $extduedate->annotate_ids('user', 'userid');
+            $override->annotate_ids('user', 'userid');
+            $override->annotate_ids('group', 'groupid');
             $file->annotate_ids('user', 'userid');
 
             // Define file annotations.

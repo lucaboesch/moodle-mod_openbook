@@ -65,6 +65,7 @@ class allfilestable_testcase extends base {
         // Setup fixture!
         $publication = $this->create_instance([
             'mode' => PUBLICATION_MODE_UPLOAD,
+            'filesarepersonal' => 1,
             'obtainteacherapproval' => 0,
             'obtainstudentapproval' => 0,
         ]);
@@ -91,6 +92,7 @@ class allfilestable_testcase extends base {
         $publication = $this->create_instance([
             'mode' => PUBLICATION_MODE_IMPORT,
             'importfrom' => $assign->id,
+            'filesarepersonal' => 1,
             'obtainteacherapproval' => 0,
             'obtainstudentapproval' => 0,
         ]);
@@ -166,7 +168,7 @@ class allfilestable_testcase extends base {
         foreach ($users as $key => $user) {
             $generator->create_submission([
                 'userid' => $user->id,
-                'assignid' => $cm->id,
+                'cmid' => $cm->id,
                 'file' => implode(',', $files),
             ]);
         }

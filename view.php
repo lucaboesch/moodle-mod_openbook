@@ -255,6 +255,9 @@ if (has_capability('mod/publication:approve', $context)) {
     $templatecontext->studentcount = count($publication->get_users([], true));
     $allfilestable = $publication->get_allfilestable(PUBLICATION_FILTER_ALLFILES, true);
     $templatecontext->allfilescount = $allfilestable->get_count();
+    $templatecontext->allfiles_url = (new moodle_url('/mod/publication/view.php',
+        ['id' => $cm->id, 'filter' => PUBLICATION_FILTER_ALLFILES, 'allfilespage' => 1]))->out(false);
+    $templatecontext->allfiles_empty = $templatecontext->allfilescount == 0;
     $templatecontext->assign = $publication->get_importlink();
     if ($publicationinstance->obtainteacherapproval == 1) {
         $templatecontext->viewall_approvalneeded_url = (new moodle_url('/mod/publication/view.php',
@@ -265,10 +268,17 @@ if (has_capability('mod/publication:approve', $context)) {
     }
 }
 
+/* Set mode for "filesarepersonal" */
+$templatecontext->filesarepersonal = $publicationinstance->filesarepersonal == 1 ? get_string('filesarepersonal_yes', 'publication') : get_string('filesarepersonal_no', 'publication');
+
 $mode = $publication->get_mode();
 $templatecontext->myfilestitle = $mode == PUBLICATION_MODE_ASSIGN_TEAMSUBMISSION ? get_string('mygroupfiles', 'publication') : get_string('myfiles', 'publication');
+
+/* Get restricted files table (only documents that have been aproved) */
 $filestable = $publication->get_filestable();
+
 $filestable->init();
+
 $templatecontext->myfiles = $filestable->data;
 $templatecontext->hasmyfiles = count($templatecontext->myfiles) > 0;
 $templatecontext->myfilesform = $filesform->render();
@@ -276,7 +286,11 @@ if (!$allfilespage) {
     echo $OUTPUT->render_from_template('mod_publication/overview', $templatecontext);
 }
 
-
-echo $allfilesform;
+if ( has_capability('mod/publication:approve', $context) || $publicationinstance->filesarepersonal == 0 ) {
+    echo $allfilesform;
+} else {
+    /* TODO: Make sure all files are not avalaible, no just hidden */
+    echo 'All files table not showing because files are personal.';
+}
 
 echo $OUTPUT->footer();

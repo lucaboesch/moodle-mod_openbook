@@ -67,6 +67,7 @@ class mod_publication_generator extends testing_module_generator {
                 'maxfiles' => 5,
                 'maxbytes' => 2,
                 'allowedfiletypes' => '',
+                'filesarepersonal' => 1,
                 'obtainteacherapproval' => 1,
                 'groupmode' => SEPARATEGROUPS,
         ];

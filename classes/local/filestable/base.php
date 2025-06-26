@@ -113,29 +113,31 @@ class base extends \html_table {
         return count($this->data);
     }
 
-    /**
-     * Add a single file to the table
-     *
-     * @param \stored_file $file Stored file instance
-     * @return string[] Array of table cell contents
-     */
-    public function add_file(\stored_file $file) {
+    public function is_file_approved($file) {
         global $OUTPUT;
+        $templatecontext = new \stdClass;
+        // Now add the specific data to the table!
+        $teacherapproval = $this->publication->teacher_approval($file);
+        $obtainteacherapproval = $this->publication->get_instance()->obtainteacherapproval;
 
-        $data = [];
-        $data[] = $OUTPUT->pix_icon(file_file_icon($file), get_mimetype_description($file));
+        $teacherapproved = false;
+        $teacherdenied = false;
+        $teacherpending = false;
 
-        $dlurl = new \moodle_url('/mod/publication/view.php', [
-                'id' => $this->publication->get_coursemodule()->id,
-                'download' => $file->get_id(),
-        ]);
-        $data[] = \html_writer::link($dlurl, $file->get_filename());
+        if ($obtainteacherapproval == 1) {
+            if ($teacherapproval == 1) {
+                $teacherapproved = true;
+            } else if ($teacherapproval == 2) {
+                $teacherdenied = true;
+            } else {
+                $teacherpending = true;
+            }
+        } else {
+            $teacherapproved = true;
+        }
 
-        $data[] = $this->get_approval_status_for_file($file);
+        return $teacherapproved;
 
-        // The specific data will be added in the child-classes!
-
-        return $data;
     }
 
     public function get_approval_status_for_file($file) {
@@ -204,48 +206,51 @@ class base extends \html_table {
         }
         $templatecontext->hint = $hint;
         return $OUTPUT->render_from_template('mod_publication/approval_icon', $templatecontext);
-/*
-        if ($teacherapproval && $this->publication->get_instance()->obtainstudentapproval) {
-            $studentapproval = $this->publication->student_approval($file);
-            if ($this->publication->is_open() && $studentapproval == 0) {
-                $this->changepossible = true;
-                $data[] = \html_writer::select($this->options, 'studentapproval[' . $file->get_id() . ']', $studentapproval);
-                $templatecontext = false;
+        
+        /*
+            if ($teacherapproval && $this->publication->get_instance()->obtainstudentapproval) {
+                $studentapproval = $this->publication->student_approval($file);
+                if ($this->publication->is_open() && $studentapproval == 0) {
+                    $this->changepossible = true;
+                    $data[] = \html_writer::select($this->options, 'studentapproval[' . $file->get_id() . ']', $studentapproval);
+                    $templatecontext = false;
+                } else {
+                    switch ($studentapproval) {
+                        case 2:
+                            $templatecontext->icon = $this->valid;
+                            $templatecontext->hint = get_string('student_approved', 'publication');
+                            break;
+                        case 1:
+                            $templatecontext->icon = $this->invalid;
+                            $templatecontext->hint = get_string('student_rejected', 'publication');
+                            break;
+                        default:
+                            $templatecontext->icon = $this->questionmark;
+                            $templatecontext->hint = get_string('student_pending', 'publication');
+                    }
+                }
             } else {
-                switch ($studentapproval) {
-                    case 2:
-                        $templatecontext->icon = $this->valid;
-                        $templatecontext->hint = get_string('student_approved', 'publication');
-                        break;
+                switch ($teacherapproval) {
                     case 1:
-                        $templatecontext->icon = $this->invalid;
-                        $templatecontext->hint = get_string('student_rejected', 'publication');
+                        $templatecontext->icon = $this->valid;
+                        $templatecontext->hint = get_string('teacher_approved', 'publication');
+                        break;
+                    case 3:
+                        $templatecontext->icon = $this->questionmark;
+                        $templatecontext->hint = get_string('hidden', 'publication') . ' (' . get_string('teacher_pending', 'publication') . ')';
                         break;
                     default:
                         $templatecontext->icon = $this->questionmark;
                         $templatecontext->hint = get_string('student_pending', 'publication');
                 }
             }
-        } else {
-            switch ($teacherapproval) {
-                case 1:
-                    $templatecontext->icon = $this->valid;
-                    $templatecontext->hint = get_string('teacher_approved', 'publication');
-                    break;
-                case 3:
-                    $templatecontext->icon = $this->questionmark;
-                    $templatecontext->hint = get_string('hidden', 'publication') . ' (' . get_string('teacher_pending', 'publication') . ')';
-                    break;
-                default:
-                    $templatecontext->icon = $this->questionmark;
-                    $templatecontext->hint = get_string('student_pending', 'publication');
-            }
-        }
 
-        if ($templatecontext) {
-            return $OUTPUT->render_from_template('mod_publication/approval_icon', $templatecontext);
-        }
-        return '';*/
+            if ($templatecontext) {
+                return $OUTPUT->render_from_template('mod_publication/approval_icon', $templatecontext);
+            }
+            return '';
+        */
+
     }
 
     /**
@@ -290,6 +295,36 @@ class base extends \html_table {
         $result = ($this->changepossible ? true : false) && has_capability('mod/publication:upload',
                         $this->publication->get_context());
         return $result;
+    }
+
+    /**
+     * Add a single file to the table
+     *
+     * @param \stored_file $file Stored file instance
+     * @return string[] Array of table cell contents
+     */
+    public function add_file(\stored_file $file) {
+        global $OUTPUT;
+
+        $data = [];
+        $data[] = $OUTPUT->pix_icon(file_file_icon($file), get_mimetype_description($file));
+
+        if ( $this->is_file_approved($file) ) {
+            $dlurl = new \moodle_url('/mod/publication/view.php', [
+                    'id' => $this->publication->get_coursemodule()->id,
+                    'download' => $file->get_id(),
+            ]);
+            $data[] = \html_writer::link($dlurl, $file->get_filename());
+        } else {
+            /* TODO : Make it better, show that link cannot be clicked */
+            $data[] = $file->get_filename();
+        }
+
+        $data[] = $this->get_approval_status_for_file($file);
+
+        // The specific data will be added in the child-classes!
+
+        return $data;
     }
 
 }

@@ -66,25 +66,40 @@ class mod_publication_files_form extends moodleform {
             $noticemode = 'import';
         }
 
-        if ($publicationinstance->obtainstudentapproval) {
-            if ($mode == PUBLICATION_MODE_ASSIGN_TEAMSUBMISSION) {
-                if ($publicationinstance->groupapproval == PUBLICATION_APPROVAL_ALL) {
-                    $noticestudentstringid = 'all';
-                } else {
-                    $noticestudentstringid = 'one';
-                }
-                $noticemode = 'group';
-            } else {
-                $noticestudentstringid = 'studentrequired';
-            }
-        } else {
-            $noticestudentstringid = 'studentnotrequired';
-        }
+        /* Check if files are personal */
+        if ($publicationinstance->filesarepersonal) {
 
-        if ($publicationinstance->obtainteacherapproval) {
-            $noticeteacherid = 'teacherrequired';
+            if ($publicationinstance->obtainteacherapproval) {
+                $noticeteacherid = 'teacherrequired';
+            } else {
+                $noticeteacherid = 'teachernotrequired';
+            }
+            
+            $noticestudentstringid = 'filesarepersonal';
+
         } else {
-            $noticeteacherid = 'teachernotrequired';
+
+            if ($publicationinstance->obtainstudentapproval) {
+                if ($mode == PUBLICATION_MODE_ASSIGN_TEAMSUBMISSION) {
+                    if ($publicationinstance->groupapproval == PUBLICATION_APPROVAL_ALL) {
+                        $noticestudentstringid = 'all';
+                    } else {
+                        $noticestudentstringid = 'one';
+                    }
+                    $noticemode = 'group';
+                } else {
+                    $noticestudentstringid = 'studentrequired';
+                }
+            } else {
+                $noticestudentstringid = 'studentnotrequired';
+            }
+
+            if ($publicationinstance->obtainteacherapproval) {
+                $noticeteacherid = 'teacherrequired';
+            } else {
+                $noticeteacherid = 'teachernotrequired';
+            }
+
         }
 
         $stringid = 'notice_' . $noticemode . '_' . $noticestudentstringid . '_' . $noticeteacherid;
@@ -126,8 +141,24 @@ class mod_publication_files_form extends moodleform {
         $mode = $publication->get_mode();
         $timeremaining = false;
         $publicationinstance = $publication->get_instance();
-        if ($publicationinstance->duedate > 0) {
-            $timeremainingdiff = $publicationinstance->duedate - time();
+
+        $extensionduedate = $publication->user_extensionduedate($USER->id);
+        $override = $publication->override_get_currentuserorgroup();
+        if ($override && $override->approvalfromdate) {
+            $approvalfromdate = $override->approvalfromdate > 0 ? userdate($override->approvalfromdate) : false;
+            $approvaltodate = $override->approvaltodate > 0 ? userdate($override->approvaltodate) : false;
+        } else {
+            $approvalfromdate = $publicationinstance->approvalfromdate > 0 ? userdate($publicationinstance->approvalfromdate) : false;
+            $approvaltodate = $publicationinstance->approvaltodate > 0 ? userdate($publicationinstance->approvaltodate) : false;
+        }
+
+
+        if ($publicationinstance->duedate > 0 || ($override && $override->submissionoverride && $override->duedate > 0)) {
+            if ($override && $override->submissionoverride && $override->duedate > 0) {
+                $timeremainingdiff = $override->duedate - time();
+            } else {
+                $timeremainingdiff = $publicationinstance->duedate - time();
+            }
             if ($timeremainingdiff > 0) {
                 $timeremaining = format_time($publicationinstance->duedate - time());
             } else {
@@ -135,9 +166,6 @@ class mod_publication_files_form extends moodleform {
             }
         }
 
-        $extensionduedate = $publication->user_extensionduedate($USER->id);
-        $approvalfromdate = $publicationinstance->approvalfromdate > 0 ? userdate($publicationinstance->approvalfromdate) : false;
-        $approvaltodate = $publicationinstance->approvaltodate > 0 ? userdate($publicationinstance->approvaltodate) : false;
         $extensionduedate = $extensionduedate > 0 ? userdate($extensionduedate) : false;
         if (!$publicationinstance->obtainstudentapproval) {
             $approvalfromdate = false;

@@ -94,7 +94,7 @@ class mod_publication_mod_form extends moodleform_mod {
         // Publication mode import specific elements.
         $choices = [];
         $choices[-1] = get_string('choose', 'publication');
-        $assigninstances = $DB->get_records('assign', ['course' => $COURSE->id]);
+        $assigninstances = $DB->get_records('assign', ['course' => $COURSE->id], 'name ASC');
         $module = $DB->get_record('modules', ['name' => 'assign']);
         $select = $mform->createElement('select', 'importfrom', get_string('assignment', 'publication'), $choices, $disabled);
         $notteamassigns = [-1];
@@ -163,6 +163,19 @@ class mod_publication_mod_form extends moodleform_mod {
         // Approval settings start.
         $mform->addElement('header', 'approvalsettings', get_string('approvalsettings', 'publication'));
         $mform->setExpanded('approvalsettings', true);
+
+
+        // Files are personal
+        $attributes = [];
+        $options = [
+            '0' => get_string('filesarepersonal_no', 'publication'),
+            '1' => get_string('filesarepersonal_yes', 'publication'),
+        ];
+
+        $mform->addElement('select', 'filesarepersonal',
+            get_string('filesarepersonal', 'publication'), $options, $attributes);
+        $mform->setDefault('filesarepersonal', get_config('publication', 'filesarepersonal'));
+        $mform->addHelpButton('filesarepersonal', 'filesarepersonal', 'publication');
 
 
         // Teacher approval.
@@ -267,6 +280,12 @@ class mod_publication_mod_form extends moodleform_mod {
 
         $mform->addElement('hidden', 'alwaysshowdescription', true);
         $mform->setType('alwaysshowdescription', PARAM_BOOL);
+
+        // Apply availability restrictions.
+        $mform->addElement('select', 'availabilityrestriction', get_string('availabilityrestriction', 'publication'),
+                [get_string('no'), get_string('yes')]);
+        $mform->setDefault('availabilityrestriction', get_config('publication', 'availabilityrestriction'));
+        $mform->addHelpButton('availabilityrestriction', 'availabilityrestriction', 'publication');
 
         $mform->addElement('header', 'notifications', get_string('notifications', 'publication'));
 
