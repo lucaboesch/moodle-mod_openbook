@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_publication\completion;
+namespace mod_privatestudentfolder\completion;
 
 use core_completion\activity_custom_completion;
 
@@ -44,13 +44,13 @@ class custom_completion extends activity_custom_completion {
         $userid = $this->userid;
         $cm = $this->cm;
 
-        require_once($CFG->dirroot . '/mod/publication/locallib.php');
+        require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php');
 
-        $publication = new \publication($cm, $cm->course, \context_module::instance($cm->id));
+        $privatestudentfolder = new \privatestudentfolder($cm, $cm->course, \context_module::instance($cm->id));
         $status = false;
-        if ($publication->get_mode() == PUBLICATION_MODE_FILEUPLOAD) {
-            $filescount = $DB->count_records('publication_file', [
-                'publication' => $publication->get_instance()->id,
+        if ($privatestudentfolder->get_mode() == PRIVATESTUDENTFOLDER_MODE_FILEUPLOAD) {
+            $filescount = $DB->count_records('privatestudentfolder_file', [
+                'privatestudentfolder' => $privatestudentfolder->get_instance()->id,
                 'userid' => $userid,
             ]);
             $status = $filescount > 0;
@@ -76,7 +76,7 @@ class custom_completion extends activity_custom_completion {
      */
     public function get_custom_rule_descriptions(): array {
         return [
-            'completionupload' => get_string('completiondetail:upload', 'publication'),
+            'completionupload' => get_string('completiondetail:upload', 'privatestudentfolder'),
         ];
     }
 

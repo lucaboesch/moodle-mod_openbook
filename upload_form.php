@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 /**
  * File containing upload form class.
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -30,15 +30,9 @@ global $CFG;
 require_once($CFG->libdir . '/formslib.php'); // Putting this is as a safety as i got a class not found error.
 
 /**
- * Form to upload files for mod_publication
- *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Form to upload files for mod_privatestudentfolder
  */
-class mod_publication_upload_form extends moodleform {
+class mod_privatestudentfolder_upload_form extends moodleform {
 
     /**
      * Definition of file upload format
@@ -47,27 +41,27 @@ class mod_publication_upload_form extends moodleform {
         $mform = $this->_form;
 
         $currententry = $this->_customdata['current'];
-        $publication = $this->_customdata['publication'];
+        $privatestudentfolder = $this->_customdata['privatestudentfolder'];
         $attachmentoptions = $this->_customdata['attachmentoptions'];
 
-        if ($publication->get_instance()->obtainteacherapproval) {
-            $text = get_string('published_aftercheck', 'publication');
+        if ($privatestudentfolder->get_instance()->obtainteacherapproval) {
+            $text = get_string('published_aftercheck', 'privatestudentfolder');
         } else {
-            $text = get_string('published_immediately', 'publication');
+            $text = get_string('published_immediately', 'privatestudentfolder');
         }
 
-        $mform->addElement('header', 'myfiles', get_string('myfiles', 'publication'));
+        $mform->addElement('header', 'myfiles', get_string('myfiles', 'privatestudentfolder'));
 
-        $mform->addElement('static', 'guideline', get_string('guideline', 'publication'), $text);
+        $mform->addElement('static', 'guideline', get_string('guideline', 'privatestudentfolder'), $text);
 
-        $mform->addElement('filemanager', 'attachment_filemanager', get_string('myfiles', 'publication'), null, $attachmentoptions);
+        $mform->addElement('filemanager', 'attachment_filemanager', get_string('myfiles', 'privatestudentfolder'), null, $attachmentoptions);
 
         // Add notice of allowed file types if they're restricted!
         if (!empty($attachmentoptions['accepted_types']) && $attachmentoptions['accepted_types'] !== '*') {
-            $text = html_writer::tag('p', get_string('filesofthesetypes', 'publication'));
+            $text = html_writer::tag('p', get_string('filesofthesetypes', 'privatestudentfolder'));
             $text .= html_writer::start_tag('ul');
 
-            $typesets = $publication->get_configured_typesets();
+            $typesets = $privatestudentfolder->get_configured_typesets();
             foreach ($typesets as $type) {
                 $a = new stdClass();
                 $extensions = file_get_typegroup('extension', $type);
@@ -98,7 +92,7 @@ class mod_publication_upload_form extends moodleform {
         $mform->setType('cmid', PARAM_INT);
 
         // Buttons.
-        $this->add_action_buttons(true, get_string('save_changes', 'publication'));
+        $this->add_action_buttons(true, get_string('save_changes', 'privatestudentfolder'));
         $this->set_data($currententry);
     }
 }

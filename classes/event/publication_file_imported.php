@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,32 +15,34 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains event class for a single mod_publication being viewed
+ * Contains event class for a single mod_privatestudentfolder being viewed
  *
- * @package       mod_publication
- * @author        Hannes Laimer
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_publication\event;
+namespace mod_privatestudentfolder\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * A file was deleted for this event
  *
- * @package       mod_publication
- * @author        Hannes Laimer
- * @copyright     2019 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class publication_file_imported extends \core\event\base {
+class privatestudentfolder_file_imported extends \core\event\base {
     /**
      * Init event objecttable
      */
     protected function init() {
         $this->data['crud'] = 'u';
-        $this->data['objecttable'] = 'publication_file';
+        $this->data['objecttable'] = 'privatestudentfolder_file';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
@@ -54,7 +56,7 @@ class publication_file_imported extends \core\event\base {
     public static function file_added(\stdClass $cm, $do) {
         // Trigger overview event.
         $event = self::create(array(
-            'objectid'      => (int)$do->publication,
+            'objectid'      => (int)$do->privatestudentfolder,
             'context'       => \context_module::instance($cm->id),
             'relateduserid' => $do->userid,
             'other'         => (Array)$do,
@@ -70,7 +72,7 @@ class publication_file_imported extends \core\event\base {
     public function get_description() {
         return "The ".$this->data['other']['typ']." with id '".$this->data['relateduserid'].
             "' added a file with id '".$this->data['other']['fileid'].
-            "' which was imported to publication with id '".$this->data['other']['publication']."'";
+            "' which was imported to privatestudentfolder with id '".$this->data['other']['privatestudentfolder']."'";
     }
 
     /**
@@ -79,7 +81,7 @@ class publication_file_imported extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventpublicationfileimported', 'publication');
+        return get_string('eventprivatestudentfolderfileimported', 'privatestudentfolder');
     }
 
     /**
@@ -88,8 +90,8 @@ class publication_file_imported extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        $moduleid = get_coursemodule_from_instance('publication', $this->data['other']['publication'])->id;
-        return new \moodle_url("/mod/publication/view.php", array('id'  => $moduleid));
+        $moduleid = get_coursemodule_from_instance('privatestudentfolder', $this->data['other']['privatestudentfolder'])->id;
+        return new \moodle_url("/mod/privatestudentfolder/view.php", array('id'  => $moduleid));
     }
 
     /**

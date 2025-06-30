@@ -9,19 +9,19 @@
 {{/timeremaining}}
 {{#approvalfromdate}}
     <tr>
-        <th>{{#str}}approvalfromdate,publication{{/str}}</th>
+        <th>{{#str}}approvalfromdate,privatestudentfolder{{/str}}</th>
         <td>{{.}}</td>
     </tr>
 {{/approvalfromdate}}
 {{#approvaltodate}}
     <tr>
-        <th>{{#str}}approvaltodate,publication{{/str}}</th>
+        <th>{{#str}}approvaltodate,privatestudentfolder{{/str}}</th>
         <td>{{.}}</td>
     </tr>
 {{/approvaltodate}}
 {{#extensionduedate}}
     <tr>
-        <th>{{#str}}extensionto,publication{{/str}}</th>
+        <th>{{#str}}extensionto,privatestudentfolder{{/str}}</th>
         <td>{{.}}</td>
     </tr>
 {{/extensionduedate}}
@@ -42,7 +42,7 @@
             {{/myfiles}}
         {{/hasmyfiles}}
         {{^hasmyfiles}}
-            {{#str}}nofiles,publication{{/str}}
+            {{#str}}nofiles,privatestudentfolder{{/str}}
         {{/hasmyfiles}}
     </td>
 </tr>

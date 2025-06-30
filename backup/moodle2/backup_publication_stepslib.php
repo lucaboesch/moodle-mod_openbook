@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,30 +15,30 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * backup/moodle2/backup_publication_stepslieb.php
+ * backup/moodle2/backup_privatestudentfolder_stepslieb.php
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class used to design mod_publications data structure to back up
+ * Class used to design mod_privatestudentfolders data structure to back up
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_publication_activity_structure_step extends backup_activity_structure_step {
+class backup_privatestudentfolder_activity_structure_step extends backup_activity_structure_step {
 
     /**
-     * Define the structure for the publication activity
+     * Define the structure for the privatestudentfolder activity
      *
      * @return backup_nested_element
      */
@@ -48,7 +48,7 @@ class backup_publication_activity_structure_step extends backup_activity_structu
         $userinfo = $this->get_setting_value('userinfo');
 
         // Define each element separated.
-        $publication = new backup_nested_element('publication', ['id'], [
+        $privatestudentfolder = new backup_nested_element('privatestudentfolder', ['id'], [
                 'name',
                 'intro',
                 'introformat',
@@ -79,13 +79,13 @@ class backup_publication_activity_structure_step extends backup_activity_structu
 
         $extduedate = new backup_nested_element('extduedate', ['id'], [
                 'userid',
-                'publication',
+                'privatestudentfolder',
                 'extensionduedate',
         ]);
 
         $overrides = new backup_nested_element('overrides');
         $override = new backup_nested_element('override', ['id'], [
-                'publication',
+                'privatestudentfolder',
                 'userid',
                 'groupid',
                 'allowsubmissionsfromdate',
@@ -108,23 +108,23 @@ class backup_publication_activity_structure_step extends backup_activity_structu
         ]);
 
         // Define sources.
-        $publication->set_source_table('publication', ['id' => backup::VAR_ACTIVITYID]);
+        $privatestudentfolder->set_source_table('privatestudentfolder', ['id' => backup::VAR_ACTIVITYID]);
 
         if ($userinfo) {
             // Build the tree.
-            $publication->add_child($extduedates);
+            $privatestudentfolder->add_child($extduedates);
             $extduedates->add_child($extduedate);
-            $publication->add_child($overrides);
+            $privatestudentfolder->add_child($overrides);
             $overrides->add_child($override);
-            $publication->add_child($files);
+            $privatestudentfolder->add_child($files);
             $files->add_child($file);
 
-            $extduedate->set_source_table('publication_extduedates', ['publication' => backup::VAR_PARENTID]);
-            $override->set_source_table('publication_overrides', ['publication' => backup::VAR_PARENTID]);
+            $extduedate->set_source_table('privatestudentfolder_extduedates', ['privatestudentfolder' => backup::VAR_PARENTID]);
+            $override->set_source_table('privatestudentfolder_overrides', ['privatestudentfolder' => backup::VAR_PARENTID]);
 
-            $file->set_source_table('publication_file', ['publication' => backup::VAR_PARENTID]);
+            $file->set_source_table('privatestudentfolder_file', ['privatestudentfolder' => backup::VAR_PARENTID]);
 
-            $file->annotate_files('mod_publication', 'attachment', null);
+            $file->annotate_files('mod_privatestudentfolder', 'attachment', null);
 
             // Define id annotations.
             $extduedate->annotate_ids('user', 'userid');
@@ -134,11 +134,11 @@ class backup_publication_activity_structure_step extends backup_activity_structu
 
             // Define file annotations.
             // This file area hasn't itemid.
-            $publication->annotate_files('mod_publication', 'attachment', null);
+            $privatestudentfolder->annotate_files('mod_privatestudentfolder', 'attachment', null);
         }
 
-        // Return the root element (publication), wrapped into standard activity structure.
+        // Return the root element (privatestudentfolder), wrapped into standard activity structure.
 
-        return $this->prepare_activity_structure($publication);
+        return $this->prepare_activity_structure($privatestudentfolder);
     }
 }

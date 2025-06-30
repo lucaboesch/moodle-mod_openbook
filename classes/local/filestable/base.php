@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,33 +17,35 @@
 /**
  * Base class for tables showing files related to me (uploaded by me, imported from me or my group and options to approve them)
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_publication\local\filestable;
+namespace mod_privatestudentfolder\local\filestable;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
-require_once($CFG->dirroot . '/mod/publication/locallib.php');
+require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php');
 require_once($CFG->libdir . '/tablelib.php');
 
 /**
  * Base class for tables showing my files or group files (upload or import)
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class base extends \html_table {
-    /** @var \publication publication object */
-    protected $publication = null;
+    /** @var \privatestudentfolder privatestudentfolder object */
+    protected $privatestudentfolder = null;
     /** @var \file_storage file storage object */
     protected $fs = null;
     /** @var \stored_file[] array of stored_file objects */
@@ -62,20 +64,20 @@ class base extends \html_table {
     /**
      * constructor
      *
-     * @param \publication $publication publication object
+     * @param \privatestudentfolder $privatestudentfolder privatestudentfolder object
      */
-    public function __construct(\publication $publication) {
+    public function __construct(\privatestudentfolder $privatestudentfolder) {
         global $OUTPUT;
 
         parent::__construct();
 
-        $this->publication = $publication;
+        $this->privatestudentfolder = $privatestudentfolder;
 
         $this->fs = get_file_storage();
 
-        $this->valid = \mod_publication\local\allfilestable\base::approval_icon('check', 'text-success', false);
-        $this->questionmark = \mod_publication\local\allfilestable\base::approval_icon('question', 'text-warning', false);
-        $this->invalid = \mod_publication\local\allfilestable\base::approval_icon('times', 'text-danger', false);
+        $this->valid = \mod_privatestudentfolder\local\allfilestable\base::approval_icon('check', 'text-success', false);
+        $this->questionmark = \mod_privatestudentfolder\local\allfilestable\base::approval_icon('question', 'text-warning', false);
+        $this->invalid = \mod_privatestudentfolder\local\allfilestable\base::approval_icon('times', 'text-danger', false);
     }
 
     /**
@@ -86,7 +88,7 @@ class base extends \html_table {
     public function init() {
         $files = $this->get_files();
 
-        if ((!$files || count($files) == 0) && has_capability('mod/publication:upload', $this->publication->get_context())) {
+        if ((!$files || count($files) == 0) && has_capability('mod/privatestudentfolder:upload', $this->privatestudentfolder->get_context())) {
             return 0;
         }
 
@@ -99,8 +101,8 @@ class base extends \html_table {
         }
 
         $this->options = [];
-        $this->options[1] = get_string('student_approve', 'publication');
-        $this->options[2] = get_string('student_reject', 'publication');
+        $this->options[1] = get_string('student_approve', 'privatestudentfolder');
+        $this->options[2] = get_string('student_reject', 'privatestudentfolder');
 
         if (empty($files) || count($files) == 0) {
             return 0;
@@ -117,8 +119,8 @@ class base extends \html_table {
         global $OUTPUT;
         $templatecontext = new \stdClass;
         // Now add the specific data to the table!
-        $teacherapproval = $this->publication->teacher_approval($file);
-        $obtainteacherapproval = $this->publication->get_instance()->obtainteacherapproval;
+        $teacherapproval = $this->privatestudentfolder->teacher_approval($file);
+        $obtainteacherapproval = $this->privatestudentfolder->get_instance()->obtainteacherapproval;
 
         $teacherapproved = false;
         $teacherdenied = false;
@@ -144,11 +146,11 @@ class base extends \html_table {
         global $OUTPUT;
         $templatecontext = new \stdClass;
         // Now add the specific data to the table!
-        $teacherapproval = $this->publication->teacher_approval($file);
-        $studentapproval = $this->publication->student_approval($file);
+        $teacherapproval = $this->privatestudentfolder->teacher_approval($file);
+        $studentapproval = $this->privatestudentfolder->student_approval($file);
 
-        $obtainteacherapproval = $this->publication->get_instance()->obtainteacherapproval;
-        $obtainstudentapproval = $this->publication->get_instance()->obtainstudentapproval;
+        $obtainteacherapproval = $this->privatestudentfolder->get_instance()->obtainteacherapproval;
+        $obtainstudentapproval = $this->privatestudentfolder->get_instance()->obtainstudentapproval;
 
         $studentapproved = false;
         $studentdenied = false;
@@ -157,21 +159,21 @@ class base extends \html_table {
         if ($obtainstudentapproval == 1) {
             if ($studentapproval == 1) {
                 $studentapproved = true;
-                $hint = get_string('student_approved', 'publication');
+                $hint = get_string('student_approved', 'privatestudentfolder');
             } else if ($studentapproval == 2) {
                 $studentdenied = true;
-                $hint = get_string('student_rejected', 'publication');
+                $hint = get_string('student_rejected', 'privatestudentfolder');
             } else {
-                if ($this->publication->is_approval_open()) {
+                if ($this->privatestudentfolder->is_approval_open()) {
                     $this->changepossible = true;
                     return \html_writer::select($this->options, 'studentapproval[' . $file->get_id() . ']', $studentapproval);
                 }
                 $studentpending = true;
-                $hint = get_string('student_pending', 'publication');
+                $hint = get_string('student_pending', 'privatestudentfolder');
             }
         } else {
             $studentapproved = true;
-            $hint = get_string('student_approved_automatically', 'publication');
+            $hint = get_string('student_approved_automatically', 'privatestudentfolder');
         }
 
         $hint .= ' ';
@@ -183,17 +185,17 @@ class base extends \html_table {
         if ($obtainteacherapproval == 1) {
             if ($teacherapproval == 1) {
                 $teacherapproved = true;
-                $hint .= get_string('teacher_approved', 'publication');
+                $hint .= get_string('teacher_approved', 'privatestudentfolder');
             } else if ($teacherapproval == 2) {
                 $teacherdenied = true;
-                $hint .= get_string('teacher_rejected', 'publication');
+                $hint .= get_string('teacher_rejected', 'privatestudentfolder');
             } else {
                 $teacherpending = true;
-                $hint .= get_string('teacher_pending', 'publication');
+                $hint .= get_string('teacher_pending', 'privatestudentfolder');
             }
         } else {
             $teacherapproved = true;
-            $hint .= get_string('teacher_approved_automatically', 'publication');
+            $hint .= get_string('teacher_approved_automatically', 'privatestudentfolder');
         }
 
 
@@ -205,12 +207,12 @@ class base extends \html_table {
             $templatecontext->icon = $this->questionmark;
         }
         $templatecontext->hint = $hint;
-        return $OUTPUT->render_from_template('mod_publication/approval_icon', $templatecontext);
+        return $OUTPUT->render_from_template('mod_privatestudentfolder/approval_icon', $templatecontext);
         
         /*
-            if ($teacherapproval && $this->publication->get_instance()->obtainstudentapproval) {
-                $studentapproval = $this->publication->student_approval($file);
-                if ($this->publication->is_open() && $studentapproval == 0) {
+            if ($teacherapproval && $this->privatestudentfolder->get_instance()->obtainstudentapproval) {
+                $studentapproval = $this->privatestudentfolder->student_approval($file);
+                if ($this->privatestudentfolder->is_open() && $studentapproval == 0) {
                     $this->changepossible = true;
                     $data[] = \html_writer::select($this->options, 'studentapproval[' . $file->get_id() . ']', $studentapproval);
                     $templatecontext = false;
@@ -218,35 +220,35 @@ class base extends \html_table {
                     switch ($studentapproval) {
                         case 2:
                             $templatecontext->icon = $this->valid;
-                            $templatecontext->hint = get_string('student_approved', 'publication');
+                            $templatecontext->hint = get_string('student_approved', 'privatestudentfolder');
                             break;
                         case 1:
                             $templatecontext->icon = $this->invalid;
-                            $templatecontext->hint = get_string('student_rejected', 'publication');
+                            $templatecontext->hint = get_string('student_rejected', 'privatestudentfolder');
                             break;
                         default:
                             $templatecontext->icon = $this->questionmark;
-                            $templatecontext->hint = get_string('student_pending', 'publication');
+                            $templatecontext->hint = get_string('student_pending', 'privatestudentfolder');
                     }
                 }
             } else {
                 switch ($teacherapproval) {
                     case 1:
                         $templatecontext->icon = $this->valid;
-                        $templatecontext->hint = get_string('teacher_approved', 'publication');
+                        $templatecontext->hint = get_string('teacher_approved', 'privatestudentfolder');
                         break;
                     case 3:
                         $templatecontext->icon = $this->questionmark;
-                        $templatecontext->hint = get_string('hidden', 'publication') . ' (' . get_string('teacher_pending', 'publication') . ')';
+                        $templatecontext->hint = get_string('hidden', 'privatestudentfolder') . ' (' . get_string('teacher_pending', 'privatestudentfolder') . ')';
                         break;
                     default:
                         $templatecontext->icon = $this->questionmark;
-                        $templatecontext->hint = get_string('student_pending', 'publication');
+                        $templatecontext->hint = get_string('student_pending', 'privatestudentfolder');
                 }
             }
 
             if ($templatecontext) {
-                return $OUTPUT->render_from_template('mod_publication/approval_icon', $templatecontext);
+                return $OUTPUT->render_from_template('mod_privatestudentfolder/approval_icon', $templatecontext);
             }
             return '';
         */
@@ -265,12 +267,12 @@ class base extends \html_table {
             return $this->files;
         }
 
-        $contextid = $this->publication->get_context()->id;
+        $contextid = $this->privatestudentfolder->get_context()->id;
         $filearea = 'attachment';
         // User ID for regular instances, group id for assignments with teamsubmission!
         $itemid = $USER->id;
 
-        $files = $this->fs->get_area_files($contextid, 'mod_publication', $filearea, $itemid, 'timemodified', false);
+        $files = $this->fs->get_area_files($contextid, 'mod_privatestudentfolder', $filearea, $itemid, 'timemodified', false);
 
         foreach ($files as $file) {
             if ($file->get_filepath() == '/resources/') {
@@ -292,8 +294,8 @@ class base extends \html_table {
      * @return bool
      */
     public function changepossible() {
-        $result = ($this->changepossible ? true : false) && has_capability('mod/publication:upload',
-                        $this->publication->get_context());
+        $result = ($this->changepossible ? true : false) && has_capability('mod/privatestudentfolder:upload',
+                        $this->privatestudentfolder->get_context());
         return $result;
     }
 
@@ -310,8 +312,8 @@ class base extends \html_table {
         $data[] = $OUTPUT->pix_icon(file_file_icon($file), get_mimetype_description($file));
 
         if ( $this->is_file_approved($file) ) {
-            $dlurl = new \moodle_url('/mod/publication/view.php', [
-                    'id' => $this->publication->get_coursemodule()->id,
+            $dlurl = new \moodle_url('/mod/privatestudentfolder/view.php', [
+                    'id' => $this->privatestudentfolder->get_coursemodule()->id,
                     'download' => $file->get_id(),
             ]);
             $data[] = \html_writer::link($dlurl, $file->get_filename());

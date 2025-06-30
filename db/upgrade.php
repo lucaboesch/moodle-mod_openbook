@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,29 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Keeps track of all DB(-structure) changes and other upgrade steps for mod_publication
+ * Keeps track of all DB(-structure) changes and other upgrade steps for mod_privatestudentfolder
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Handles all the upgrade steps for mod_publication
+ * Handles all the upgrade steps for mod_privatestudentfolder
  *
- * @param int $oldversion the currently installed publication version
+ * @param int $oldversion the currently installed privatestudentfolder version
  * @return bool true if everythings allright
  */
-function xmldb_publication_upgrade($oldversion) {
+function xmldb_privatestudentfolder_upgrade($oldversion) {
     global $DB;
 
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2014032201) {
-        $table = new xmldb_table('publication_file');
+        $table = new xmldb_table('privatestudentfolder_file');
 
         // Add field alwaysshowdescription.
         $field = new xmldb_field('filesourceid', XMLDB_TYPE_INTEGER, '10', false, false, false, '0', 'fileid');
@@ -48,17 +48,17 @@ function xmldb_publication_upgrade($oldversion) {
         }
 
         // Organizer savepoint reached.
-        upgrade_mod_savepoint(true, 2014032201, 'publication');
+        upgrade_mod_savepoint(true, 2014032201, 'privatestudentfolder');
     }
 
     if ($oldversion < 2015120201) {
         // Remove unused settings (requiremodintro and duplicates of stdexamplecount and requiremodintro)!
         $DB->delete_records('config_plugins', [
-                'plugin' => 'publication',
+                'plugin' => 'privatestudentfolder',
                 'name' => 'requiremodintro',
         ]);
 
-        upgrade_mod_savepoint(true, 2015120201, 'publication');
+        upgrade_mod_savepoint(true, 2015120201, 'privatestudentfolder');
     }
 
     // Moodle v3.1.0 release upgrade line.
@@ -66,8 +66,8 @@ function xmldb_publication_upgrade($oldversion) {
 
     if ($oldversion < 2016051200) {
 
-        // Define field autoimport to be added to publication.
-        $table = new xmldb_table('publication');
+        // Define field autoimport to be added to privatestudentfolder.
+        $table = new xmldb_table('privatestudentfolder');
         $field = new xmldb_field('autoimport', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'obtainteacherapproval');
 
         // Conditionally launch add field autoimport.
@@ -76,13 +76,13 @@ function xmldb_publication_upgrade($oldversion) {
         }
 
         // Assign savepoint reached.
-        upgrade_mod_savepoint(true, 2016051200, 'publication');
+        upgrade_mod_savepoint(true, 2016051200, 'privatestudentfolder');
     }
 
     if ($oldversion < 2016062201) {
 
-        // Define field groupapproval to be added to publication.
-        $table = new xmldb_table('publication');
+        // Define field groupapproval to be added to privatestudentfolder.
+        $table = new xmldb_table('privatestudentfolder');
         $field = new xmldb_field('groupapproval', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'autoimport');
 
         // Conditionally launch add field groupapproval.
@@ -90,10 +90,10 @@ function xmldb_publication_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Define table publication_groupapproval to be created.
-        $table = new xmldb_table('publication_groupapproval');
+        // Define table privatestudentfolder_groupapproval to be created.
+        $table = new xmldb_table('privatestudentfolder_groupapproval');
 
-        // Adding fields to table publication_groupapproval.
+        // Adding fields to table privatestudentfolder_groupapproval.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('fileid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
@@ -101,18 +101,18 @@ function xmldb_publication_upgrade($oldversion) {
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
 
-        // Adding keys to table publication_groupapproval.
+        // Adding keys to table privatestudentfolder_groupapproval.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
-        $table->add_key('fileid', XMLDB_KEY_FOREIGN, ['fileid'], 'publication_files', ['id']);
+        $table->add_key('fileid', XMLDB_KEY_FOREIGN, ['fileid'], 'privatestudentfolder_files', ['id']);
         $table->add_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
 
-        // Conditionally launch create table for publication_groupapproval.
+        // Conditionally launch create table for privatestudentfolder_groupapproval.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
 
-        // Define field groupapproval to be added to publication.
-        $table = new xmldb_table('publication_groupapproval');
+        // Define field groupapproval to be added to privatestudentfolder.
+        $table = new xmldb_table('privatestudentfolder_groupapproval');
 
         $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'approval');
         // Conditionally launch add field groupapproval.
@@ -127,7 +127,7 @@ function xmldb_publication_upgrade($oldversion) {
         }
 
         // Publication savepoint reached.
-        upgrade_mod_savepoint(true, 2016062201, 'publication');
+        upgrade_mod_savepoint(true, 2016062201, 'privatestudentfolder');
     }
 
     // Moodle v3.2.0 release upgrade line.
@@ -139,8 +139,8 @@ function xmldb_publication_upgrade($oldversion) {
     if ($oldversion < 2017071200) {
         // Get all old filetype-restrictions and convert them!
         $rs = $DB->get_recordset_sql("SELECT id id, allowedfiletypes allowedfiletypes
-                                        FROM {publication}
-                                       WHERE " . $DB->sql_isnotempty('publication', 'allowedfiletypes', false, true));
+                                        FROM {privatestudentfolder}
+                                       WHERE " . $DB->sql_isnotempty('privatestudentfolder', 'allowedfiletypes', false, true));
         echo "<pre>";
         foreach ($rs as $cur) {
             // We only convert old style entries!
@@ -159,19 +159,19 @@ function xmldb_publication_upgrade($oldversion) {
                     implode('; ', $allowedfiletypes) .
                     "<br />\n";
             $cur->allowedfiletypes = implode('; ', $allowedfiletypes);
-            $DB->update_record('publication', $cur);
+            $DB->update_record('privatestudentfolder', $cur);
         }
         echo "</pre>";
         $rs->close();
 
         // Publication savepoint reached.
-        upgrade_mod_savepoint(true, 2017071200, 'publication');
+        upgrade_mod_savepoint(true, 2017071200, 'privatestudentfolder');
     }
 
     if ($oldversion < 2019052100) {
 
-        // Define field notifyteacher to be added to publication.
-        $table = new xmldb_table('publication');
+        // Define field notifyteacher to be added to privatestudentfolder.
+        $table = new xmldb_table('privatestudentfolder');
         $field = new xmldb_field('notifyteacher', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '1', 'groupapproval');
         $field2 = new xmldb_field('notifystudents', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'notifyteacher');
 
@@ -184,31 +184,31 @@ function xmldb_publication_upgrade($oldversion) {
         }
 
         // Publication savepoint reached.
-        upgrade_mod_savepoint(true, 2019052100, 'publication');
+        upgrade_mod_savepoint(true, 2019052100, 'privatestudentfolder');
     }
 
     if ($oldversion < 2020010500) {
 
-        // Changing the default of field teacherapproval on table publication_file to 3.
-        $table = new xmldb_table('publication_file');
+        // Changing the default of field teacherapproval on table privatestudentfolder_file to 3.
+        $table = new xmldb_table('privatestudentfolder_file');
         $field = new xmldb_field('teacherapproval', XMLDB_TYPE_INTEGER, '2', null, null, null, '3', 'type');
 
-        $DB->set_field('publication_file', 'teacherapproval', 3, ['teacherapproval' => null]);
+        $DB->set_field('privatestudentfolder_file', 'teacherapproval', 3, ['teacherapproval' => null]);
 
         // Launch change of default for field teacherapproval.
         $dbman->change_field_default($table, $field);
 
         // Publication savepoint reached.
-        upgrade_mod_savepoint(true, 2020010500, 'publication');
+        upgrade_mod_savepoint(true, 2020010500, 'privatestudentfolder');
     }
 
     if ($oldversion < 2021052500) {
 
-        // Define field id to be added to publication_file.
-        $table = new xmldb_table('publication_file');
-        $index = new xmldb_index('publication', XMLDB_INDEX_NOTUNIQUE, ['publication']);
+        // Define field id to be added to privatestudentfolder_file.
+        $table = new xmldb_table('privatestudentfolder_file');
+        $index = new xmldb_index('privatestudentfolder', XMLDB_INDEX_NOTUNIQUE, ['privatestudentfolder']);
 
-        // Conditionally launch add index publication.
+        // Conditionally launch add index privatestudentfolder.
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
@@ -221,26 +221,26 @@ function xmldb_publication_upgrade($oldversion) {
         }
 
         // Publication savepoint reached.
-        upgrade_mod_savepoint(true, 2021052500, 'publication');
+        upgrade_mod_savepoint(true, 2021052500, 'privatestudentfolder');
     }
 
     if ($oldversion < 2021052501) {
 
-        $table = new xmldb_table('publication_groupapproval');
-        $DB->set_field('publication_groupapproval', 'timecreated', 0, ['timecreated' => null]);
-        $DB->set_field('publication_groupapproval', 'timemodified', 0, ['timemodified' => null]);
+        $table = new xmldb_table('privatestudentfolder_groupapproval');
+        $DB->set_field('privatestudentfolder_groupapproval', 'timecreated', 0, ['timecreated' => null]);
+        $DB->set_field('privatestudentfolder_groupapproval', 'timemodified', 0, ['timemodified' => null]);
         $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, true, null, '0', 'approval');
         $dbman->change_field_default($table, $field);
         $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, true, null, '0', 'timecreated');
         $dbman->change_field_default($table, $field);
         // Publication savepoint reached.
-        upgrade_mod_savepoint(true, 2021052501, 'publication');
+        upgrade_mod_savepoint(true, 2021052501, 'privatestudentfolder');
     }
 
     if ($oldversion < 2023081000) {
 
-        // Define field completionupload to be added to publication.
-        $table = new xmldb_table('publication');
+        // Define field completionupload to be added to privatestudentfolder.
+        $table = new xmldb_table('privatestudentfolder');
         $field = new xmldb_field('completionupload', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'allowsubmissionsfromdate');
 
         // Conditionally launch add field completionupload.
@@ -249,13 +249,13 @@ function xmldb_publication_upgrade($oldversion) {
         }
 
         // Publication savepoint reached.
-        upgrade_mod_savepoint(true, 2023081000, 'publication');
+        upgrade_mod_savepoint(true, 2023081000, 'privatestudentfolder');
     }
 
     if ($oldversion < 2024061900) {
 
-        // Define field approvalfromdate to be added to publication.
-        $table = new xmldb_table('publication');
+        // Define field approvalfromdate to be added to privatestudentfolder.
+        $table = new xmldb_table('privatestudentfolder');
         $field = new xmldb_field('approvalfromdate', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'cutoffdate');
 
         // Conditionally launch add field approvalfromdate.
@@ -273,11 +273,11 @@ function xmldb_publication_upgrade($oldversion) {
 
 
         // Publication savepoint reached.
-        upgrade_mod_savepoint(true, 2024061900, 'publication');
+        upgrade_mod_savepoint(true, 2024061900, 'privatestudentfolder');
     }
 
     if ($oldversion < 2024071900) {
-        $table = new xmldb_table('publication');
+        $table = new xmldb_table('privatestudentfolder');
 
         $field = new xmldb_field('notifyteacher', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '1', 'groupapproval');
         // Launch rename field notifystatuschange.
@@ -296,52 +296,52 @@ function xmldb_publication_upgrade($oldversion) {
         $dbman->change_field_default($table, $field);
 
         // Publication savepoint reached.
-        upgrade_mod_savepoint(true, 2024071900, 'publication');
+        upgrade_mod_savepoint(true, 2024071900, 'privatestudentfolder');
     }
 
     if ($oldversion < 2024080200) {
-        $rs = $DB->get_recordset('publication');
-        foreach ($rs as $publication) {
-            if ($publication->notifystatuschange == 1) {
-                $publication->notifystatuschange = PUBLICATION_NOTIFY_STUDENT;
+        $rs = $DB->get_recordset('privatestudentfolder');
+        foreach ($rs as $privatestudentfolder) {
+            if ($privatestudentfolder->notifystatuschange == 1) {
+                $privatestudentfolder->notifystatuschange = PRIVATESTUDENTFOLDER_NOTIFY_STUDENT;
             } else {
-                $publication->notifystatuschange = 0;
+                $privatestudentfolder->notifystatuschange = 0;
             }
-            if ($publication->mode == PUBLICATION_MODE_UPLOAD) {
-                $publication->obtainstudentapproval = 0;
-                $publication->obtainteacherapproval = $publication->obtainteacherapproval == 1 ? 0 : 1;
+            if ($privatestudentfolder->mode == PRIVATESTUDENTFOLDER_MODE_UPLOAD) {
+                $privatestudentfolder->obtainstudentapproval = 0;
+                $privatestudentfolder->obtainteacherapproval = $privatestudentfolder->obtainteacherapproval == 1 ? 0 : 1;
             } else {
-                $publication->obtainteacherapproval = 1;
-                $publication->approvalfromdate = $publication->allowsubmissionsfromdate;
-                $publication->approvaltodate = $publication->duedate;
+                $privatestudentfolder->obtainteacherapproval = 1;
+                $privatestudentfolder->approvalfromdate = $privatestudentfolder->allowsubmissionsfromdate;
+                $privatestudentfolder->approvaltodate = $privatestudentfolder->duedate;
             }
-            $DB->update_record('publication', $publication, true);
+            $DB->update_record('privatestudentfolder', $privatestudentfolder, true);
         }
         $rs->close();
 
 
-        $rs = $DB->get_recordset('publication_file');
+        $rs = $DB->get_recordset('privatestudentfolder_file');
         foreach ($rs as $file) {
             if ($file->studentapproval === 0) {
                 $file->studentapproval = 2;
             } else if ($file->studentapproval > 2) {
                 $file->studentapproval = null;
             }
-            $DB->update_record('publication_file', $file, true);
+            $DB->update_record('privatestudentfolder_file', $file, true);
         }
         $rs->close();
 
-        upgrade_mod_savepoint(true, 2024080200, 'publication');
+        upgrade_mod_savepoint(true, 2024080200, 'privatestudentfolder');
     }
 
     if ($oldversion < 2024100400) {
 
-        // Define table publication_overrides to be created.
-        $table = new xmldb_table('publication_overrides');
+        // Define table privatestudentfolder_overrides to be created.
+        $table = new xmldb_table('privatestudentfolder_overrides');
 
-        // Adding fields to table publication_overrides.
+        // Adding fields to table privatestudentfolder_overrides.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('publication', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('privatestudentfolder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('groupid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
         $table->add_field('allowsubmissionsfromdate', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
@@ -349,23 +349,23 @@ function xmldb_publication_upgrade($oldversion) {
         $table->add_field('approvalfromdate', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
         $table->add_field('approvaltodate', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
 
-        // Adding keys to table publication_overrides.
+        // Adding keys to table privatestudentfolder_overrides.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
-        $table->add_key('publication', XMLDB_KEY_FOREIGN, ['publication'], 'publication', ['id']);
+        $table->add_key('privatestudentfolder', XMLDB_KEY_FOREIGN, ['privatestudentfolder'], 'privatestudentfolder', ['id']);
         $table->add_key('groupid', XMLDB_KEY_FOREIGN, ['groupid'], 'groups', ['id']);
         $table->add_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
 
-        // Conditionally launch create table for publication_overrides.
+        // Conditionally launch create table for privatestudentfolder_overrides.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
 
         // Publication savepoint reached.
-        upgrade_mod_savepoint(true, 2024100400, 'publication');
+        upgrade_mod_savepoint(true, 2024100400, 'privatestudentfolder');
     }
 
     if ($oldversion < 2024101801) {
-        $table = new xmldb_table('publication');
+        $table = new xmldb_table('privatestudentfolder');
 
         // Add field availabilityrestriction.
         $field = new xmldb_field('availabilityrestriction', XMLDB_TYPE_INTEGER, '1', false, true, false, '1', 'notifyfilechange');
@@ -376,15 +376,15 @@ function xmldb_publication_upgrade($oldversion) {
         }
 
         // Organizer savepoint reached.
-        upgrade_mod_savepoint(true, 2024101801, 'publication');
+        upgrade_mod_savepoint(true, 2024101801, 'privatestudentfolder');
     }
 
     if ($oldversion < 2025042203) {
 
-        // Define table publication_overrides to be created.
-        $table = new xmldb_table('publication');
+        // Define table privatestudentfolder_overrides to be created.
+        $table = new xmldb_table('privatestudentfolder');
 
-        // Conditionally launch create table for publication_overrides.
+        // Conditionally launch create table for privatestudentfolder_overrides.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
@@ -397,7 +397,7 @@ function xmldb_publication_upgrade($oldversion) {
         }
 
         // Publication savepoint reached.
-        upgrade_mod_savepoint(true, 2025042203, 'publication');
+        upgrade_mod_savepoint(true, 2025042203, 'privatestudentfolder');
     }
 
     return true;

@@ -1,12 +1,12 @@
 CHANGELOG
 =========
 
-4.6 (2025-06-26)
+4.5.3 (2025-06-26)
 -------------------
 
 * Moodle 4.5+ compatible version
 * [FORK] Original plugin forked
-* [UPDATE] Code clean up
+* [UPDATE] Code clean up (moodle checker and code checker)
 * [FEATURE] #1 - Multiple changes to make the plugin work in a different way (files are private or can be shared, students can aprove sharing, teacher rejection means document is not avalaible to it's owner or anyone)
 
 ORIGINAL CHANGELOG
@@ -24,7 +24,7 @@ ORIGINAL CHANGELOG
 -------------------
 * [FEATURE] #8188 - implement new setting for availability restrictions for userlist - github #92 & github pull request #93 - melanietreitinger
 * [BUG] #8113 - fix sql query that fetches users to work under MSSQL - github #88
-* [BUG] #8212 - fix issues with backup and restore of publication - github #95
+* [BUG] #8212 - fix issues with backup and restore of privatestudentfolder - github #95
 
 4.5.0 (2024-10-18)
 -------------------
@@ -45,7 +45,7 @@ ORIGINAL CHANGELOG
 * [FEATURE] #7931 - update icon
 * [FEATURE] #7473 - only students with access appear in files list - github #67
 * [FEATURE] #7809 - hide action buttons when table is empty in File submissions page
-* [FEATURE] #7774 - implement new workflow for publication
+* [FEATURE] #7774 - implement new workflow for privatestudentfolder
 * [FEATURE] #7775 - implement new message options
 * [BUG] #7975 - fix error when using postgres database - github #83
 
@@ -81,7 +81,7 @@ ORIGINAL CHANGELOG
 * [UPDATE] #7357 - new navigation structure
 * [HOTFIX] #7628 - force download plugin files, add missing require_sesskey() in view.php
 * [BUG] #7653 - fix error when participants try to download files
-* [BUG] #7654 - fix warning message of publication, shown in assignment if online text is empty
+* [BUG] #7654 - fix warning message of privatestudentfolder, shown in assignment if online text is empty
 
 4.1.0 (2022-12-12)
 -------------------
@@ -115,7 +115,7 @@ ORIGINAL CHANGELOG
 3.11.1 (2021-09-15)
 -------------------
 * [FEATURE] #6879 - make files that need approval more visible and add infotext
-* [BUG] #6967 - fix wrong default value for db fields in table publication_groupapproval - github issue #52
+* [BUG] #6967 - fix wrong default value for db fields in table privatestudentfolder_groupapproval - github issue #52
 * [BUG] #6975 - fix wrong referenced table in install.xml - github issue #53
 * [FIXED] #6929 - fix language of notifications to match that of the receiver 
 
@@ -124,7 +124,7 @@ ORIGINAL CHANGELOG
 * Moodle 3.11.0 compatible version
 * [FEATURE] #6834 - add one more file status for students - "pending approval"
 * [FIXED] #6912 - fix buttons margins - github merge request #49 by Luca Bösch
-* [FIXED] #6877 - add indexes for db table publication_file, fields publication and userid - github #47
+* [FIXED] #6877 - add indexes for db table privatestudentfolder_file, fields privatestudentfolder and userid - github #47
 * [FIXED] #6922 - remove warning that appears sometimes during listing of files of groups
 * [FIXED] #6923 - fix bug when sending approval-changed notifications to groups
 * [FIXED] #6924 - fix showing deleted assignments (pending deletion) in the dropdown
@@ -173,7 +173,7 @@ ORIGINAL CHANGELOG
 3.7.0 (2019-08-07)
 ------------------
 
-* [BUG] #6207 publication layout bug after changing approval fixed
+* [BUG] #6207 privatestudentfolder layout bug after changing approval fixed
 * [BUG] #6206 notifications with groups fixed
 * [FEATURE] #6126 added support for report-editdates
 * [FEATURE] #4995 notification on file-status change for student
@@ -194,7 +194,7 @@ ORIGINAL CHANGELOG
 * Moodle 3.6 compatible version
 * [FIXED] #5951 remove strong-tags in labels due to flexbox not displaying spaces around them
 * [FIXED] #6014 fix help icon related to column status being displayed the column before
-* [FEATURE] #5835 context locking now affects publication too (some capabilities were defined as reading instead of writing)!
+* [FEATURE] #5835 context locking now affects privatestudentfolder too (some capabilities were defined as reading instead of writing)!
 * [FEATURE] #5758 add new core_userlist_provider methods to privacy provider
 * [FEATURE] #6025 privacy API updates (#5758) are now covered by unit tests
 * [UPDATE] #5638 update .travis.yml
@@ -225,7 +225,7 @@ ORIGINAL CHANGELOG
 3.3.2 (2017-11-16)
 ------------------
 
-* [FIXED] #4914 error caused for users without capability "mod/publication:upload" by not instantiated files table
+* [FIXED] #4914 error caused for users without capability "mod/privatestudentfolder:upload" by not instantiated files table
 
 
 3.3.1 (2017-09-04)
@@ -324,9 +324,9 @@ ORIGINAL CHANGELOG
 * Moodle 2.9 compatible version
 * [CHANGED] #2495 Replace javascript with AMD modules based on JQuery instead of YUI
 * [FIXED] Language strings (fix typos, termini, etc.)
-* [FIXED] #2737 Capability publication:upload for submit button
+* [FIXED] #2737 Capability privatestudentfolder:upload for submit button
 * [FIXED] #2777 Uninitialized variable corrupting ZIP files with debugging enabled
-* [FIXED] #2886 Disable assignments with teamsubmissions enabled in publication until
+* [FIXED] #2886 Disable assignments with teamsubmissions enabled in privatestudentfolder until
   team submissions are supported
 * [FIXED] #2875 Usage of fullname function (don't override fullname format anymore)
 * [REMOVED] #2495 Unused settings and deprecate unused lang strings

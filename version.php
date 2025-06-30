@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,10 @@
 /**
  * Version information
  *
- * @package       mod_publication
- * @author        Hannes Laimer
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @author        Simeon Naydenov
- * @copyright     2021 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,6 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->version  = 2025062601;
 $plugin->requires = 2024100700;
-$plugin->component = 'mod_publication';
+$plugin->component = 'mod_privatestudentfolder';
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release  = "v4.6";
+$plugin->release  = "v4.5.3";

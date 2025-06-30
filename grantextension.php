@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 /**
  * Displays the form for granting extensions for student's submissions!
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,14 +28,14 @@ require_once('../../config.php');
 
 global $CFG, $DB, $OUTPUT, $PAGE;
 
-require_once($CFG->dirroot . '/mod/publication/locallib.php');
-require_once($CFG->dirroot . '/mod/publication/mod_publication_grantextension_form.php');
+require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php');
+require_once($CFG->dirroot . '/mod/privatestudentfolder/mod_privatestudentfolder_grantextension_form.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID.
 $userids = required_param_array('userids', PARAM_INT); // User id.
 
-$url = new moodle_url('/mod/publication/grantextension.php', ['id' => $id]);
-if (!$cm = get_coursemodule_from_id('publication', $id, 0, false, MUST_EXIST)) {
+$url = new moodle_url('/mod/privatestudentfolder/grantextension.php', ['id' => $id]);
+if (!$cm = get_coursemodule_from_id('privatestudentfolder', $id, 0, false, MUST_EXIST)) {
     throw new \moodle_exception('invalidcoursemodule');
 }
 
@@ -47,11 +47,11 @@ require_login($course, false, $cm);
 
 $context = context_module::instance($cm->id);
 
-require_capability('mod/publication:grantextension', $context);
+require_capability('mod/privatestudentfolder:grantextension', $context);
 
-$publication = new publication($cm, $course, $context);
+$privatestudentfolder = new privatestudentfolder($cm, $course, $context);
 
-$url = new moodle_url('/mod/publication/grantextension.php', ['cmid' => $cm->id]);
+$url = new moodle_url('/mod/privatestudentfolder/grantextension.php', ['cmid' => $cm->id]);
 if (!empty($id)) {
     $url->param('id', $id);
 }
@@ -59,31 +59,31 @@ if (!empty($id)) {
 $PAGE->set_url($url);
 
 // Create a new form object.
-$mform = new mod_publication_grantextension_form(null,
-        ['publication' => $publication, 'userids' => $userids]);
+$mform = new mod_privatestudentfolder_grantextension_form(null,
+        ['privatestudentfolder' => $privatestudentfolder, 'userids' => $userids]);
 
 if ($mform->is_cancelled()) {
-    redirect(new moodle_url('/mod/publication/view.php', ['id' => $cm->id]));
+    redirect(new moodle_url('/mod/privatestudentfolder/view.php', ['id' => $cm->id]));
 
 } else if ($data = $mform->get_data()) {
     // Store updated set of files.
     $dataobject = [];
-    $dataobject['publication'] = $publication->get_instance()->id;
+    $dataobject['privatestudentfolder'] = $privatestudentfolder->get_instance()->id;
 
     foreach ($data->userids as $uid) {
         $dataobject['userid'] = $uid;
 
-        $DB->delete_records('publication_extduedates', $dataobject);
+        $DB->delete_records('privatestudentfolder_extduedates', $dataobject);
 
         if ($data->extensionduedate > 0) {
             // Create new record.
             $dataobject['extensionduedate'] = $data->extensionduedate;
-            \mod_publication\event\publication_duedate_extended::duedate_extended($cm, $dataobject)->trigger();
-            $DB->insert_record('publication_extduedates', (object)$dataobject);
+            \mod_privatestudentfolder\event\privatestudentfolder_duedate_extended::duedate_extended($cm, $dataobject)->trigger();
+            $DB->insert_record('privatestudentfolder_extduedates', (object)$dataobject);
         }
     }
 
-    redirect(new moodle_url('/mod/publication/view.php', ['id' => $cm->id]));
+    redirect(new moodle_url('/mod/privatestudentfolder/view.php', ['id' => $cm->id]));
 }
 
 // Load existing files into draft area.

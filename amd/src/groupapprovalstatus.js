@@ -1,4 +1,4 @@
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,21 +16,22 @@
 /**
  * JS showing detailed infos about user's approval status for group approvals in a modal window
  *
- * @module        mod_publication/groupapprovalstatus
- * @package
- * @author        Philipp Hager
- * @copyright     2020 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @module        mod_privatestudentfolder/groupapprovalstatus
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * @module mod_publication/groupapprovalstatus
+ * @module mod_privatestudentfolder/groupapprovalstatus
  */
 define(['jquery', 'core/modal_factory', 'core/str', 'core/templates', 'core/log'], function($, ModalFactory, str, templates, log) {
 
     /**
      * @constructor
-     * @alias module:mod_publication/groupapprovalstatus
+     * @alias module:mod_privatestudentfolder/groupapprovalstatus
      */
     var Groupapprovalstatus = function() {
         this.id = '';
@@ -39,7 +40,7 @@ define(['jquery', 'core/modal_factory', 'core/str', 'core/templates', 'core/log'
     var instance = new Groupapprovalstatus();
 
     /**
-     * Initialises the JavaScript for publication's group approval status tooltips
+     * Initialises the JavaScript for privatestudentfolder's group approval status tooltips
      *
      *
      * @param {Object} config The configuration
@@ -48,7 +49,7 @@ define(['jquery', 'core/modal_factory', 'core/str', 'core/templates', 'core/log'
         instance.id = config.id;
         instance.mode = config.mode;
 
-        log.info('Initialize groupapprovalstatus JS!', 'mod_publication');
+        log.info('Initialize groupapprovalstatus JS!', 'mod_privatestudentfolder');
 
         // Prepare modal object!
         if (!instance.modal) {
@@ -58,12 +59,12 @@ define(['jquery', 'core/modal_factory', 'core/str', 'core/templates', 'core/log'
             });
         }
 
-        str.get_string('filedetails', 'mod_publication').done(function(s) {
-            log.info('Done loading strings...', 'mod_publication');
+        str.get_string('filedetails', 'mod_privatestudentfolder').done(function(s) {
+            log.info('Done loading strings...', 'mod_privatestudentfolder');
             instance.modalpromise.done(function(modal) {
-                log.info('Done preparing modal', 'mod_publication');
+                log.info('Done preparing modal', 'mod_privatestudentfolder');
                 instance.modal = modal;
-                $('.path-mod-publication .statustable .approvaldetails *').click(function(e) {
+                $('.path-mod-privatestudentfolder .statustable .approvaldetails *').click(function(e) {
                     e.stopPropagation();
                     var element = $(e.target);
 
@@ -118,7 +119,7 @@ define(['jquery', 'core/modal_factory', 'core/str', 'core/templates', 'core/log'
                     };
 
                     // This will call the function to load and render our template.
-                    var promise = templates.render('mod_publication/approvaltooltip', context);
+                    var promise = templates.render('mod_privatestudentfolder/approvaltooltip', context);
 
                     // How we deal with promise objects is by adding callbacks.
                     promise.done(function(source) {
@@ -133,10 +134,10 @@ define(['jquery', 'core/modal_factory', 'core/str', 'core/templates', 'core/log'
                     });
                 });
                 // Everything is prepared, fade the symbols in!
-                $('.path-mod-publication .statustable .approvaldetails').fadeIn('slow');
+                $('.path-mod-privatestudentfolder .statustable .approvaldetails').fadeIn('slow');
             });
         }).fail(function(ex) {
-            log.error('Error getting strings: ' + ex, 'mod_publication');
+            log.error('Error getting strings: ' + ex, 'mod_privatestudentfolder');
         });
     };
 

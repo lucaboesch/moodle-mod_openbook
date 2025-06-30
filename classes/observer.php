@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,17 +17,17 @@
 /**
  * observer.php
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace mod_publication;
+namespace mod_privatestudentfolder;
 
 use core\notification;
 use mod_assign\event\assessable_submitted;
 use mod_assign\event\base;
-use publication;
+use privatestudentfolder;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die;
@@ -35,22 +35,22 @@ defined('MOODLE_INTERNAL') || die;
 /**
  * mod_grouptool\observer handles events due to changes in moodle core which affect grouptool
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class observer {
     public static function course_module_created(\core\event\base $event) {
         global $DB;
         $eventdata = $event->get_data();
-        if (isset($eventdata['other']) && isset($eventdata['other']['modulename']) && $eventdata['other']['modulename'] == 'publication') {
-            $cm = get_coursemodule_from_instance('publication', $eventdata['other']['instanceid'], 0, false, MUST_EXIST);
-            $publication = new publication($cm);
-            if ($publication->get_instance()->mode == PUBLICATION_MODE_IMPORT) {
-                $publication->importfiles();
+        if (isset($eventdata['other']) && isset($eventdata['other']['modulename']) && $eventdata['other']['modulename'] == 'privatestudentfolder') {
+            $cm = get_coursemodule_from_instance('privatestudentfolder', $eventdata['other']['instanceid'], 0, false, MUST_EXIST);
+            $privatestudentfolder = new privatestudentfolder($cm);
+            if ($privatestudentfolder->get_instance()->mode == PRIVATESTUDENTFOLDER_MODE_IMPORT) {
+                $privatestudentfolder->importfiles();
             }
-            publication::send_all_pending_notifications();
+            privatestudentfolder::send_all_pending_notifications();
         }
     }
 
@@ -64,7 +64,7 @@ class observer {
         global $DB, $CFG, $OUTPUT;
 
         // Keep other page calls slimmed down!
-        require_once($CFG->dirroot . '/mod/publication/locallib.php');
+        require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php');
 
         // We have the submission ID, so first we fetch the corresponding submission, assign, etc.!
         $assign = $e->get_assign();
@@ -86,23 +86,23 @@ class observer {
         $assigncontext = \context_module::instance($assigncm->id);
 
         $sql = "SELECT pub.*
-                  FROM {publication} pub
+                  FROM {privatestudentfolder} pub
                  WHERE (pub.mode = ?) AND (pub.importfrom = ?)";
-        $params = [\PUBLICATION_MODE_IMPORT, $assignid];
-        if (!$publications = $DB->get_records_sql($sql, $params)) {
+        $params = [\PRIVATESTUDENTFOLDER_MODE_IMPORT, $assignid];
+        if (!$privatestudentfolders = $DB->get_records_sql($sql, $params)) {
             return true;
         }
 
-        foreach ($publications as $pub) {
-            $cm = get_coursemodule_from_instance('publication', $pub->id);
+        foreach ($privatestudentfolders as $pub) {
+            $cm = get_coursemodule_from_instance('privatestudentfolder', $pub->id);
             if (!$cm) {
                 continue;
             }
-            $publication = new publication($cm);
-            $publication->importfiles();
+            $privatestudentfolder = new privatestudentfolder($cm);
+            $privatestudentfolder->importfiles();
         }
 
-        publication::send_all_pending_notifications();
+        privatestudentfolder::send_all_pending_notifications();
 /*
         $subfilerecords = $DB->get_records('assignsubmission_file', [
                 'assignment' => $assignid,
@@ -129,17 +129,17 @@ class observer {
             }
         }
 
-        foreach ($publications as $curpub) {
-            $cm = get_coursemodule_from_instance('publication', $curpub->id, 0, false, MUST_EXIST);
+        foreach ($privatestudentfolders as $curpub) {
+            $cm = get_coursemodule_from_instance('privatestudentfolder', $curpub->id, 0, false, MUST_EXIST);
             $context = \context_module::instance($cm->id);
 
             $conditions = [];
-            $conditions['publication'] = $curpub->id;
+            $conditions['privatestudentfolder'] = $curpub->id;
             $conditions['userid'] = $itemid;
             // We look for regular imported files here!
-            $conditions['type'] = PUBLICATION_MODE_IMPORT;
+            $conditions['type'] = PRIVATESTUDENTFOLDER_MODE_IMPORT;
 
-            $oldpubfiles = $DB->get_records('publication_file', $conditions);
+            $oldpubfiles = $DB->get_records('privatestudentfolder_file', $conditions);
 
             $assignfileids = $allassignfileids;
             $assignfiles = $allassignfiles;
@@ -152,25 +152,25 @@ class observer {
 
                 } else {
                     // File has been removed from assign.
-                    // Remove from publication (file and db entry).
+                    // Remove from privatestudentfolder (file and db entry).
                     if ($file = $fs->get_file_by_id($oldpubfile->fileid)) {
                         $file->delete();
                     }
 
                     $conditions['id'] = $oldpubfile->id;
-                    $dataobject = $DB->get_record('publication_file', ['id' => $conditions['id']]);
+                    $dataobject = $DB->get_record('privatestudentfolder_file', ['id' => $conditions['id']]);
                     $dataobject->typ = $importtype;
                     $dataobject->itemid = $itemid;
-                    \mod_publication\event\publication_file_deleted::create_from_object($cm, $dataobject)->trigger();
-                    $DB->delete_records('publication_file', $conditions);
+                    \mod_privatestudentfolder\event\privatestudentfolder_file_deleted::create_from_object($cm, $dataobject)->trigger();
+                    $DB->delete_records('privatestudentfolder_file', $conditions);
                 }
             }
 
-            // Add new files to publication.
+            // Add new files to privatestudentfolder.
             foreach ($assignfileids as $assignfileid) {
                 $newfilerecord = new \stdClass();
                 $newfilerecord->contextid = $context->id;
-                $newfilerecord->component = 'mod_publication';
+                $newfilerecord->component = 'mod_privatestudentfolder';
                 $newfilerecord->filearea = 'attachment';
                 $newfilerecord->itemid = $itemid;
 
@@ -193,22 +193,22 @@ class observer {
                     }
 
                     $dataobject = new \stdClass();
-                    $dataobject->publication = $curpub->id;
+                    $dataobject->privatestudentfolder = $curpub->id;
                     $dataobject->userid = $itemid;
                     $dataobject->timecreated = time();
                     $dataobject->fileid = $newfile->get_id();
                     $dataobject->filesourceid = $assignfileid;
                     $dataobject->filename = $newfile->get_filename();
                     $dataobject->contenthash = "666";
-                    $dataobject->type = \PUBLICATION_MODE_IMPORT;
-                    $DB->insert_record('publication_file', $dataobject);
+                    $dataobject->type = \PRIVATESTUDENTFOLDER_MODE_IMPORT;
+                    $DB->insert_record('privatestudentfolder_file', $dataobject);
                     $dataobject->typ = $importtype;
                     $dataobject->itemid = $itemid;
-                    \mod_publication\event\publication_file_imported::file_added($cm, $dataobject)->trigger();
+                    \mod_privatestudentfolder\event\privatestudentfolder_file_imported::file_added($cm, $dataobject)->trigger();
 
-                    $publication = new publication($cm);
-                    if ($publication->get_instance()->notifyfilechange != 0) {
-                        publication::send_notification_filechange($cm, $dataobject, null, $publication);
+                    $privatestudentfolder = new privatestudentfolder($cm);
+                    if ($privatestudentfolder->get_instance()->notifyfilechange != 0) {
+                        privatestudentfolder::send_notification_filechange($cm, $dataobject, null, $privatestudentfolder);
                     }
 
                 } catch (\Exception $ex) {
@@ -220,7 +220,7 @@ class observer {
             }
 
             // And now the same for online texts!
-            \publication::update_assign_onlinetext($assigncm, $assigncontext, $curpub->id, $context->id, $submission->id);
+            \privatestudentfolder::update_assign_onlinetext($assigncm, $assigncontext, $curpub->id, $context->id, $submission->id);
         }*/
         return true;
     }

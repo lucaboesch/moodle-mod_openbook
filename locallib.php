@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,59 +15,58 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains much of the logic needed for mod_publication
+ * Contains much of the logic needed for mod_privatestudentfolder
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-define('PUBLICATION_MODE_UPLOAD', 0);
-define('PUBLICATION_MODE_IMPORT', 1);
+define('PRIVATESTUDENTFOLDER_MODE_UPLOAD', 0);
+define('PRIVATESTUDENTFOLDER_MODE_IMPORT', 1);
 // Used in DB to mark online-text-files!
-define('PUBLICATION_MODE_ONLINETEXT', 2);
+define('PRIVATESTUDENTFOLDER_MODE_ONLINETEXT', 2);
 
-define('PUBLICATION_APPROVAL_GROUPAUTOMATIC', -1);
-define('PUBLICATION_APPROVAL_ALL', 0);
-define('PUBLICATION_APPROVAL_SINGLE', 1);
+define('PRIVATESTUDENTFOLDER_APPROVAL_GROUPAUTOMATIC', -1);
+define('PRIVATESTUDENTFOLDER_APPROVAL_ALL', 0);
+define('PRIVATESTUDENTFOLDER_APPROVAL_SINGLE', 1);
 
-define('PUBLICATION_EVENT_TYPE_DUE', 'due');
+define('PRIVATESTUDENTFOLDER_EVENT_TYPE_DUE', 'due');
 
 
-define('PUBLICATION_FILTER_NOFILTER', 'nofilter');
-define('PUBLICATION_FILTER_ALLFILES', 'allfiles');
-define('PUBLICATION_FILTER_APPROVED', 'approved');
-define('PUBLICATION_FILTER_REJECTED', 'rejected');
-define('PUBLICATION_FILTER_APPROVALREQUIRED', 'approvalrequired');
-define('PUBLICATION_FILTER_NOFILES', 'nofiles');
+define('PRIVATESTUDENTFOLDER_FILTER_NOFILTER', 'nofilter');
+define('PRIVATESTUDENTFOLDER_FILTER_ALLFILES', 'allfiles');
+define('PRIVATESTUDENTFOLDER_FILTER_APPROVED', 'approved');
+define('PRIVATESTUDENTFOLDER_FILTER_REJECTED', 'rejected');
+define('PRIVATESTUDENTFOLDER_FILTER_APPROVALREQUIRED', 'approvalrequired');
+define('PRIVATESTUDENTFOLDER_FILTER_NOFILES', 'nofiles');
 
-define('PUBLICATION_MODE_FILEUPLOAD', 'fileupload');
-define('PUBLICATION_MODE_ASSIGN_TEAMSUBMISSION', 'teamsubmission');
-define('PUBLICATION_MODE_ASSIGN_IMPORT', 'import');
+define('PRIVATESTUDENTFOLDER_MODE_FILEUPLOAD', 'fileupload');
+define('PRIVATESTUDENTFOLDER_MODE_ASSIGN_TEAMSUBMISSION', 'teamsubmission');
+define('PRIVATESTUDENTFOLDER_MODE_ASSIGN_IMPORT', 'import');
 
-define('PUBLICATION_NOTIFY_NONE', 0);
-define('PUBLICATION_NOTIFY_TEACHER', 1);
-define('PUBLICATION_NOTIFY_STUDENT', 2);
-define('PUBLICATION_NOTIFY_ALL', 3);
-define('PUBLICATION_NOTIFY_STATUSCHANGE', 'status');
-define('PUBLICATION_NOTIFY_FILECHANGE', 'file');
+define('PRIVATESTUDENTFOLDER_NOTIFY_NONE', 0);
+define('PRIVATESTUDENTFOLDER_NOTIFY_TEACHER', 1);
+define('PRIVATESTUDENTFOLDER_NOTIFY_STUDENT', 2);
+define('PRIVATESTUDENTFOLDER_NOTIFY_ALL', 3);
+define('PRIVATESTUDENTFOLDER_NOTIFY_STATUSCHANGE', 'status');
+define('PRIVATESTUDENTFOLDER_NOTIFY_FILECHANGE', 'file');
 
-require_once($CFG->dirroot . '/mod/publication/mod_publication_allfiles_form.php');
+require_once($CFG->dirroot . '/mod/privatestudentfolder/mod_privatestudentfolder_allfiles_form.php');
 
 /**
- * publication class contains much logic used in mod_publication
+ * privatestudentfolder class contains much logic used in mod_privatestudentfolder
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class publication {
+class privatestudentfolder {
     // TODO replace $instance with proper properties + PHPDoc comments?!?
     /** @var object instance */
     protected $instance;
@@ -111,22 +110,22 @@ class publication {
             $this->context = context_module::instance($cm->id);
         }
 
-        $this->instance = $DB->get_record("publication", ["id" => $cm->instance]);
+        $this->instance = $DB->get_record("privatestudentfolder", ["id" => $cm->instance]);
 
        // $this->instance->obtainteacherapproval = !$this->instance->obtainteacherapproval;
 
-        if ($this->instance->mode == PUBLICATION_MODE_IMPORT) {
+        if ($this->instance->mode == PRIVATESTUDENTFOLDER_MODE_IMPORT) {
             $cond = ['id' => $this->instance->importfrom];
             $this->requiregroup = $DB->get_field('assign', 'preventsubmissionnotingroup', $cond);
             $this->teamsubmission = $DB->get_field('assign', 'teamsubmission', $cond);
         }
 
-        if ($this->get_instance()->mode == PUBLICATION_MODE_UPLOAD) {
-            $this->mode = PUBLICATION_MODE_FILEUPLOAD;
+        if ($this->get_instance()->mode == PRIVATESTUDENTFOLDER_MODE_UPLOAD) {
+            $this->mode = PRIVATESTUDENTFOLDER_MODE_FILEUPLOAD;
         } else if ($this->teamsubmission) {
-            $this->mode = PUBLICATION_MODE_ASSIGN_TEAMSUBMISSION;
+            $this->mode = PRIVATESTUDENTFOLDER_MODE_ASSIGN_TEAMSUBMISSION;
         } else {
-            $this->mode = PUBLICATION_MODE_ASSIGN_IMPORT;
+            $this->mode = PRIVATESTUDENTFOLDER_MODE_ASSIGN_IMPORT;
         }
     }
 
@@ -153,16 +152,16 @@ class publication {
         if ($this->show_intro()) {
             if ($this->instance->intro) {
                 echo $OUTPUT->box_start('generalbox boxaligncenter', 'intro');
-                echo format_module_intro('publication', $this->instance, $this->coursemodule->id);
+                echo format_module_intro('privatestudentfolder', $this->instance, $this->coursemodule->id);
                 echo $OUTPUT->box_end();
             }
         } else {
             if ($this->alwaysshowdescription) {
                 $message = get_string('allowsubmissionsfromdatesummary',
-                        'publication', userdate($this->instance->allowsubmissionsfromdate));
+                        'privatestudentfolder', userdate($this->instance->allowsubmissionsfromdate));
             } else {
                 $message = get_string('allowsubmissionsanddescriptionfromdatesummary',
-                        'publication', userdate($this->instance->allowsubmissionsfromdate));
+                        'privatestudentfolder', userdate($this->instance->allowsubmissionsfromdate));
             }
             echo html_writer::div($message, '', ['id' => 'intro']);
         }
@@ -175,34 +174,34 @@ class publication {
         global $USER, $OUTPUT;
 
         // Display availability dates.
-        $textsuffix = ($this->instance->mode == PUBLICATION_MODE_IMPORT) ? "_import" : "_upload";
+        $textsuffix = ($this->instance->mode == PRIVATESTUDENTFOLDER_MODE_IMPORT) ? "_import" : "_upload";
 
         echo $OUTPUT->box_start('generalbox boxaligncenter', 'dates');
         echo '<table>';
         if ($this->instance->allowsubmissionsfromdate) {
-            echo '<tr><td class="c0">' . get_string('allowsubmissionsfromdate' . $textsuffix, 'publication') . ':</td>';
+            echo '<tr><td class="c0">' . get_string('allowsubmissionsfromdate' . $textsuffix, 'privatestudentfolder') . ':</td>';
             echo '    <td class="c1">' . userdate($this->instance->allowsubmissionsfromdate) . '</td></tr>';
         }
         if ($this->instance->duedate) {
-            echo '<tr><td class="c0">' . get_string('duedate' . $textsuffix, 'publication') . ':</td>';
+            echo '<tr><td class="c0">' . get_string('duedate' . $textsuffix, 'privatestudentfolder') . ':</td>';
             echo '    <td class="c1">' . userdate($this->instance->duedate) . '</td></tr>';
         }
 
         $extensionduedate = $this->user_extensionduedate($USER->id);
 
         if ($extensionduedate) {
-            echo '<tr><td class="c0">' . get_string('extensionto', 'publication') . ':</td>';
+            echo '<tr><td class="c0">' . get_string('extensionto', 'privatestudentfolder') . ':</td>';
             echo '    <td class="c1">' . userdate($extensionduedate) . '</td></tr>';
         }
 
         $override = $this->override_get_currentuserorgroup();
         if ($override) {
             if ($override->approvaloverride) {
-                echo '<tr><td class="c0">' . get_string('approvaloverride', 'publication') . ':</td>';
+                echo '<tr><td class="c0">' . get_string('approvaloverride', 'privatestudentfolder') . ':</td>';
                 echo '    <td class="c1">' . $override->approvaloverride . '</td></tr>';
             }
             if ($override->submissionoverride) {
-                echo '<tr><td class="c0">' . get_string('submissionoverride', 'publication') . ':</td>';
+                echo '<tr><td class="c0">' . get_string('submissionoverride', 'privatestudentfolder') . ':</td>';
                 echo '    <td class="c1">' . $override->submissionoverride . '</td></tr>';
             }
         }
@@ -219,7 +218,7 @@ class publication {
     public function get_importlink() {
         global $DB, $OUTPUT;
 
-        if ($this->instance->mode == PUBLICATION_MODE_IMPORT) {
+        if ($this->instance->mode == PRIVATESTUDENTFOLDER_MODE_IMPORT) {
             $context = new stdClass;
 
             if ($this->get_instance()->importfrom == -1) {
@@ -247,7 +246,7 @@ class publication {
                     $context->notfound = true;
                 }
             }
-            return $OUTPUT->render_from_template('mod_publication/partial_assignlink', $context);
+            return $OUTPUT->render_from_template('mod_privatestudentfolder/partial_assignlink', $context);
         }
         return null;
     }
@@ -262,20 +261,20 @@ class publication {
     public function display_uploadlink() {
         global $OUTPUT;
 
-        if ($this->instance->mode == PUBLICATION_MODE_UPLOAD) {
-            if (has_capability('mod/publication:upload', $this->context)) {
+        if ($this->instance->mode == PRIVATESTUDENTFOLDER_MODE_UPLOAD) {
+            if (has_capability('mod/privatestudentfolder:upload', $this->context)) {
                 if ($this->is_open()) {
-                    $url = new moodle_url('/mod/publication/upload.php',
+                    $url = new moodle_url('/mod/privatestudentfolder/upload.php',
                             ['id' => $this->instance->id, 'cmid' => $this->coursemodule->id]);
-                    $label = get_string('edit_uploads', 'publication');
+                    $label = get_string('edit_uploads', 'privatestudentfolder');
                     $editbutton = $OUTPUT->single_button($url, $label);
 
                     return $editbutton;
                 } else {
-                    return get_string('edit_timeover', 'publication');
+                    return get_string('edit_timeover', 'privatestudentfolder');
                 }
             } else {
-                return get_string('edit_notcapable', 'publication');
+                return get_string('edit_notcapable', 'privatestudentfolder');
             }
         }
     }
@@ -289,8 +288,8 @@ class publication {
     public function user_extensionduedate($uid) {
         global $DB;
 
-        $extensionduedate = $DB->get_field('publication_extduedates', 'extensionduedate', [
-                'publication' => $this->get_instance()->id,
+        $extensionduedate = $DB->get_field('privatestudentfolder_extduedates', 'extensionduedate', [
+                'privatestudentfolder' => $this->get_instance()->id,
                 'userid' => $uid,
         ]);
 
@@ -317,7 +316,7 @@ class publication {
     public function is_open() {
         global $USER;
 
-        if (!has_capability('mod/publication:upload', $this->get_context())) {
+        if (!has_capability('mod/privatestudentfolder:upload', $this->get_context())) {
             return false;
         }
 
@@ -481,12 +480,12 @@ class publication {
         $currentgroup = groups_get_activity_group($this->get_coursemodule(), true);
 
         // Get all ppl that are allowed to submit assignments.
-        list($esql, $params) = get_enrolled_sql($this->context, 'mod/publication:view', $currentgroup);
+        list($esql, $params) = get_enrolled_sql($this->context, 'mod/privatestudentfolder:view', $currentgroup);
 
         $allfilespage = $ignoreallfilespage || $this->allfilespage;
 
-        if ($allfilespage && (has_capability('mod/publication:approve', $this->context)
-                || has_capability('mod/publication:grantextension', $this->context))) {
+        if ($allfilespage && (has_capability('mod/privatestudentfolder:approve', $this->context)
+                || has_capability('mod/privatestudentfolder:grantextension', $this->context))) {
             // We can skip the approval-checks for teachers!
             $sql = 'SELECT u.id FROM {user} u ' .
                     'LEFT JOIN (' . $esql . ') eu ON eu.id=u.id ' .
@@ -494,9 +493,9 @@ class publication {
         } else {
             $sql = 'SELECT u.id FROM {user} u ' .
                     'LEFT JOIN (' . $esql . ') eu ON eu.id=u.id ' .
-                    'LEFT JOIN {publication_file} files ON (u.id = files.userid) ' .
+                    'LEFT JOIN {privatestudentfolder_file} files ON (u.id = files.userid) ' .
                     'WHERE u.deleted = 0 AND eu.id=u.id ' . $customusers .
-                    'AND files.publication = ' . $this->get_instance()->id . ' ';
+                    'AND files.privatestudentfolder = ' . $this->get_instance()->id . ' ';
 
             $where = '';
             if ($this->get_instance()->obtainteacherapproval == 1) {
@@ -517,7 +516,7 @@ class publication {
                 // Student and teacher have approved.
                 //$where = 'files.teacherapproval = 1 AND files.studentapproval = 1';
             }
-            /*if ($this->get_instance()->mode == PUBLICATION_MODE_UPLOAD) {
+            /*if ($this->get_instance()->mode == PRIVATESTUDENTFOLDER_MODE_UPLOAD) {
                 // Mode upload.
             } else {
                 // TODO group mode!
@@ -560,13 +559,13 @@ class publication {
         if ($ignoreallfilespage) {
             $this->allfilespage = true;
         }
-        $uniqueid = \mod_publication\local\allfilestable\base::get_table_uniqueid($this->instance->id);
-        if ($mode == PUBLICATION_MODE_FILEUPLOAD) {
-            $table = new \mod_publication\local\allfilestable\upload($uniqueid . $this->coursemodule->id, $this, $filter);
-        } else if ($mode == PUBLICATION_MODE_ASSIGN_TEAMSUBMISSION) {
-            $table = new \mod_publication\local\allfilestable\group($uniqueid, $this, $filter);
+        $uniqueid = \mod_privatestudentfolder\local\allfilestable\base::get_table_uniqueid($this->instance->id);
+        if ($mode == PRIVATESTUDENTFOLDER_MODE_FILEUPLOAD) {
+            $table = new \mod_privatestudentfolder\local\allfilestable\upload($uniqueid . $this->coursemodule->id, $this, $filter);
+        } else if ($mode == PRIVATESTUDENTFOLDER_MODE_ASSIGN_TEAMSUBMISSION) {
+            $table = new \mod_privatestudentfolder\local\allfilestable\group($uniqueid, $this, $filter);
         } else {
-            $table = new \mod_publication\local\allfilestable\import($uniqueid, $this, $filter);
+            $table = new \mod_privatestudentfolder\local\allfilestable\import($uniqueid, $this, $filter);
         }
         $this->allfilespage = $oldallfilespage;
         return $table;
@@ -575,12 +574,12 @@ class publication {
     public function get_filestable() {
         global $DB;
         $mode = $this->get_mode();
-        if ($mode == PUBLICATION_MODE_FILEUPLOAD) {
-            $table = new \mod_publication\local\filestable\upload($this);
-        } else if ($mode == PUBLICATION_MODE_ASSIGN_TEAMSUBMISSION) {
-            $table = new \mod_publication\local\filestable\group($this);
+        if ($mode == PRIVATESTUDENTFOLDER_MODE_FILEUPLOAD) {
+            $table = new \mod_privatestudentfolder\local\filestable\upload($this);
+        } else if ($mode == PRIVATESTUDENTFOLDER_MODE_ASSIGN_TEAMSUBMISSION) {
+            $table = new \mod_privatestudentfolder\local\filestable\group($this);
         } else {
-            $table = new \mod_publication\local\filestable\import($this);
+            $table = new \mod_privatestudentfolder\local\filestable\import($this);
         }
         return $table;
     }
@@ -601,18 +600,18 @@ class publication {
         if ($updatepref) {
             $perpage = optional_param('perpage', 10, PARAM_INT);
             $perpage = ($perpage < 0) ? 10 : $perpage;
-            set_user_preference('mod-publication-perpage-' . $this->instance->id, $perpage);
+            set_user_preference('mod-privatestudentfolder-perpage-' . $this->instance->id, $perpage);
         }
 
         // Next we get perpage param from database!
-        $perpage = get_user_preferences('mod-publication-perpage-' . $this->instance->id, 10);
+        $perpage = get_user_preferences('mod-privatestudentfolder-perpage-' . $this->instance->id, 10);
 
-        $filter = optional_param('filter', PUBLICATION_FILTER_NOFILTER, PARAM_ALPHANUMEXT);
+        $filter = optional_param('filter', PRIVATESTUDENTFOLDER_FILTER_NOFILTER, PARAM_ALPHANUMEXT);
 
         $page = optional_param('page', 0, PARAM_INT);
 
         $formattrs = [];
-        $formattrs['action'] = new moodle_url('/mod/publication/view.php', ['allfilespage' => $this->allfilespage]);
+        $formattrs['action'] = new moodle_url('/mod/privatestudentfolder/view.php', ['allfilespage' => $this->allfilespage]);
         $formattrs['id'] = 'fastg';
         $formattrs['method'] = 'post';
         $formattrs['class'] = 'mform';
@@ -628,15 +627,15 @@ class publication {
                 html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'filter', 'value' => $filter]);
 
         $output .= html_writer::start_tag('fieldset', ['class' => 'clearfix collapsible', 'id' => 'id_allfiles']);
-        $allfiles = get_string('allfiles', 'publication');
-        $publicfiles = get_string('publicfiles', 'publication');
-        $myownfiles = get_string('myownfiles', 'publication');
-        $title = (has_capability('mod/publication:approve', $context)  && $this->allfilespage) ? $allfiles : $publicfiles;
+        $allfiles = get_string('allfiles', 'privatestudentfolder');
+        $publicfiles = get_string('publicfiles', 'privatestudentfolder');
+        $myownfiles = get_string('myownfiles', 'privatestudentfolder');
+        $title = (has_capability('mod/privatestudentfolder:approve', $context)  && $this->allfilespage) ? $allfiles : $publicfiles;
         $output .= html_writer::tag('legend', $title, ['class' => 'ftoggler h3']);
         $output .= html_writer::start_div('fcontainer clearfix mb-3');
 
-        $f = groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/publication/view.php?id=' . $cm->id, true);
-        $mf = new mod_publication_allfiles_form(null, array('form' => $f));
+        $f = groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/privatestudentfolder/view.php?id=' . $cm->id, true);
+        $mf = new mod_privatestudentfolder_allfiles_form(null, array('form' => $f));
         $output .= $mf->render();
 
         $table = $this->get_allfilestable($filter);
@@ -649,16 +648,16 @@ class publication {
         $norowsfound = $table->get_count() == 0;
         $nofilesfound = $table->get_totalfilescount() == 0;
 
-        $link = html_writer::link(new moodle_url('/mod/publication/view.php', [
+        $link = html_writer::link(new moodle_url('/mod/privatestudentfolder/view.php', [
                 'id' => $this->coursemodule->id,
                 'action' => 'zip',
                 'allfilespage' => $this->allfilespage,
             ]),
-            get_string('downloadall', 'publication'),
+            get_string('downloadall', 'privatestudentfolder'),
             ['class' => 'btn btn-secondary mb-2 btn-sm']
         );
         if (!$norowsfound && !$nofilesfound) {
-            $output .= html_writer::tag('div', $link, ['class' => 'mod-publication-download-link']);
+            $output .= html_writer::tag('div', $link, ['class' => 'mod-privatestudentfolder-download-link']);
         }
 
         if ($perpage == 0) {
@@ -668,45 +667,45 @@ class publication {
         $output .= $tableoutput;
 
         $options = [];
-        $options['zipusers'] = get_string('zipusers', 'publication');
+        $options['zipusers'] = get_string('zipusers', 'privatestudentfolder');
 
-        if (has_capability('mod/publication:approve', $context) && $table->totalfiles() > 0  && $this->allfilespage) {
+        if (has_capability('mod/privatestudentfolder:approve', $context) && $table->totalfiles() > 0  && $this->allfilespage) {
             if ($this->get_instance()->obtainteacherapproval) {
-                $options['approveusers'] = get_string('approveusers', 'publication');
-                $options['rejectusers'] = get_string('rejectusers', 'publication');
+                $options['approveusers'] = get_string('approveusers', 'privatestudentfolder');
+                $options['rejectusers'] = get_string('rejectusers', 'privatestudentfolder');
             }
 
             if ($this->get_instance()->obtainstudentapproval) {
-                $options['resetstudentapproval'] = get_string('resetstudentapproval', 'publication');
+                $options['resetstudentapproval'] = get_string('resetstudentapproval', 'privatestudentfolder');
             }
         }
-        if (has_capability('mod/publication:grantextension', $this->get_context()) && $this->allfilespage) {
-            $options['grantextension'] = get_string('grantextension', 'publication');
+        if (has_capability('mod/privatestudentfolder:grantextension', $this->get_context()) && $this->allfilespage) {
+            $options['grantextension'] = get_string('grantextension', 'privatestudentfolder');
         }
 
         if (count($options) > 0 && !$norowsfound && !$nofilesfound) {
             $output .= html_writer::start_div('form-row');
-            if (has_capability('mod/publication:approve', $context) && $this->allfilespage) {
+            if (has_capability('mod/privatestudentfolder:approve', $context) && $this->allfilespage) {
                 $buttons = html_writer::empty_tag('input', [
                         'type' => 'reset',
                         'name' => 'resetvisibility',
-                        'value' => get_string('reset', 'publication'),
+                        'value' => get_string('reset', 'privatestudentfolder'),
                         'class' => 'visibilitysaver btn btn-secondary ml-1',
                 ]);
 
-                if ($this->get_instance()->mode == PUBLICATION_MODE_IMPORT &&
+                if ($this->get_instance()->mode == PRIVATESTUDENTFOLDER_MODE_IMPORT &&
                         $this->get_instance()->obtainstudentapproval) {
                     $buttons .= html_writer::empty_tag('input', [
                             'type' => 'submit',
                             'name' => 'savevisibility',
-                            'value' => get_string('saveapproval', 'publication'),
+                            'value' => get_string('saveapproval', 'privatestudentfolder'),
                             'class' => 'visibilitysaver btn btn-primary',
                     ]);
                 } else {
                     $buttons .= html_writer::empty_tag('input', [
                             'type' => 'submit',
                             'name' => 'savevisibility',
-                            'value' => get_string('saveteacherapproval', 'publication'),
+                            'value' => get_string('saveteacherapproval', 'privatestudentfolder'),
                             'class' => 'visibilitysaver btn btn-primary',
                     ]);
                 }
@@ -715,12 +714,12 @@ class publication {
             }
 
             $output .= html_writer::start_div('withselection col-7').
-                 html_writer::span(get_string('withselected', 'publication')).
+                 html_writer::span(get_string('withselected', 'privatestudentfolder')).
                  html_writer::select($options, 'action').
                  html_writer::empty_tag('input', [
                     'type' => 'submit',
                     'name' => 'submitgo',
-                    'value' => get_string('go', 'publication'),
+                    'value' => get_string('go', 'privatestudentfolder'),
                     'class' => 'btn btn-primary',
                  ]).html_writer::end_div().
                  html_writer::div($buttons, 'col');
@@ -749,7 +748,7 @@ class publication {
                 html_writer::end_tag('form');
 
         // Mini form for setting user preference.
-        $formaction = new moodle_url('/mod/publication/view.php', ['id' => $this->coursemodule->id, 'allfilespage' => $this->allfilespage]);
+        $formaction = new moodle_url('/mod/privatestudentfolder/view.php', ['id' => $this->coursemodule->id, 'allfilespage' => $this->allfilespage]);
         $mform = new MoodleQuickForm('optionspref', 'post', $formaction, '', ['class' => 'optionspref']);
 
         $attributes = [];
@@ -759,9 +758,9 @@ class publication {
         $mform->addElement('hidden', 'updatepref');
         $mform->setDefault('updatepref', 1);
 
-        $mform->addElement('header', 'qgprefs', get_string('optionalsettings', 'publication'));
+        $mform->addElement('header', 'qgprefs', get_string('optionalsettings', 'privatestudentfolder'));
 
-        $mform->addElement('select', 'perpage', get_string('entiresperpage', 'publication'), [
+        $mform->addElement('select', 'perpage', get_string('entiresperpage', 'privatestudentfolder'), [
             0 => get_string('all'),
             3 => 3,
             10 => 10,
@@ -771,22 +770,22 @@ class publication {
         ], $attributes);
         $mform->setDefault('perpage', $perpage);
 
-        if (has_capability('mod/publication:approve', $context) && $this->allfilespage) {
+        if (has_capability('mod/privatestudentfolder:approve', $context) && $this->allfilespage) {
             $filteroptions = [
-                PUBLICATION_FILTER_NOFILTER => get_string('filter:' . PUBLICATION_FILTER_NOFILTER, 'publication'),
-                PUBLICATION_FILTER_ALLFILES => get_string('filter:' . PUBLICATION_FILTER_ALLFILES, 'publication'),
+                PRIVATESTUDENTFOLDER_FILTER_NOFILTER => get_string('filter:' . PRIVATESTUDENTFOLDER_FILTER_NOFILTER, 'privatestudentfolder'),
+                PRIVATESTUDENTFOLDER_FILTER_ALLFILES => get_string('filter:' . PRIVATESTUDENTFOLDER_FILTER_ALLFILES, 'privatestudentfolder'),
             ];
             if ($this->get_instance()->obtainteacherapproval || $this->get_instance()->obtainstudentapproval) {
                 $filteroptions += [
-                    PUBLICATION_FILTER_APPROVED => get_string('filter:' . PUBLICATION_FILTER_APPROVED, 'publication'),
-                    PUBLICATION_FILTER_REJECTED => get_string('filter:' . PUBLICATION_FILTER_REJECTED, 'publication'),
-                    PUBLICATION_FILTER_APPROVALREQUIRED => get_string('filter:' . PUBLICATION_FILTER_APPROVALREQUIRED, 'publication'),
+                    PRIVATESTUDENTFOLDER_FILTER_APPROVED => get_string('filter:' . PRIVATESTUDENTFOLDER_FILTER_APPROVED, 'privatestudentfolder'),
+                    PRIVATESTUDENTFOLDER_FILTER_REJECTED => get_string('filter:' . PRIVATESTUDENTFOLDER_FILTER_REJECTED, 'privatestudentfolder'),
+                    PRIVATESTUDENTFOLDER_FILTER_APPROVALREQUIRED => get_string('filter:' . PRIVATESTUDENTFOLDER_FILTER_APPROVALREQUIRED, 'privatestudentfolder'),
                 ];
             }
             $filteroptions += [
-                PUBLICATION_FILTER_NOFILES => get_string('filter:' . PUBLICATION_FILTER_NOFILES, 'publication'),
+                PRIVATESTUDENTFOLDER_FILTER_NOFILES => get_string('filter:' . PRIVATESTUDENTFOLDER_FILTER_NOFILES, 'privatestudentfolder'),
             ];
-            $mform->addElement('select', 'filter', get_string('filter', 'publication'), $filteroptions, $attributes);
+            $mform->addElement('select', 'filter', get_string('filter', 'privatestudentfolder'), $filteroptions, $attributes);
             $mform->setDefault('filter', $filter);
         }
         $mform->disable_form_change_checker();
@@ -806,19 +805,19 @@ class publication {
         global $DB;
 
         $conditions = [];
-        $conditions['publication'] = $this->get_instance()->id;
+        $conditions['privatestudentfolder'] = $this->get_instance()->id;
         $conditions['fileid'] = $fileid;
 
-        $filepermissions = $DB->get_record('publication_file', $conditions);
+        $filepermissions = $DB->get_record('privatestudentfolder_file', $conditions);
 
         $haspermission = false;
 
         if ($filepermissions) {
             if ($userid != 0) {
-                if ($this->get_instance()->mode == PUBLICATION_MODE_UPLOAD && $filepermissions->userid == $userid) {
+                if ($this->get_instance()->mode == PRIVATESTUDENTFOLDER_MODE_UPLOAD && $filepermissions->userid == $userid) {
                     // Everyone is allowed to view their own files.
                     $haspermission = true;
-                } else if ($this->get_instance()->mode == PUBLICATION_MODE_IMPORT) {
+                } else if ($this->get_instance()->mode == PRIVATESTUDENTFOLDER_MODE_IMPORT) {
                     // If it's a team-submission, we have to check for the group membership!
                     $teamsubmission = $this->teamsubmission;
                     if (!empty($teamsubmission)) {
@@ -842,7 +841,7 @@ class publication {
 
             $haspermission = $haspermission || ((!$obtainteacherapproval || $teacherapproval == 1) && (!$obtainstudentapproval || $studentapproval == 1));
 /*
-            if ($this->get_instance()->mode == PUBLICATION_MODE_UPLOAD) {
+            if ($this->get_instance()->mode == PRIVATESTUDENTFOLDER_MODE_UPLOAD) {
                 // Mode upload.
                 if ($this->get_instance()->obtainteacherapproval) {
                     // Need teacher approval.
@@ -877,7 +876,7 @@ class publication {
      * Sets group approval for the specified user and returns current cumulated group approval!
      *
      * @param null|int $approval 0 if rejected, 1 if approved and 'null' if not set!
-     * @param int $pubfileid ID of publication file entry in DB
+     * @param int $pubfileid ID of privatestudentfolder file entry in DB
      * @param int $userid ID of user to set approval/rejection for
      * @return array cumulated approval for specified file, approving and needed count
      * @throws coding_exception
@@ -894,8 +893,8 @@ class publication {
 
         $approvalforgroupapproval = $approval == 1 ? 1 : 0; // $approval == 2 => $approvalforgroupapproval = 0...
 
-        $record = $DB->get_record('publication_groupapproval', ['fileid' => $pubfileid, 'userid' => $userid]);
-        $filerec = $DB->get_record('publication_file', ['id' => $pubfileid]);
+        $record = $DB->get_record('privatestudentfolder_groupapproval', ['fileid' => $pubfileid, 'userid' => $userid]);
+        $filerec = $DB->get_record('privatestudentfolder_file', ['id' => $pubfileid]);
         if (!empty($record)) {
             if ($record->approval === $approvalforgroupapproval) {
                 // Nothing changed, return!
@@ -903,7 +902,7 @@ class publication {
             }
             $record->approval = $approvalforgroupapproval;
             $record->timemodified = time();
-            $DB->update_record('publication_groupapproval', $record);
+            $DB->update_record('privatestudentfolder_groupapproval', $record);
         } else {
             $record = new stdClass();
             $record->fileid = $pubfileid;
@@ -911,7 +910,7 @@ class publication {
             $record->approval = $approvalforgroupapproval;
             $record->timecreated = time();
             $record->timemodified = $record->timecreated;
-            $record->id = $DB->insert_record('publication_groupapproval', $record);
+            $record->id = $DB->insert_record('privatestudentfolder_groupapproval', $record);
         }
 
         // Calculate new cumulated studentapproval for caching in file table!
@@ -924,14 +923,14 @@ class publication {
             list($usersql, $userparams) = $DB->get_in_or_equal(array_keys($groupmembers), SQL_PARAMS_NAMED, 'user');
             $select = "fileid = :fileid AND approval = :approval AND userid " . $usersql;
             $params = ['fileid' => $pubfileid, 'approval' => 0] + $userparams;
-            if ($DB->record_exists_select('publication_groupapproval', $select, $params)) {
+            if ($DB->record_exists_select('privatestudentfolder_groupapproval', $select, $params)) {
                 // If anyone rejected it's rejected, no matter what!
                 $approval = 2; // 2 is rejected...
             } else {
-                if ($this->get_instance()->groupapproval == PUBLICATION_APPROVAL_SINGLE) {
+                if ($this->get_instance()->groupapproval == PRIVATESTUDENTFOLDER_APPROVAL_SINGLE) {
                     // If only one has to approve, we check for that!
                     $params['approval'] = 1;
-                    if ($DB->record_exists_select('publication_groupapproval', $select, $params)) {
+                    if ($DB->record_exists_select('privatestudentfolder_groupapproval', $select, $params)) {
                         $approval = 1;
                     } else {
                         $approval = 0;
@@ -941,7 +940,7 @@ class publication {
                     $select = "fileid = :fileid AND approval IS NULL AND userid " . $usersql;
                     $params = ['fileid' => $pubfileid] + $userparams;
                     $approving = $DB->count_records_sql("SELECT count(DISTINCT userid)
-                                                           FROM {publication_groupapproval}
+                                                           FROM {privatestudentfolder_groupapproval}
                                                           WHERE fileid = :fileid AND approval = 1 AND userid " . $usersql, $params);
                     $stats['approving'] = $approving;
                     $stats['needed'] = count($userparams);
@@ -960,7 +959,7 @@ class publication {
 
         // Update approval value and return it!
         $filerec->studentapproval = $approval;
-        $DB->update_record('publication_file', $filerec);
+        $DB->update_record('privatestudentfolder_file', $filerec);
         $stats['approval'] = $approval;
         return $stats;
     }
@@ -976,11 +975,11 @@ class publication {
 
         if (empty($conditions)) {
             static $conditions = [];
-            $conditions['publication'] = $this->get_instance()->id;
+            $conditions['privatestudentfolder'] = $this->get_instance()->id;
         }
         $conditions['fileid'] = $file->get_id();
 
-        $teacherapproval = $DB->get_field('publication_file', 'teacherapproval', $conditions);
+        $teacherapproval = $DB->get_field('privatestudentfolder_file', 'teacherapproval', $conditions);
         $obtainteacherapproval = $this->get_instance()->obtainteacherapproval;
         if (!$obtainteacherapproval) {
             return 1;
@@ -1000,11 +999,11 @@ class publication {
 
         if (empty($conditions)) {
             static $conditions = [];
-            $conditions['publication'] = $this->get_instance()->id;
+            $conditions['privatestudentfolder'] = $this->get_instance()->id;
         }
         $conditions['fileid'] = $file->get_id();
 
-        $studentapproval = $DB->get_field('publication_file', 'studentapproval', $conditions);
+        $studentapproval = $DB->get_field('privatestudentfolder_file', 'studentapproval', $conditions);
 
         //$studentapproval = (!is_null($studentapproval)) ? $studentapproval + 1 : null;
 
@@ -1025,7 +1024,7 @@ class publication {
             $availabilityinfo = new \core_availability\info_module($modinfo->get_cm($this->coursemodule->id));
         }
 
-        if ($this->mode != PUBLICATION_MODE_ASSIGN_TEAMSUBMISSION) {
+        if ($this->mode != PRIVATESTUDENTFOLDER_MODE_ASSIGN_TEAMSUBMISSION) {
             throw new coding_exception('Cannot be called if files get uploaded or teamsubmission is deactivated!');
         }
 
@@ -1059,17 +1058,17 @@ class publication {
     /**
      * Gets group approval for the specified file!
      *
-     * @param int $pubfileid ID of publication file entry in DB
+     * @param int $pubfileid ID of privatestudentfolder file entry in DB
      * @return array cumulated approval for specified file and array with approval details
      */
     public function group_approval($pubfileid) {
         global $DB;
 
-        if ($this->mode != PUBLICATION_MODE_ASSIGN_TEAMSUBMISSION) {
+        if ($this->mode != PRIVATESTUDENTFOLDER_MODE_ASSIGN_TEAMSUBMISSION) {
             throw new coding_exception('Cannot be called if files get uploaded or teamsubmission is deactivated!');
         }
 
-        $filerec = $DB->get_record('publication_file', ['id' => $pubfileid]);
+        $filerec = $DB->get_record('privatestudentfolder_file', ['id' => $pubfileid]);
 
         // Get group members!
         $groupmembers = $this->get_submissionmembers($filerec->userid);
@@ -1078,7 +1077,7 @@ class publication {
         if (!empty($groupmembers)) {
             list($usersql, $userparams) = $DB->get_in_or_equal(array_keys($groupmembers), SQL_PARAMS_NAMED, 'user');
             $sql = "SELECT u.*, ga.approval, ga.timemodified AS approvaltime, ga.userid, ga.fileid
-                      FROM {publication_groupapproval} ga
+                      FROM {privatestudentfolder_groupapproval} ga
                  JOIN {user} u ON u.id = ga.userid
                      WHERE  ga.fileid = :fileid AND u.id " . $usersql;
             $params = ['fileid' => $filerec->id] + $userparams;
@@ -1090,15 +1089,15 @@ class publication {
                     $allconfirmed = false;
                     break;
                 }
-                if ($groupapproval == PUBLICATION_APPROVAL_SINGLE && $gd->approval == 1) {
+                if ($groupapproval == PRIVATESTUDENTFOLDER_APPROVAL_SINGLE && $gd->approval == 1) {
                     $studentapproval = 1;
-                } else if ($groupapproval == PUBLICATION_APPROVAL_ALL) {
+                } else if ($groupapproval == PRIVATESTUDENTFOLDER_APPROVAL_ALL) {
                     if ($gd->approval != 1) {
                         $allconfirmed = false;
                     }
                 }
             }
-            if ($groupapproval == PUBLICATION_APPROVAL_ALL && $allconfirmed) {
+            if ($groupapproval == PRIVATESTUDENTFOLDER_APPROVAL_ALL && $allconfirmed) {
                 $studentapproval = 1;
             }
         } else {
@@ -1118,13 +1117,13 @@ class publication {
         global $DB, $USER;
 
         $conditions = [];
-        $conditions['publication'] = $this->get_instance()->id;
+        $conditions['privatestudentfolder'] = $this->get_instance()->id;
         $conditions['fileid'] = $fileid;
-        $record = $DB->get_record('publication_file', $conditions);
+        $record = $DB->get_record('privatestudentfolder_file', $conditions);
 
         $allowed = false;
 
-        if (has_capability('mod/publication:approve', $this->get_context())) {
+        if (has_capability('mod/privatestudentfolder:approve', $this->get_context())) {
             // Teachers has to see the files to know if they can allow them.
             $allowed = true;
         } else if ($this->has_filepermission($fileid, $USER->id)) {
@@ -1136,7 +1135,7 @@ class publication {
             $fs = get_file_storage();
             $file = $fs->get_file_by_id($fileid);
             $itemid = $file->get_itemid();
-            if ($record->type == PUBLICATION_MODE_ONLINETEXT) {
+            if ($record->type == PRIVATESTUDENTFOLDER_MODE_ONLINETEXT) {
                 global $CFG;
 
                 if ($this->get_instance()->importfrom == -1) {
@@ -1167,7 +1166,7 @@ class publication {
                     // We can send the file directly, if it has no resources!
                     send_file($file, $filename, 'default', 0, false, true, $file->get_mimetype(), false);
                 } else {
-                    $zipfile = tempnam($CFG->dataroot . '/temp/', 'publication_');
+                    $zipfile = tempnam($CFG->dataroot . '/temp/', 'privatestudentfolder_');
                     if ($zipper->archive_to_pathname($filesforzipping, $zipfile)) {
                         send_temp_file($zipfile, $zipname); // Send file and delete after sending.
                     }
@@ -1177,7 +1176,7 @@ class publication {
             }
             die();
         } else {
-            throw new \moodle_exception('You are not allowed to see this file', 'mod_publication'); // TODO get_string().
+            throw new \moodle_exception('You are not allowed to see this file', 'mod_privatestudentfolder'); // TODO get_string().
         }
     }
 
@@ -1192,7 +1191,7 @@ class publication {
 
         $cm = $this->get_coursemodule();
 
-        $canapprove = has_capability('mod/publication:approve', $this->get_context());
+        $canapprove = has_capability('mod/privatestudentfolder:approve', $this->get_context());
         if ($this->get_instance()->importfrom == -1) {
             $teamsubmission = false;
         } else {
@@ -1200,7 +1199,7 @@ class publication {
         }
 
         $conditions = [];
-        $conditions['publication'] = $this->get_instance()->id;
+        $conditions['privatestudentfolder'] = $this->get_instance()->id;
 
         $filesforzipping = [];
         $fs = get_file_storage();
@@ -1229,7 +1228,7 @@ class publication {
         // Get all files from each user/group.
         foreach ($uploaders as $uploader) {
             $conditions['userid'] = $uploader;
-            $records = $DB->get_records('publication_file', $conditions);
+            $records = $DB->get_records('privatestudentfolder_file', $conditions);
 
             if (!$teamsubmission) {
                 // Get user firstname/lastname.
@@ -1258,7 +1257,7 @@ class publication {
                     if (key_exists($fileforzipname, $filesforzipping)) {
                         throw new coding_exception('Can\'t overwrite ' . $fileforzipname . '!');
                     }
-                    if ($record->type == PUBLICATION_MODE_ONLINETEXT) {
+                    if ($record->type == PRIVATESTUDENTFOLDER_MODE_ONLINETEXT) {
                         $this->add_onlinetext_to_zipfiles($filesforzipping, $file, $itemname, $fileforzipname, $fs, $itemunique);
                     } else {
                         // Save file name to array for zipping.
@@ -1282,7 +1281,7 @@ class publication {
     private function pack_files($filesforzipping) {
         global $CFG;
         // Create path for new zip file.
-        $tempzip = tempnam($CFG->dataroot . '/temp/', 'publication_');
+        $tempzip = tempnam($CFG->dataroot . '/temp/', 'privatestudentfolder_');
         // Zip files.
         $zipper = new zip_packer();
         if ($zipper->archive_to_pathname($filesforzipping, $tempzip)) {
@@ -1311,7 +1310,7 @@ class publication {
 
         // First we get all ressources!
         $resources = $fs->get_directory_files($this->get_context()->id,
-                'mod_publication',
+                'mod_privatestudentfolder',
                 'attachment',
                 $file->get_itemid(),
                 '/resources/',
@@ -1344,8 +1343,8 @@ class publication {
 
         list($usersql, $params) = $DB->get_in_or_equal($userorgroupids, SQL_PARAMS_NAMED, 'user');
         $params['pubid'] = $this->instance->id;
-        $select = ' publication=:pubid AND userid ' . $usersql;
-        $records = $DB->get_records_select('publication_file', $select, $params);
+        $select = ' privatestudentfolder=:pubid AND userid ' . $usersql;
+        $records = $DB->get_records_select('privatestudentfolder_file', $select, $params);
         $files = [];
         //$teacherapproval = $action == 'approveusers' ? '1' : ($action == 'rejectusers' ? '2' : null);
         foreach ($records as $record) {
@@ -1366,7 +1365,7 @@ class publication {
         global $DB, $USER;
 
         foreach ($files as $fileid => $newfileaction) {
-            $x = $DB->get_record('publication_file', array('fileid' => $fileid), $fields = "fileid,userid,teacherapproval,id,studentapproval,filename");
+            $x = $DB->get_record('privatestudentfolder_file', array('fileid' => $fileid), $fields = "fileid,userid,teacherapproval,id,studentapproval,filename");
 
             $oldteacherapproval = $x->teacherapproval;
             $oldstudentapproval = $x->studentapproval;
@@ -1401,7 +1400,7 @@ class publication {
                     $newteacherapproval = 2;
                     break;
                 case 'resetstudentapproval':
-                    if ($oldstudentapproval != 1 && $oldstudentapproval != 2 && $this->mode != PUBLICATION_MODE_ASSIGN_TEAMSUBMISSION)  {
+                    if ($oldstudentapproval != 1 && $oldstudentapproval != 2 && $this->mode != PRIVATESTUDENTFOLDER_MODE_ASSIGN_TEAMSUBMISSION)  {
                         continue 2;
                     }
                     $resetstudentapproval = true;
@@ -1419,7 +1418,7 @@ class publication {
 
             $user = $DB->get_record('user', array('id' => $x->userid));
             $group = false;
-            if ($this->mode == PUBLICATION_MODE_ASSIGN_TEAMSUBMISSION) {
+            if ($this->mode == PRIVATESTUDENTFOLDER_MODE_ASSIGN_TEAMSUBMISSION) {
                 $group = $x->userid;
             }
            /* $logstatus = '';
@@ -1435,7 +1434,7 @@ class publication {
             }
 */
             $dataforlog = new stdClass();
-            $dataforlog->publication = $this->instance->id;
+            $dataforlog->privatestudentfolder = $this->instance->id;
             $dataforlog->approval = $logstatus;
             $dataforlog->userid = $USER->id;
             if ($user && !empty($user->id)) {
@@ -1446,19 +1445,19 @@ class publication {
             $dataforlog->fileid = $fileid;
 
             try {
-                \mod_publication\event\publication_approval_changed::approval_changed($this->coursemodule, $dataforlog)->trigger();
+                \mod_privatestudentfolder\event\privatestudentfolder_approval_changed::approval_changed($this->coursemodule, $dataforlog)->trigger();
             } catch (coding_exception $e) {
                 throw new Exception("Coding exception while sending notification: " . $e->getMessage());
             }
 
             if ($teacherapprove || $teacherreject) {
-                $DB->set_field('publication_file', 'teacherapproval', $newteacherapproval, ['fileid' => $fileid]);
+                $DB->set_field('privatestudentfolder_file', 'teacherapproval', $newteacherapproval, ['fileid' => $fileid]);
             } else { // reset student approval
-                $DB->set_field('publication_file', 'studentapproval', 0, ['fileid' => $fileid]);
-                if ($this->mode == PUBLICATION_MODE_ASSIGN_TEAMSUBMISSION) {
-                    $groupapprovals = $DB->get_records('publication_groupapproval', ['fileid' => $x->id]);
+                $DB->set_field('privatestudentfolder_file', 'studentapproval', 0, ['fileid' => $fileid]);
+                if ($this->mode == PRIVATESTUDENTFOLDER_MODE_ASSIGN_TEAMSUBMISSION) {
+                    $groupapprovals = $DB->get_records('privatestudentfolder_groupapproval', ['fileid' => $x->id]);
                     foreach ($groupapprovals as $groupapproval) {
-                        $DB->set_field('publication_groupapproval', 'approval', null, ['id' => $groupapproval->id]);
+                        $DB->set_field('privatestudentfolder_groupapproval', 'approval', null, ['id' => $groupapproval->id]);
                     }
 
                 }
@@ -1479,7 +1478,7 @@ class publication {
     public function importfiles() {
         global $DB;
 
-        if ($this->instance->mode == PUBLICATION_MODE_IMPORT) {
+        if ($this->instance->mode == PRIVATESTUDENTFOLDER_MODE_IMPORT) {
             $assign = $DB->get_record('assign', ['id' => $this->instance->importfrom]);
             $assignmoduleid = $DB->get_field('modules', 'id', ['name' => 'assign']);
             $assigncm = $DB->get_record('course_modules', [
@@ -1536,16 +1535,16 @@ class publication {
             }
 
             $conditions = [];
-            $conditions['publication'] = $this->get_instance()->id;
+            $conditions['privatestudentfolder'] = $this->get_instance()->id;
             if (empty($assignment->get_instance()->teamsubmission)) {
                 $conditions['userid'] = $submission->userid;
             } else {
                 $conditions['userid'] = $submission->groupid;
             }
             // We look for regular imported files here!
-            $conditions['type'] = PUBLICATION_MODE_IMPORT;
+            $conditions['type'] = PRIVATESTUDENTFOLDER_MODE_IMPORT;
 
-            $oldpubfiles = $DB->get_records('publication_file', $conditions);
+            $oldpubfiles = $DB->get_records('privatestudentfolder_file', $conditions);
 
             foreach ($oldpubfiles as $oldpubfile) {
 
@@ -1555,24 +1554,24 @@ class publication {
 
                 } else {
                     // File has been removed from assign.
-                    // Remove from publication (file and db entry).
+                    // Remove from privatestudentfolder (file and db entry).
                     if ($file = $fs->get_file_by_id($oldpubfile->fileid)) {
                         $file->delete();
                     }
 
                     $conditions['id'] = $oldpubfile->id;
-                    $dataobject = $DB->get_record('publication_file', ['id' => $conditions['id']]);
+                    $dataobject = $DB->get_record('privatestudentfolder_file', ['id' => $conditions['id']]);
                     $cm = $this->coursemodule;
-                    \mod_publication\event\publication_file_deleted::create_from_object($cm, $dataobject)->trigger();
-                    $DB->delete_records('publication_file', $conditions);
+                    \mod_privatestudentfolder\event\privatestudentfolder_file_deleted::create_from_object($cm, $dataobject)->trigger();
+                    $DB->delete_records('privatestudentfolder_file', $conditions);
                 }
             }
 
-            // Add new files to publication.
+            // Add new files to privatestudentfolder.
             foreach ($assignfileids as $assignfileid) {
                 $newfilerecord = new stdClass();
                 $newfilerecord->contextid = $this->get_context()->id;
-                $newfilerecord->component = 'mod_publication';
+                $newfilerecord->component = 'mod_privatestudentfolder';
                 $newfilerecord->filearea = 'attachment';
                 if (empty($assignment->get_instance()->teamsubmission)) {
                     $newfilerecord->itemid = $submission->userid;
@@ -1584,7 +1583,7 @@ class publication {
                     $newfile = $fs->create_file_from_storedfile($newfilerecord, $assignfiles[$assignfileid]);
 
                     $dataobject = new stdClass();
-                    $dataobject->publication = $this->get_instance()->id;
+                    $dataobject->privatestudentfolder = $this->get_instance()->id;
                     $importtype = 'user';
                     if (empty($assignment->get_instance()->teamsubmission)) {
                         $dataobject->userid = $submission->userid;
@@ -1597,14 +1596,14 @@ class publication {
                     $dataobject->filesourceid = $assignfileid;
                     $dataobject->filename = $newfile->get_filename();
                     $dataobject->contenthash = "666";
-                    $dataobject->type = PUBLICATION_MODE_IMPORT;
+                    $dataobject->type = PRIVATESTUDENTFOLDER_MODE_IMPORT;
 
-                    $dataobject->id = $DB->insert_record('publication_file', $dataobject);
+                    $dataobject->id = $DB->insert_record('privatestudentfolder_file', $dataobject);
                     $dataobject->typ = $importtype;
-                    \mod_publication\event\publication_file_imported::file_added($assigncm, $dataobject)->trigger();
+                    \mod_privatestudentfolder\event\privatestudentfolder_file_imported::file_added($assigncm, $dataobject)->trigger();
 
                     if ($this->get_instance()->notifyfilechange != 0) {
-                        $cm = get_coursemodule_from_instance('publication', $this->get_instance()->id, 0, false, MUST_EXIST);
+                        $cm = get_coursemodule_from_instance('privatestudentfolder', $this->get_instance()->id, 0, false, MUST_EXIST);
                         // USER $user = $DB->get_record('user', ['id' => $submission->userid], '*', MUST_EXIST); Not needed!
                         self::send_notification_filechange($cm, $dataobject);
                     }
@@ -1627,7 +1626,7 @@ class publication {
      * @throws coding_exception
      */
     protected function import_assign_onlinetexts($assigncm, $assigncontext) {
-        if ($this->get_instance()->mode != PUBLICATION_MODE_IMPORT) {
+        if ($this->get_instance()->mode != PRIVATESTUDENTFOLDER_MODE_IMPORT) {
             return;
         }
 
@@ -1639,11 +1638,11 @@ class publication {
      *
      * @param stdClass $assigncm Assign's coursemodule object
      * @param stdClass $assigncontext Assign's context object
-     * @param int $publicationid Publication's instance ID
+     * @param int $privatestudentfolderid Publication's instance ID
      * @param int $contextid Publication's context ID
      * @param int $submissionid (optional) If set, only process this submission, else process all submissions
      */
-    public static function update_assign_onlinetext($assigncm, $assigncontext, $publicationid, $contextid, $submissionid = 0) {
+    public static function update_assign_onlinetext($assigncm, $assigncontext, $privatestudentfolderid, $contextid, $submissionid = 0) {
         global $USER, $DB, $CFG;
 
         $fs = get_file_storage();
@@ -1652,8 +1651,8 @@ class publication {
         $assigncourse = $DB->get_record('course', ['id' => $assigncm->course]);
         $assignment = new assign($assigncontext, $assigncm, $assigncourse);
         $teamsubmission = $assignment->get_instance()->teamsubmission;
-        $cm = get_coursemodule_from_instance('publication', $publicationid, 0, false, MUST_EXIST);
-        $publication = new publication($cm);
+        $cm = get_coursemodule_from_instance('privatestudentfolder', $privatestudentfolderid, 0, false, MUST_EXIST);
+        $privatestudentfolder = new privatestudentfolder($cm);
 
         $currentonlinetexts = [];
         if (!empty($submissionid)) {
@@ -1663,7 +1662,7 @@ class publication {
             ]);
         } else {
             $records = $DB->get_records('assignsubmission_onlinetext', ['assignment' => $assigncm->instance]);
-            $currentonlinetexts = $DB->get_records('publication_file', ['publication' => $publicationid, 'type' => PUBLICATION_MODE_ONLINETEXT]);
+            $currentonlinetexts = $DB->get_records('privatestudentfolder_file', ['privatestudentfolder' => $privatestudentfolderid, 'type' => PRIVATESTUDENTFOLDER_MODE_ONLINETEXT]);
         }
         $filename = get_string('onlinetextfilename', 'assignsubmission_onlinetext');
 
@@ -1683,7 +1682,7 @@ class publication {
             foreach ($fsfiles as $file) {
                 $filerecord = new \stdClass();
                 $filerecord->contextid = $contextid;
-                $filerecord->component = 'mod_publication';
+                $filerecord->component = 'mod_privatestudentfolder';
                 $filerecord->filearea = 'attachment';
                 $filerecord->itemid = $itemid;
                 $filerecord->filepath = '/resources/';
@@ -1705,7 +1704,7 @@ class publication {
             }
             // Now we delete old resource-files, which are no longer present!
             $resources = $fs->get_directory_files($contextid,
-                    'mod_publication',
+                    'mod_privatestudentfolder',
                     'attachment',
                     $itemid,
                     '/resources/',
@@ -1730,14 +1729,14 @@ class publication {
 
 
             // Does the file exist... let's check it!
-            $pathhash = $fs->get_pathname_hash($contextid, 'mod_publication', 'attachment', $itemid, '/', $filename);
+            $pathhash = $fs->get_pathname_hash($contextid, 'mod_privatestudentfolder', 'attachment', $itemid, '/', $filename);
 
             $conditions = [
-                    'publication' => $publicationid,
+                    'privatestudentfolder' => $privatestudentfolderid,
                     'userid' => $itemid,
-                    'type' => PUBLICATION_MODE_ONLINETEXT,
+                    'type' => PRIVATESTUDENTFOLDER_MODE_ONLINETEXT,
             ];
-            $pubfile = $DB->get_record('publication_file', $conditions, '*', IGNORE_MISSING);
+            $pubfile = $DB->get_record('privatestudentfolder_file', $conditions, '*', IGNORE_MISSING);
             if ($pubfile && isset($currentonlinetexts[$pubfile->id])) {
                 unset($currentonlinetexts[$pubfile->id]);
             }
@@ -1747,8 +1746,8 @@ class publication {
                 if (empty($formattedtext)) {
                     // The onlinetext was empty, delete the file!
                     if ($pubfile) {
-                        \mod_publication\event\publication_file_deleted::create_from_object($assigncm, $pubfile)->trigger();
-                        $DB->delete_records('publication_file', $conditions);
+                        \mod_privatestudentfolder\event\privatestudentfolder_file_deleted::create_from_object($assigncm, $pubfile)->trigger();
+                        $DB->delete_records('privatestudentfolder_file', $conditions);
                     }
                     $file->delete();
                 } else if (($file->get_timemodified() < $submission->timemodified)
@@ -1775,7 +1774,7 @@ class publication {
                 // We gotta create a new one!
                 $newfilerecord = new stdClass();
                 $newfilerecord->contextid = $contextid;
-                $newfilerecord->component = 'mod_publication';
+                $newfilerecord->component = 'mod_privatestudentfolder';
                 $newfilerecord->filearea = 'attachment';
                 $newfilerecord->itemid = $itemid;
                 $newfilerecord->filename = $filename;
@@ -1784,8 +1783,8 @@ class publication {
                 if (!$pubfile) {
                     $pubfile = new stdClass();
                     $pubfile->userid = $itemid;
-                    $pubfile->type = PUBLICATION_MODE_ONLINETEXT;
-                    $pubfile->publication = $publicationid;
+                    $pubfile->type = PRIVATESTUDENTFOLDER_MODE_ONLINETEXT;
+                    $pubfile->privatestudentfolder = $privatestudentfolderid;
                 }
                 // The file has been updated, so we set the new time.
                 $pubfile->timecreated = time();
@@ -1797,17 +1796,17 @@ class publication {
                     $dataobject->typ = $importtype;
                     $dataobject->itemid = $itemid;
                     $dataobject->update = true;
-                    \mod_publication\event\publication_file_imported::file_added($assigncm, $dataobject)->trigger();
-                    $DB->update_record('publication_file', $pubfile);
+                    \mod_privatestudentfolder\event\privatestudentfolder_file_imported::file_added($assigncm, $dataobject)->trigger();
+                    $DB->update_record('privatestudentfolder_file', $pubfile);
                 } else {
                     $dataobject = $pubfile;
-                    $dataobject->id = $DB->insert_record('publication_file', $pubfile);
+                    $dataobject->id = $DB->insert_record('privatestudentfolder_file', $pubfile);
                     $dataobject->typ = $importtype;
                     $dataobject->itemid = $itemid;
-                    \mod_publication\event\publication_file_imported::file_added($assigncm, $dataobject)->trigger();
+                    \mod_privatestudentfolder\event\privatestudentfolder_file_imported::file_added($assigncm, $dataobject)->trigger();
                 }
 
-                if ($publication->get_instance()->notifyfilechange != 0) {
+                if ($privatestudentfolder->get_instance()->notifyfilechange != 0) {
                     self::send_notification_filechange($cm, $dataobject);
                 }
             }
@@ -1818,8 +1817,8 @@ class publication {
             $resource = $fs->get_file_by_id($pubfile->fileid);
             if ($resource && $resource->get_itemid() == $pubfile->userid) {
                 $resource->delete();
-                \mod_publication\event\publication_file_deleted::create_from_object($assigncm, $pubfile)->trigger();
-                $DB->delete_records('publication_file', ['id' => $pubfile->id]);
+                \mod_privatestudentfolder\event\privatestudentfolder_file_deleted::create_from_object($assigncm, $pubfile)->trigger();
+                $DB->delete_records('privatestudentfolder_file', ['id' => $pubfile->id]);
             }
         }
 
@@ -1831,28 +1830,28 @@ class publication {
      * @param object $user the where the notification should go
      * @param object $userfrom who cahnged the approval status
      * @param string $newstatus whats the new status
-     * @param object $pubfile the publication-file on which the status change took place
-     * @param string $pubid id of the publication
-     * @param null|stdClass $publication the publication instance
+     * @param object $pubfile the privatestudentfolder-file on which the status change took place
+     * @param string $pubid id of the privatestudentfolder
+     * @param null|stdClass $privatestudentfolder the privatestudentfolder instance
      * @throws coding_exception
      */
     public static function send_notification_statuschange($cm, $userfrom, $newstatus, $pubfile,
-                                                          $pubid, $publication=null) {
+                                                          $pubid, $privatestudentfolder=null) {
         global $CFG, $DB;
         $sm = get_string_manager();
 
-        if (!$publication) {
-            $publication = new publication($cm);
+        if (!$privatestudentfolder) {
+            $privatestudentfolder = new privatestudentfolder($cm);
         }
 
-        $notifyfilechange = $publication->get_instance()->notifyfilechange;
+        $notifyfilechange = $privatestudentfolder->get_instance()->notifyfilechange;
         $receivers = [];
-        if ($notifyfilechange == PUBLICATION_NOTIFY_TEACHER || $notifyfilechange == PUBLICATION_NOTIFY_ALL) {
-            $receivers = $publication->get_graders($userfrom);
+        if ($notifyfilechange == PRIVATESTUDENTFOLDER_NOTIFY_TEACHER || $notifyfilechange == PRIVATESTUDENTFOLDER_NOTIFY_ALL) {
+            $receivers = $privatestudentfolder->get_graders($userfrom);
         }
-        if ($notifyfilechange == PUBLICATION_NOTIFY_STUDENT || $notifyfilechange == PUBLICATION_NOTIFY_ALL) {
-            if ($publication->get_mode() == PUBLICATION_MODE_ASSIGN_TEAMSUBMISSION) {
-                $usersingroup = $publication->get_submissionmembers($pubfile->userid);
+        if ($notifyfilechange == PRIVATESTUDENTFOLDER_NOTIFY_STUDENT || $notifyfilechange == PRIVATESTUDENTFOLDER_NOTIFY_ALL) {
+            if ($privatestudentfolder->get_mode() == PRIVATESTUDENTFOLDER_MODE_ASSIGN_TEAMSUBMISSION) {
+                $usersingroup = $privatestudentfolder->get_submissionmembers($pubfile->userid);
                 $receivers += $usersingroup;
             } else {
                 $student = $DB->get_record('user', ['id' => $pubfile->userid]);
@@ -1861,34 +1860,34 @@ class publication {
         }
         if (!empty($receivers)) {
             foreach ($receivers as $receiver) {
-                $strsubmitted = $sm->get_string('approvalchange', 'publication', null, $receiver->lang);
+                $strsubmitted = $sm->get_string('approvalchange', 'privatestudentfolder', null, $receiver->lang);
                 $info = new stdClass();
                 $info->username = fullname($userfrom);
-                $info->publication = format_string($cm->name, true);
-                $info->url = $CFG->wwwroot . '/mod/publication/view.php?id=' . $pubid;
+                $info->privatestudentfolder = format_string($cm->name, true);
+                $info->url = $CFG->wwwroot . '/mod/privatestudentfolder/view.php?id=' . $pubid;
                 $info->id = $pubid;
                 $info->filename = $pubfile->filename;
-                $info->apstatus = $sm->get_string('status:approved' . $newstatus, 'mod_publication', null, $receiver->lang);
+                $info->apstatus = $sm->get_string('status:approved' . $newstatus, 'mod_privatestudentfolder', null, $receiver->lang);
                 $info->dayupdated = userdate(time(), $sm->get_string('strftimedate', 'core_langconfig', null, $receiver->lang));
                 $info->timeupdated = userdate(time(), $sm->get_string('strftimetime24', 'core_langconfig', null, $receiver->lang));
 
-                if (!isset(self::$pendingnotifications[PUBLICATION_NOTIFY_STATUSCHANGE])) {
-                    self::$pendingnotifications[PUBLICATION_NOTIFY_STATUSCHANGE] = [];
+                if (!isset(self::$pendingnotifications[PRIVATESTUDENTFOLDER_NOTIFY_STATUSCHANGE])) {
+                    self::$pendingnotifications[PRIVATESTUDENTFOLDER_NOTIFY_STATUSCHANGE] = [];
                 }
-                if (!isset(self::$pendingnotifications[PUBLICATION_NOTIFY_STATUSCHANGE][$cm->id])) {
-                    self::$pendingnotifications[PUBLICATION_NOTIFY_STATUSCHANGE][$cm->id] = [];
+                if (!isset(self::$pendingnotifications[PRIVATESTUDENTFOLDER_NOTIFY_STATUSCHANGE][$cm->id])) {
+                    self::$pendingnotifications[PRIVATESTUDENTFOLDER_NOTIFY_STATUSCHANGE][$cm->id] = [];
                 }
 
-                $includeheader = !isset(self::$pendingnotifications[PUBLICATION_NOTIFY_STATUSCHANGE][$cm->id][$receiver->id]);
+                $includeheader = !isset(self::$pendingnotifications[PRIVATESTUDENTFOLDER_NOTIFY_STATUSCHANGE][$cm->id][$receiver->id]);
                 $postsubject = $strsubmitted . ': ' . $cm->name;
-                $posttext = $publication->email_statuschange_text($info, $receiver->lang, $includeheader);
-                $posthtml = $publication->email_statuschange_html($info, $receiver->lang, $includeheader);
+                $posttext = $privatestudentfolder->email_statuschange_text($info, $receiver->lang, $includeheader);
+                $posthtml = $privatestudentfolder->email_statuschange_html($info, $receiver->lang, $includeheader);
 
                 //TODO maybe add check here is receiver is the same as user from. Unless already checked in get_graders
-                if (!isset(self::$pendingnotifications[PUBLICATION_NOTIFY_STATUSCHANGE][$cm->id][$receiver->id])) {
+                if (!isset(self::$pendingnotifications[PRIVATESTUDENTFOLDER_NOTIFY_STATUSCHANGE][$cm->id][$receiver->id])) {
                     $message = new \core\message\message();
-                    $message->component = 'mod_publication';
-                    $message->name = 'publication_updates';
+                    $message->component = 'mod_privatestudentfolder';
+                    $message->name = 'privatestudentfolder_updates';
                     $message->courseid = $cm->course;
                     $message->userfrom = core_user::get_noreply_user();
                     $message->userto = $receiver;
@@ -1899,11 +1898,11 @@ class publication {
                     $message->smallmessage = $postsubject;
                     $message->notification = 1;
                     $message->contexturl = $info->url;
-                    $message->contexturlname = $info->publication;
-                    self::$pendingnotifications[PUBLICATION_NOTIFY_STATUSCHANGE][$cm->id][$receiver->id] = $message;
+                    $message->contexturlname = $info->privatestudentfolder;
+                    self::$pendingnotifications[PRIVATESTUDENTFOLDER_NOTIFY_STATUSCHANGE][$cm->id][$receiver->id] = $message;
                 }
-                self::$pendingnotifications[PUBLICATION_NOTIFY_STATUSCHANGE][$cm->id][$receiver->id]->fullmessage .= $posttext;
-                self::$pendingnotifications[PUBLICATION_NOTIFY_STATUSCHANGE][$cm->id][$receiver->id]->fullmessagehtml .= $posthtml;
+                self::$pendingnotifications[PRIVATESTUDENTFOLDER_NOTIFY_STATUSCHANGE][$cm->id][$receiver->id]->fullmessage .= $posttext;
+                self::$pendingnotifications[PRIVATESTUDENTFOLDER_NOTIFY_STATUSCHANGE][$cm->id][$receiver->id]->fullmessagehtml .= $posthtml;
 
             }
         }
@@ -1914,36 +1913,36 @@ class publication {
      * @param object $cm course module
      * @param object $file the file
      * @param stdClass|null $user the user
-     * @param stdClass|null $publication object the publication, if available
+     * @param stdClass|null $privatestudentfolder object the privatestudentfolder, if available
      * @throws coding_exception
      */
-    public static function send_notification_filechange($cm, $file,  $user=null, $publication=null) {
+    public static function send_notification_filechange($cm, $file,  $user=null, $privatestudentfolder=null) {
         global $CFG, $USER, $DB;
         $sm = get_string_manager();
         if (!$user) {
             $user = $USER;
         }
-        if (!$publication) {
-            $publication = new publication($cm);
+        if (!$privatestudentfolder) {
+            $privatestudentfolder = new privatestudentfolder($cm);
         }
 
-        $stridentifier = $publication->get_instance()->mode == PUBLICATION_MODE_UPLOAD ? 'filechange_upload' : 'filechange_import';
+        $stridentifier = $privatestudentfolder->get_instance()->mode == PRIVATESTUDENTFOLDER_MODE_UPLOAD ? 'filechange_upload' : 'filechange_import';
         $assignname = null;
-        if ($publication->get_instance()->mode != PUBLICATION_MODE_UPLOAD) {
-            $assign = $DB->get_record('assign', ['id' => $publication->get_instance()->importfrom]);
+        if ($privatestudentfolder->get_instance()->mode != PRIVATESTUDENTFOLDER_MODE_UPLOAD) {
+            $assign = $DB->get_record('assign', ['id' => $privatestudentfolder->get_instance()->importfrom]);
             if ($assign) {
                 $assignname = $assign->name;
             }
         }
 
-        $notifyfilechange = $publication->get_instance()->notifyfilechange;
+        $notifyfilechange = $privatestudentfolder->get_instance()->notifyfilechange;
         $receivers = [];
-        if ($notifyfilechange == PUBLICATION_NOTIFY_TEACHER || $notifyfilechange == PUBLICATION_NOTIFY_ALL) {
-            $receivers = $publication->get_graders($user);
+        if ($notifyfilechange == PRIVATESTUDENTFOLDER_NOTIFY_TEACHER || $notifyfilechange == PRIVATESTUDENTFOLDER_NOTIFY_ALL) {
+            $receivers = $privatestudentfolder->get_graders($user);
         }
-        if ($notifyfilechange == PUBLICATION_NOTIFY_STUDENT || $notifyfilechange == PUBLICATION_NOTIFY_ALL) {
-            if ($publication->get_mode() == PUBLICATION_MODE_ASSIGN_TEAMSUBMISSION) {
-                $usersingroup = $publication->get_submissionmembers($file->userid);
+        if ($notifyfilechange == PRIVATESTUDENTFOLDER_NOTIFY_STUDENT || $notifyfilechange == PRIVATESTUDENTFOLDER_NOTIFY_ALL) {
+            if ($privatestudentfolder->get_mode() == PRIVATESTUDENTFOLDER_MODE_ASSIGN_TEAMSUBMISSION) {
+                $usersingroup = $privatestudentfolder->get_submissionmembers($file->userid);
                 $receivers += $usersingroup;
             } else {
                 $student = $DB->get_record('user', ['id' => $file->userid]);
@@ -1952,35 +1951,35 @@ class publication {
         }
         if (!empty($receivers)) {
             foreach ($receivers as $receiver) {
-                $strsubmitted = $sm->get_string('email:' . $stridentifier . ':subject', 'publication', null, $receiver->lang);
+                $strsubmitted = $sm->get_string('email:' . $stridentifier . ':subject', 'privatestudentfolder', null, $receiver->lang);
                 $info = new stdClass();
                 $info->username = fullname($user);
-                $info->publication = format_string($publication->get_instance()->name, true);
-                $info->url = $CFG->wwwroot . '/mod/publication/view.php?id=' . $cm->id;
+                $info->privatestudentfolder = format_string($privatestudentfolder->get_instance()->name, true);
+                $info->url = $CFG->wwwroot . '/mod/privatestudentfolder/view.php?id=' . $cm->id;
                 $info->id = $cm->id;
                 $info->filename = $file->filename;
                 $info->assign = $assignname;
                 $info->dayupdated = userdate(time(), $sm->get_string('strftimedate', 'core_langconfig', null, $receiver->lang));
                 $info->timeupdated = userdate(time(), $sm->get_string('strftimetime24', 'core_langconfig', null, $receiver->lang));
 
-                if (!isset(self::$pendingnotifications[PUBLICATION_NOTIFY_FILECHANGE])) {
-                    self::$pendingnotifications[PUBLICATION_NOTIFY_FILECHANGE] = [];
+                if (!isset(self::$pendingnotifications[PRIVATESTUDENTFOLDER_NOTIFY_FILECHANGE])) {
+                    self::$pendingnotifications[PRIVATESTUDENTFOLDER_NOTIFY_FILECHANGE] = [];
                 }
-                if (!isset(self::$pendingnotifications[PUBLICATION_NOTIFY_FILECHANGE][$cm->id])) {
-                    self::$pendingnotifications[PUBLICATION_NOTIFY_FILECHANGE][$cm->id] = [];
+                if (!isset(self::$pendingnotifications[PRIVATESTUDENTFOLDER_NOTIFY_FILECHANGE][$cm->id])) {
+                    self::$pendingnotifications[PRIVATESTUDENTFOLDER_NOTIFY_FILECHANGE][$cm->id] = [];
                 }
 
-                $includeheader = !isset(self::$pendingnotifications[PUBLICATION_NOTIFY_FILECHANGE][$cm->id][$receiver->id]);
-                $postsubject = $strsubmitted . ': ' . $info->publication;
-                $posttext = $publication->email_filechange_text($info, $receiver->lang, $stridentifier, $includeheader);
-                $posthtml = $publication->email_filechange_html($info, $receiver->lang, $stridentifier, $includeheader);
+                $includeheader = !isset(self::$pendingnotifications[PRIVATESTUDENTFOLDER_NOTIFY_FILECHANGE][$cm->id][$receiver->id]);
+                $postsubject = $strsubmitted . ': ' . $info->privatestudentfolder;
+                $posttext = $privatestudentfolder->email_filechange_text($info, $receiver->lang, $stridentifier, $includeheader);
+                $posthtml = $privatestudentfolder->email_filechange_html($info, $receiver->lang, $stridentifier, $includeheader);
 
                 //TODO maybe add check here is receiver is the same as user from. Unless already checked in get_graders
 
-                if (!isset(self::$pendingnotifications[PUBLICATION_NOTIFY_FILECHANGE][$cm->id][$receiver->id])) {
+                if (!isset(self::$pendingnotifications[PRIVATESTUDENTFOLDER_NOTIFY_FILECHANGE][$cm->id][$receiver->id])) {
                     $message = new \core\message\message();
-                    $message->component = 'mod_publication';
-                    $message->name = 'publication_updates';
+                    $message->component = 'mod_privatestudentfolder';
+                    $message->name = 'privatestudentfolder_updates';
                     $message->courseid = $cm->course;
                     $message->userfrom = core_user::get_noreply_user();
                     $message->userto = $receiver;
@@ -1991,11 +1990,11 @@ class publication {
                     $message->smallmessage = $postsubject;
                     $message->notification = 1;
                     $message->contexturl = $info->url;
-                    $message->contexturlname = $info->publication;
-                    self::$pendingnotifications[PUBLICATION_NOTIFY_FILECHANGE][$cm->id][$receiver->id] = $message;
+                    $message->contexturlname = $info->privatestudentfolder;
+                    self::$pendingnotifications[PRIVATESTUDENTFOLDER_NOTIFY_FILECHANGE][$cm->id][$receiver->id] = $message;
                 }
-                self::$pendingnotifications[PUBLICATION_NOTIFY_FILECHANGE][$cm->id][$receiver->id]->fullmessage .= $posttext;
-                self::$pendingnotifications[PUBLICATION_NOTIFY_FILECHANGE][$cm->id][$receiver->id]->fullmessagehtml .= $posthtml;
+                self::$pendingnotifications[PRIVATESTUDENTFOLDER_NOTIFY_FILECHANGE][$cm->id][$receiver->id]->fullmessage .= $posttext;
+                self::$pendingnotifications[PRIVATESTUDENTFOLDER_NOTIFY_FILECHANGE][$cm->id][$receiver->id]->fullmessagehtml .= $posthtml;
 
                // message_send($message);
             }
@@ -2007,9 +2006,9 @@ class publication {
         foreach (self::$pendingnotifications as $type => $cms) {
             foreach ($cms as $cmid => $users) {
                 foreach ($users as $userid => $message) {
-                    if ($type == PUBLICATION_NOTIFY_FILECHANGE) {
-                        $message->fullmessage .= PHP_EOL . strip_tags($sm->get_string('email:filechange:footer', 'publication', null, $message->userto->lang));
-                        $message->fullmessagehtml .= $sm->get_string('email:filechange:footer', 'publication', null, $message->userto->lang);
+                    if ($type == PRIVATESTUDENTFOLDER_NOTIFY_FILECHANGE) {
+                        $message->fullmessage .= PHP_EOL . strip_tags($sm->get_string('email:filechange:footer', 'privatestudentfolder', null, $message->userto->lang));
+                        $message->fullmessagehtml .= $sm->get_string('email:filechange:footer', 'privatestudentfolder', null, $message->userto->lang);
                     } else {
                         $message->fullmessage .= '';
                         $message->fullmessagehtml .= '</ul>';
@@ -2029,20 +2028,20 @@ class publication {
      * Format file content of imported onlinetexts to be rendered as preview.
      *
      * @param int $itemid User's or group's ID
-     * @param int $publicationid Publication instance's database ID
+     * @param int $privatestudentfolderid Publication instance's database ID
      * @param int $contextid Publication instance's context ID
      * @return string formatted HTML snippet ready to be output
      */
-    public static function export_onlinetext_for_preview($itemid, $publicationid, $contextid) {
+    public static function export_onlinetext_for_preview($itemid, $privatestudentfolderid, $contextid) {
         global $DB;
 
         // Get file data/record!
         $conditions = [
-                'publication' => $publicationid,
+                'privatestudentfolder' => $privatestudentfolderid,
                 'userid' => $itemid,
-                'type' => PUBLICATION_MODE_ONLINETEXT,
+                'type' => PRIVATESTUDENTFOLDER_MODE_ONLINETEXT,
         ];
-        if (!$pubfile = $DB->get_record('publication_file', $conditions, '*')) {
+        if (!$pubfile = $DB->get_record('privatestudentfolder_file', $conditions, '*')) {
             return '';
         }
 
@@ -2052,7 +2051,7 @@ class publication {
 
         // Correct ressources filepaths for onine-view!
         $resources = $fs->get_directory_files($contextid,
-                'mod_publication',
+                'mod_privatestudentfolder',
                 'attachment',
                 $itemid,
                 '/resources/',
@@ -2065,7 +2064,7 @@ class publication {
             $replace = '@@PLUGINFILE@@/resources/' . $filename;
             $content = str_replace($search, $replace, $content);
         }
-        $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $contextid, 'mod_publication', 'attachment',
+        $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $contextid, 'mod_privatestudentfolder', 'attachment',
                 $itemid);
 
         // Get only the body part!
@@ -2084,7 +2083,7 @@ class publication {
     // Allowed file-types have been changed in Moodle 3.3 (and form element will probably change in Moodle 3.4 again)!
 
     /**
-     * Get the type sets configured for this publication.
+     * Get the type sets configured for this privatestudentfolder.
      * Adapted from assignsubmission_file!
      *
      * @return array('groupname', 'mime/type', ...)
@@ -2158,7 +2157,7 @@ class publication {
     public function get_graders($user) {
         // Get potential graders!
         $potgraders = get_enrolled_users($this->context,
-                    'mod/publication:receiveteachernotification',
+                    'mod/privatestudentfolder:receiveteachernotification',
                     0,
                     'u.*',
                     null,
@@ -2213,12 +2212,12 @@ class publication {
         $posttext = '';
         if ($includeheader) {
             $posttext .= format_string($this->course->shortname) . ' -> ' .
-                $sm->get_string('modulenameplural', 'publication', null, $lang) . ' -> ' .
-                format_string($info->publication) . "\n";
-            $posttext .= strip_tags($sm->get_string('email:' . $stridentifier . ':header', 'publication', $info, $lang))."\n";
+                $sm->get_string('modulenameplural', 'privatestudentfolder', null, $lang) . ' -> ' .
+                format_string($info->privatestudentfolder) . "\n";
+            $posttext .= strip_tags($sm->get_string('email:' . $stridentifier . ':header', 'privatestudentfolder', $info, $lang))."\n";
         }
         $posttext .= $info->filename . "\n";
-        //$posttext .= $sm->get_string('email:' . $stridentifier . ':plaintext', 'publication', $info, $lang)."\n";
+        //$posttext .= $sm->get_string('email:' . $stridentifier . ':plaintext', 'privatestudentfolder', $info, $lang)."\n";
         return $posttext;
     }
 
@@ -2236,16 +2235,16 @@ class publication {
             $posthtml .= '<p><span style="font-family: sans-serif; ">' .
                 '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $this->course->id . '">' .
                 format_string($this->course->shortname) . '</a> ->' .
-                '<a href="' . $CFG->wwwroot . '/mod/publication/view.php?id=' .
-                $info->id . '">' . $sm->get_string('modulenameplural', 'publication', null, $lang) . '</a> ->' .
-                '<a href="' . $CFG->wwwroot . '/mod/publication/view.php?id=' . $info->id . '">' .
-                format_string($info->publication) . '</a></span></p>';
-            $posthtml .= ''.$sm->get_string('email:' . $stridentifier . ':header', 'publication', $info, $lang).'';
+                '<a href="' . $CFG->wwwroot . '/mod/privatestudentfolder/view.php?id=' .
+                $info->id . '">' . $sm->get_string('modulenameplural', 'privatestudentfolder', null, $lang) . '</a> ->' .
+                '<a href="' . $CFG->wwwroot . '/mod/privatestudentfolder/view.php?id=' . $info->id . '">' .
+                format_string($info->privatestudentfolder) . '</a></span></p>';
+            $posthtml .= ''.$sm->get_string('email:' . $stridentifier . ':header', 'privatestudentfolder', $info, $lang).'';
 
         }
         $posthtml .= '<li>' . $info->filename . '</li>';
         /*$posthtml .= '<span style="font-family: sans-serif; ">';
-        $posthtml .= ''.$sm->get_string('email:' . $stridentifier . ':plaintext', 'publication', $info, $lang).'';
+        $posthtml .= ''.$sm->get_string('email:' . $stridentifier . ':plaintext', 'privatestudentfolder', $info, $lang).'';
         $posthtml .= '</span>';*/
         return $posthtml;
     }
@@ -2261,12 +2260,12 @@ class publication {
         $posttext = '';
         if ($includeheader) {
             $posttext .= format_string($this->course->shortname) . ' -> ' .
-                $sm->get_string('modulenameplural', 'publication', null, $lang) . ' -> ' .
-                format_string($info->publication) . "\n";
+                $sm->get_string('modulenameplural', 'privatestudentfolder', null, $lang) . ' -> ' .
+                format_string($info->privatestudentfolder) . "\n";
             $posttext .= "---------------------------------------------------------------------\n";
-            $posttext .= strip_tags($sm->get_string('email:statuschange:header', 'publication', $info, $lang))."\n";
+            $posttext .= strip_tags($sm->get_string('email:statuschange:header', 'privatestudentfolder', $info, $lang))."\n";
         }
-        $posttext .= strip_tags($sm->get_string('email:statuschange:filename', 'publication', $info, $lang))."\n";
+        $posttext .= strip_tags($sm->get_string('email:statuschange:filename', 'privatestudentfolder', $info, $lang))."\n";
         return $posttext;
     }
 
@@ -2284,20 +2283,20 @@ class publication {
             $posthtml .= '<p><span style="font-family: sans-serif; ">' .
                 '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $this->course->id . '">' .
                 format_string($this->course->shortname) . '</a> ->' .
-                '<a href="' . $CFG->wwwroot . '/mod/publication/view.php?id=' .
-                $info->id . '">' . $sm->get_string('modulenameplural', 'publication', null, $lang) . '</a> ->' .
-                '<a href="' . $CFG->wwwroot . '/mod/publication/view.php?id=' . $info->id . '">' .
-                format_string($info->publication) . '</a></span></p>';
-            $posthtml .= ''.$sm->get_string('email:statuschange:header', 'publication', $info, $lang);
+                '<a href="' . $CFG->wwwroot . '/mod/privatestudentfolder/view.php?id=' .
+                $info->id . '">' . $sm->get_string('modulenameplural', 'privatestudentfolder', null, $lang) . '</a> ->' .
+                '<a href="' . $CFG->wwwroot . '/mod/privatestudentfolder/view.php?id=' . $info->id . '">' .
+                format_string($info->privatestudentfolder) . '</a></span></p>';
+            $posthtml .= ''.$sm->get_string('email:statuschange:header', 'privatestudentfolder', $info, $lang);
         }
-        $posthtml .= $sm->get_string('email:statuschange:filename', 'publication', $info, $lang);
+        $posthtml .= $sm->get_string('email:statuschange:filename', 'privatestudentfolder', $info, $lang);
        /* $posthtml .= '<hr /><span style="font-family: sans-serif; ">';
         $posthtml .= '</span>';*/
         return $posthtml;
     }
 
     /**
-     * Handles calendar events for publications with a due date
+     * Handles calendar events for privatestudentfolders with a due date
      * This will create, update and delete an event when necessary
      */
     public function update_calendar_event() {
@@ -2306,13 +2305,13 @@ class publication {
 
         $instance = $this->get_instance();
 
-        // Check whether the publication already has a event
-        $result = $DB->get_record('event', ['modulename' => 'publication', 'instance' => $instance->id]);
+        // Check whether the privatestudentfolder already has a event
+        $result = $DB->get_record('event', ['modulename' => 'privatestudentfolder', 'instance' => $instance->id]);
 
         if ($result) {
-            // Check whether the publication still has a due date, if not delete the event
+            // Check whether the privatestudentfolder still has a due date, if not delete the event
             if ($instance->duedate == null || $instance->duedate == 0) {
-                $DB->delete_records('event', ['modulename' => 'publication', 'instance' => $instance->id]);
+                $DB->delete_records('event', ['modulename' => 'privatestudentfolder', 'instance' => $instance->id]);
             } else {
                 $result->name = $instance->name;
                 $result->timestart = $instance->duedate;
@@ -2322,16 +2321,16 @@ class publication {
             }
         } else if ($instance->duedate != null && $instance->duedate != 0) {
             $event = new stdClass();
-            $event->eventtype = PUBLICATION_EVENT_TYPE_DUE;
+            $event->eventtype = PRIVATESTUDENTFOLDER_EVENT_TYPE_DUE;
             $event->type = CALENDAR_EVENT_TYPE_ACTION; // Necessary to enable this event in block_myoverview
             $event->name = $instance->name;
             $event->description = "";
             $event->courseid = $instance->course;
             $event->groupid = 0;
             $event->userid = 0;
-            $event->modulename = 'publication';
+            $event->modulename = 'privatestudentfolder';
             $event->instance = $instance->id;
-            $event->visible = instance_is_visible('publication', $this->instance);
+            $event->visible = instance_is_visible('privatestudentfolder', $this->instance);
             $event->timestart = $instance->duedate;
             $event->timesort = $instance->duedate; // Necessary for block_myoverview
             $event->timeduration = 0;
@@ -2344,23 +2343,23 @@ class publication {
         global $DB;
         $context = new stdClass;
 
-        $editurl = new moodle_url('/mod/publication/overrides_edit.php', ['id' => $this->coursemodule->id]);
-        $deleteurl = new moodle_url('/mod/publication/overrides_delete.php', ['id' => $this->coursemodule->id]);
+        $editurl = new moodle_url('/mod/privatestudentfolder/overrides_edit.php', ['id' => $this->coursemodule->id]);
+        $deleteurl = new moodle_url('/mod/privatestudentfolder/overrides_delete.php', ['id' => $this->coursemodule->id]);
 
 
         $context->newoverrideurl = (new moodle_url($editurl, ['overrideid' => -1]))->out(false);
 
-        $overrides = $DB->get_records('publication_overrides', ['publication' => $this->instance->id]);
+        $overrides = $DB->get_records('privatestudentfolder_overrides', ['privatestudentfolder' => $this->instance->id]);
         $context->overridesempty = count($overrides) == 0;
         $context->overrides = [];
-        $isgroupmode = $this->mode == PUBLICATION_MODE_ASSIGN_TEAMSUBMISSION;
+        $isgroupmode = $this->mode == PRIVATESTUDENTFOLDER_MODE_ASSIGN_TEAMSUBMISSION;
         $context->isgroupmode = $isgroupmode;
         if ($isgroupmode) {
             $context->usergroupcoltitle = get_string('group');
-            $context->addoverridetitle = get_string('override:add:group', 'mod_publication');
+            $context->addoverridetitle = get_string('override:add:group', 'mod_privatestudentfolder');
         } else {
             $context->usergroupcoltitle = get_string('user');
-            $context->addoverridetitle = get_string('override:add:user', 'mod_publication');
+            $context->addoverridetitle = get_string('override:add:user', 'mod_privatestudentfolder');
         }
 
         $userurl = new moodle_url('/user/view.php', ['course' => $this->course->id]);
@@ -2388,17 +2387,17 @@ class publication {
     public function override_export_for_template_single($override) {
         $override->submissionoverride = null;
         $override->approvaloverride = null;
-        if ($this->mode == PUBLICATION_MODE_FILEUPLOAD && ($override->allowsubmissionsfromdate > 0 || $override->duedate > 0)) {
+        if ($this->mode == PRIVATESTUDENTFOLDER_MODE_FILEUPLOAD && ($override->allowsubmissionsfromdate > 0 || $override->duedate > 0)) {
             $fromto = (object)[
                 'from' =>  userdate($override->allowsubmissionsfromdate),
                 'to' => userdate($override->duedate)
             ];
             if ($override->allowsubmissionsfromdate > 0 && $override->duedate > 0) {
-                $override->submissionoverride = get_string('override:submission:fromto', 'mod_publication', $fromto);
+                $override->submissionoverride = get_string('override:submission:fromto', 'mod_privatestudentfolder', $fromto);
             } else if ($override->allowsubmissionsfromdate > 0) {
-                $override->submissionoverride = get_string('override:submission:from', 'mod_publication', $fromto);
+                $override->submissionoverride = get_string('override:submission:from', 'mod_privatestudentfolder', $fromto);
             } else if ($override->duedate > 0) {
-                $override->submissionoverride = get_string('override:submission:to', 'mod_publication', $fromto);
+                $override->submissionoverride = get_string('override:submission:to', 'mod_privatestudentfolder', $fromto);
             }
         }
         if ($this->instance->obtainstudentapproval == 1 && ($override->approvalfromdate > 0 || $override->approvaltodate > 0)) {
@@ -2407,11 +2406,11 @@ class publication {
                 'to' => userdate($override->approvaltodate)
             ];
             if ($override->approvalfromdate > 0 && $override->approvaltodate > 0) {
-                $override->approvaloverride = get_string('override:approval:fromto', 'mod_publication', $fromto);
+                $override->approvaloverride = get_string('override:approval:fromto', 'mod_privatestudentfolder', $fromto);
             } else if ($override->approvalfromdate > 0) {
-                $override->approvaloverride = get_string('override:approval:from', 'mod_publication', $fromto);
+                $override->approvaloverride = get_string('override:approval:from', 'mod_privatestudentfolder', $fromto);
             } else if ($override->approvaltodate > 0) {
-                $override->approvaloverride = get_string('override:approval:to', 'mod_publication', $fromto);
+                $override->approvaloverride = get_string('override:approval:to', 'mod_privatestudentfolder', $fromto);
             }
         }
         return $override;
@@ -2429,31 +2428,31 @@ class publication {
             return null;
         }
         if ($formdata->overrideid != -1) {
-            $override = $DB->get_record('publication_overrides', ['id' => $formdata->overrideid, 'publication' => $this->instance->id]);
+            $override = $DB->get_record('privatestudentfolder_overrides', ['id' => $formdata->overrideid, 'privatestudentfolder' => $this->instance->id]);
             unset($formdata->id);
             unset($formdata->overrideid);
             if (!$override) {
-                $formdata->publication = $this->instance->id;
-                $overrideresult->overrideid = $DB->insert_record('publication_overrides', $formdata);
+                $formdata->privatestudentfolder = $this->instance->id;
+                $overrideresult->overrideid = $DB->insert_record('privatestudentfolder_overrides', $formdata);
                 $overrideresult->newoverride = true;
             } else {
                 $formdata->id = $override->id;
-                $formdata->publication = $this->instance->id;
-                $DB->update_record('publication_overrides', $formdata);
+                $formdata->privatestudentfolder = $this->instance->id;
+                $DB->update_record('privatestudentfolder_overrides', $formdata);
                 $overrideresult->overrideid = $override->id;
             }
         } else {
-            $override = $DB->get_record('publication_overrides', ['publication' => $this->instance->id, 'userid' => $formdata->userid, 'groupid' => $formdata->groupid]);
+            $override = $DB->get_record('privatestudentfolder_overrides', ['privatestudentfolder' => $this->instance->id, 'userid' => $formdata->userid, 'groupid' => $formdata->groupid]);
             unset($formdata->id);
             unset($formdata->overrideid);
             if (!$override) {
-                $formdata->publication = $this->instance->id;
-                $overrideresult->overrideid = $DB->insert_record('publication_overrides', $formdata);
+                $formdata->privatestudentfolder = $this->instance->id;
+                $overrideresult->overrideid = $DB->insert_record('privatestudentfolder_overrides', $formdata);
                 $overrideresult->newoverride = true;
             } else {
                 $formdata->id = $override->id;
-                $formdata->publication = $this->instance->id;
-                $DB->update_record('publication_overrides', $formdata);
+                $formdata->privatestudentfolder = $this->instance->id;
+                $DB->update_record('privatestudentfolder_overrides', $formdata);
                 $overrideresult->overrideid = $override->id;
             }
         }
@@ -2462,7 +2461,7 @@ class publication {
 
     public function override_get($overrideid) {
         global $DB;
-        $override = $DB->get_record('publication_overrides', ['id' => $overrideid, 'publication' => $this->instance->id]);
+        $override = $DB->get_record('privatestudentfolder_overrides', ['id' => $overrideid, 'privatestudentfolder' => $this->instance->id]);
         if ($override) {
             return $this->override_export_for_template_single($override);
         }
@@ -2471,9 +2470,9 @@ class publication {
 
     public function override_delete($overrideid) {
         global $DB;
-        $override = $DB->get_record('publication_overrides', ['id' => $overrideid, 'publication' => $this->instance->id]);
+        $override = $DB->get_record('privatestudentfolder_overrides', ['id' => $overrideid, 'privatestudentfolder' => $this->instance->id]);
         if ($override) {
-            $DB->delete_records('publication_overrides', ['id' => $overrideid]);
+            $DB->delete_records('privatestudentfolder_overrides', ['id' => $overrideid]);
             return true;
         }
         return false;
@@ -2487,7 +2486,7 @@ class publication {
             $formdata->id = $this->coursemodule->id;
             return $formdata;
         }
-        $override = $DB->get_record('publication_overrides', ['id' => $overrideid, 'publication' => $this->instance->id]);
+        $override = $DB->get_record('privatestudentfolder_overrides', ['id' => $overrideid, 'privatestudentfolder' => $this->instance->id]);
         if ($override) {
             $override->overrideid = $override->id;
             $override->id = $this->coursemodule->id;
@@ -2499,15 +2498,15 @@ class publication {
     public function override_get_currentuserorgroup() {
         global $DB, $USER;
         $override = null;
-        if ($this->mode == PUBLICATION_MODE_ASSIGN_TEAMSUBMISSION) {
+        if ($this->mode == PRIVATESTUDENTFOLDER_MODE_ASSIGN_TEAMSUBMISSION) {
 
             $groups = groups_get_all_groups($this->course->id, $USER->id);
             if (!empty($groups)) {
                 $group = reset($groups);
-                $override = $DB->get_record('publication_overrides', ['publication' => $this->instance->id, 'groupid' => $group->id]);
+                $override = $DB->get_record('privatestudentfolder_overrides', ['privatestudentfolder' => $this->instance->id, 'groupid' => $group->id]);
             }
         } else {
-                $override = $DB->get_record('publication_overrides', ['publication' => $this->instance->id, 'userid' => $USER->id]);
+                $override = $DB->get_record('privatestudentfolder_overrides', ['privatestudentfolder' => $this->instance->id, 'userid' => $USER->id]);
         }
         if ($override) {
             return $this->override_export_for_template_single($override);

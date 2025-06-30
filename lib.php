@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains interface and callback methods for mod_publication
+ * Contains interface and callback methods for mod_privatestudentfolder
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,35 +29,35 @@ defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__.'/locallib.php');
 
 /**
- * Adds a new publication instance
+ * Adds a new privatestudentfolder instance
  *
- * @param stdClass $publication data (from mod_publication_mod_form)
- * @return int publication ID
+ * @param stdClass $privatestudentfolder data (from mod_privatestudentfolder_mod_form)
+ * @return int privatestudentfolder ID
  */
-function publication_add_instance($publication) {
+function privatestudentfolder_add_instance($privatestudentfolder) {
     global $DB, $OUTPUT;
 
-    $cmid = $publication->coursemodule;
-    $courseid = $publication->course;
+    $cmid = $privatestudentfolder->coursemodule;
+    $courseid = $privatestudentfolder->course;
 
     $id = 0;
     try {
-        $id = $DB->insert_record('publication', $publication);
+        $id = $DB->insert_record('privatestudentfolder', $privatestudentfolder);
     } catch (Exception $e) {
         echo $OUTPUT->notification($e->getMessage(), 'error');
     }
 
     $DB->set_field('course_modules', 'instance', $id, ['id' => $cmid]);
 
-    $record = $DB->get_record('publication', ['id' => $id]);
+    $record = $DB->get_record('privatestudentfolder', ['id' => $id]);
 
     $record->course = $courseid;
     $record->cmid = $cmid;
 
     $course = $DB->get_record('course', ['id' => $record->course], '*', MUST_EXIST);
-    $cm = get_coursemodule_from_id('publication', $cmid, 0, false, MUST_EXIST);
+    $cm = get_coursemodule_from_id('privatestudentfolder', $cmid, 0, false, MUST_EXIST);
     $context = context_module::instance($cm->id);
-    $instance = new publication($cm, $course, $context);
+    $instance = new privatestudentfolder($cm, $course, $context);
 
     $instance->update_calendar_event();
 
@@ -70,7 +70,7 @@ function publication_add_instance($publication) {
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, null if doesn't know
  */
-function publication_supports($feature) {
+function privatestudentfolder_supports($feature) {
     switch ($feature) {
         case FEATURE_GROUPS:
             return true;
@@ -100,66 +100,66 @@ function publication_supports($feature) {
 }
 
 /**
- * updates an existing publication instance
+ * updates an existing privatestudentfolder instance
  *
- * @param stdClass $publication from mod_publication_mod_form
+ * @param stdClass $privatestudentfolder from mod_privatestudentfolder_mod_form
  * @return bool true
  */
-function publication_update_instance($publication) {
+function privatestudentfolder_update_instance($privatestudentfolder) {
     global $DB;
 
-    $publication->id = $publication->instance;
+    $privatestudentfolder->id = $privatestudentfolder->instance;
 
-    $publication->timemodified = time();
+    $privatestudentfolder->timemodified = time();
 
-    $DB->update_record('publication', $publication);
+    $DB->update_record('privatestudentfolder', $privatestudentfolder);
 
-    $course = $DB->get_record('course', ['id' => $publication->course], '*', MUST_EXIST);
-    $cm = get_coursemodule_from_instance('publication', $publication->id, 0, false, MUST_EXIST);
+    $course = $DB->get_record('course', ['id' => $privatestudentfolder->course], '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('privatestudentfolder', $privatestudentfolder->id, 0, false, MUST_EXIST);
     $context = context_module::instance($cm->id);
-    $instance = new publication($cm, $course, $context);
+    $instance = new privatestudentfolder($cm, $course, $context);
 
     $instance->update_calendar_event();
 
-    if ($instance->get_instance()->mode == PUBLICATION_MODE_IMPORT) {
+    if ($instance->get_instance()->mode == PRIVATESTUDENTFOLDER_MODE_IMPORT) {
         // Fetch all files right now!
         $instance->importfiles();
-        publication::send_all_pending_notifications();
+        privatestudentfolder::send_all_pending_notifications();
     }
 
     return true;
 }
 
 /**
- * complete deletes an publication instance
+ * complete deletes an privatestudentfolder instance
  *
  * @param int $id
  * @return bool
  */
-function publication_delete_instance($id) {
+function privatestudentfolder_delete_instance($id) {
     global $DB;
 
-    if (!$publication = $DB->get_record('publication', ['id' => $id])) {
+    if (!$privatestudentfolder = $DB->get_record('privatestudentfolder', ['id' => $id])) {
         return false;
     }
 
-    $DB->delete_records('publication_extduedates', ['publication' => $publication->id]);
+    $DB->delete_records('privatestudentfolder_extduedates', ['privatestudentfolder' => $privatestudentfolder->id]);
 
     $fs = get_file_storage();
 
-    $fs->delete_area_files($publication->id, 'mod_publication', 'attachment');
+    $fs->delete_area_files($privatestudentfolder->id, 'mod_privatestudentfolder', 'attachment');
 
-    $DB->delete_records('publication_file', ['publication' => $publication->id]);
+    $DB->delete_records('privatestudentfolder_file', ['privatestudentfolder' => $privatestudentfolder->id]);
 
-    $DB->delete_records('event', ['modulename' => 'publication', 'instance' => $publication->id]);
+    $DB->delete_records('event', ['modulename' => 'privatestudentfolder', 'instance' => $privatestudentfolder->id]);
 
-    $tableuniqueid = \mod_publication\local\allfilestable\base::get_table_uniqueid($id);
+    $tableuniqueid = \mod_privatestudentfolder\local\allfilestable\base::get_table_uniqueid($id);
     $DB->delete_records('user_preferences', ['name' => $tableuniqueid]);
-    $filteruserpreference = 'mod-publication-perpage-' . $id;
+    $filteruserpreference = 'mod-privatestudentfolder-perpage-' . $id;
     $DB->delete_records('user_preferences', ['name' => $filteruserpreference]);
 
     $result = true;
-    if (!$DB->delete_records('publication', ['id' => $publication->id])) {
+    if (!$DB->delete_records('privatestudentfolder', ['id' => $privatestudentfolder->id])) {
         $result = false;
     }
 
@@ -172,67 +172,67 @@ function publication_delete_instance($id) {
  * @param stdClass $coursemodule The coursemodule object (record).
  * @return bool|cached_cm_info An object on information that the courses will know about (most noticeably, an icon) or false.
  */
-function publication_get_coursemodule_info($coursemodule) {
+function privatestudentfolder_get_coursemodule_info($coursemodule) {
     global $DB;
 
     $dbparams = ['id' => $coursemodule->instance];
     $fields = 'id, name, alwaysshowdescription, allowsubmissionsfromdate, intro, introformat, completionupload';
-    if (!$publication = $DB->get_record('publication', $dbparams, $fields)) {
+    if (!$privatestudentfolder = $DB->get_record('privatestudentfolder', $dbparams, $fields)) {
         return false;
     }
 
     $result = new cached_cm_info();
-    $result->name = $publication->name;
+    $result->name = $privatestudentfolder->name;
     if ($coursemodule->showdescription) {
-        if ($publication->alwaysshowdescription || time() > $publication->allowsubmissionsfromdate) {
+        if ($privatestudentfolder->alwaysshowdescription || time() > $privatestudentfolder->allowsubmissionsfromdate) {
             // Convert intro to html. Do not filter cached version, filters run at display time.
-            $result->content = format_module_intro('publication', $publication, $coursemodule->id, false);
+            $result->content = format_module_intro('privatestudentfolder', $privatestudentfolder, $coursemodule->id, false);
         }
     }
 
     // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
     if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
-        $result->customdata['customcompletionrules']['completionupload'] = $publication->completionupload;
+        $result->customdata['customcompletionrules']['completionupload'] = $privatestudentfolder->completionupload;
     }
 
     return $result;
 }
 
 /**
- * Defines which elements mod_publication needs to add to reset form
+ * Defines which elements mod_privatestudentfolder needs to add to reset form
  *
  * @param MoodleQuickForm $mform The reset course form to extend
  */
-function publication_reset_course_form_definition(&$mform) {
-    $mform->addElement('header', 'publicationheader', get_string('modulenameplural', 'publication'));
-    $mform->addElement('checkbox', 'reset_publication_userdata', get_string('reset_userdata', 'publication'));
+function privatestudentfolder_reset_course_form_definition(&$mform) {
+    $mform->addElement('header', 'privatestudentfolderheader', get_string('modulenameplural', 'privatestudentfolder'));
+    $mform->addElement('checkbox', 'reset_privatestudentfolder_userdata', get_string('reset_userdata', 'privatestudentfolder'));
 }
 
 /**
- * Reset the userdata in publication module
+ * Reset the userdata in privatestudentfolder module
  *
  * @param object $data settings object which userdata to reset
  * @return array[] array of associative arrays giving feedback what has been successfully reset
  */
-function publication_reset_userdata($data) {
+function privatestudentfolder_reset_userdata($data) {
     global $DB;
 
-    if (!$DB->count_records('publication', ['course' => $data->courseid])) {
+    if (!$DB->count_records('privatestudentfolder', ['course' => $data->courseid])) {
         return [];
     }
 
-    $componentstr = get_string('modulenameplural', 'publication');
+    $componentstr = get_string('modulenameplural', 'privatestudentfolder');
     $status = [];
 
-    if (isset($data->reset_publication_userdata)) {
+    if (isset($data->reset_privatestudentfolder_userdata)) {
 
-        $publications = $DB->get_records('publication', ['course' => $data->courseid]);
+        $privatestudentfolders = $DB->get_records('privatestudentfolder', ['course' => $data->courseid]);
 
-        foreach ($publications as $publication) {
+        foreach ($privatestudentfolders as $privatestudentfolder) {
 
-            $DB->delete_records('publication_extduedates', ['publication' => $publication->id]);
+            $DB->delete_records('privatestudentfolder_extduedates', ['privatestudentfolder' => $privatestudentfolder->id]);
 
-            $filerecords = $DB->get_records('publication_file', ['publication' => $publication->id]);
+            $filerecords = $DB->get_records('privatestudentfolder_file', ['privatestudentfolder' => $privatestudentfolder->id]);
 
             $fs = get_file_storage();
             foreach ($filerecords as $filerecord) {
@@ -241,11 +241,11 @@ function publication_reset_userdata($data) {
                 }
             }
 
-            $DB->delete_records('publication_file', ['publication' => $publication->id]);
+            $DB->delete_records('privatestudentfolder_file', ['privatestudentfolder' => $privatestudentfolder->id]);
 
             $status[] = [
                     'component' => $componentstr,
-                    'item' => $publication->name,
+                    'item' => $privatestudentfolder->name,
                     'error' => false,
             ];
         }
@@ -263,10 +263,10 @@ function publication_reset_userdata($data) {
  * @param navigation_node $navref
  * @return void
  */
-function publication_extend_settings_navigation(settings_navigation $settings, navigation_node $navref) {
+function privatestudentfolder_extend_settings_navigation(settings_navigation $settings, navigation_node $navref) {
     global $DB, $CFG;
 
-    require_once($CFG->dirroot . '/mod/publication/locallib.php');
+    require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php');
 
     // We want to add these new nodes after the Edit settings node, and before the
     // Locally assigned roles node. Of course, both of those are controlled by capabilities.
@@ -291,25 +291,25 @@ function publication_extend_settings_navigation(settings_navigation $settings, n
         return;
     }
 
-    if (has_capability('mod/publication:addinstance', $settings->get_page()->cm->context)) {
-        $url = new moodle_url('/mod/publication/view.php', ['id' => $settings->get_page()->cm->id, 'allfilespage' => '1']);
+    if (has_capability('mod/privatestudentfolder:addinstance', $settings->get_page()->cm->context)) {
+        $url = new moodle_url('/mod/privatestudentfolder/view.php', ['id' => $settings->get_page()->cm->id, 'allfilespage' => '1']);
 
-        $node = navigation_node::create(get_string('allfiles', 'publication'),
+        $node = navigation_node::create(get_string('allfiles', 'privatestudentfolder'),
             $url,
-            navigation_node::TYPE_SETTING, null, 'mod_publication_allfiles');
+            navigation_node::TYPE_SETTING, null, 'mod_privatestudentfolder_allfiles');
         $navref->add_node($node, $beforekey);
     }
 
 
-    if (has_capability('mod/publication:manageoverrides', $settings->get_page()->cm->context)) {
-        $publication = new publication($cm, $course, $context);
-        $mode = $publication->get_mode();
-        if ($mode != PUBLICATION_MODE_ASSIGN_TEAMSUBMISSION || true) {
-            $url = new moodle_url('/mod/publication/overrides.php', ['id' => $settings->get_page()->cm->id]);
+    if (has_capability('mod/privatestudentfolder:manageoverrides', $settings->get_page()->cm->context)) {
+        $privatestudentfolder = new privatestudentfolder($cm, $course, $context);
+        $mode = $privatestudentfolder->get_mode();
+        if ($mode != PRIVATESTUDENTFOLDER_MODE_ASSIGN_TEAMSUBMISSION || true) {
+            $url = new moodle_url('/mod/privatestudentfolder/overrides.php', ['id' => $settings->get_page()->cm->id]);
 
             $node = navigation_node::create(get_string('overrides', 'assign'),
                 $url,
-                navigation_node::TYPE_SETTING, null, 'mod_publication_useroverrides');
+                navigation_node::TYPE_SETTING, null, 'mod_privatestudentfolder_useroverrides');
             $navref->add_node($node, $beforekey);
         }
     }
@@ -329,13 +329,13 @@ function publication_extend_settings_navigation(settings_navigation $settings, n
  * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - just send the file
  */
-function mod_publication_pluginfile($course, $cm, context $context, $filearea, $args, $forcedownload, array $options = []) {
+function mod_privatestudentfolder_pluginfile($course, $cm, context $context, $filearea, $args, $forcedownload, array $options = []) {
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
     }
 
     require_login($course, false, $cm);
-    if (!has_capability('mod/publication:view', $context)) {
+    if (!has_capability('mod/privatestudentfolder:view', $context)) {
         return false;
     }
 
@@ -347,7 +347,7 @@ function mod_publication_pluginfile($course, $cm, context $context, $filearea, $
 
     $relativepath = implode('/', $args);
 
-    $fullpath = "/{$context->id}/mod_publication/$filearea/$itemid/$relativepath";
+    $fullpath = "/{$context->id}/mod_privatestudentfolder/$filearea/$itemid/$relativepath";
     $fs = get_file_storage();
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) || $file->is_directory()) {
         return false;
@@ -365,26 +365,26 @@ function mod_publication_pluginfile($course, $cm, context $context, $filearea, $
  * @param event
  * @param factory
  */
-function mod_publication_core_calendar_provide_event_action(calendar_event $event, \core_calendar\action_factory $factory) {
+function mod_privatestudentfolder_core_calendar_provide_event_action(calendar_event $event, \core_calendar\action_factory $factory) {
     global $CFG, $USER, $DB;
-    require_once($CFG->dirroot . '/mod/publication/locallib.php');
+    require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php');
 
-    // Get the instance of the publication with the way recommended by the docs.
-    $courseinstance = get_fast_modinfo($event->courseid)->instances['publication'][$event->instance];
-    $instance = new publication($courseinstance);
+    // Get the instance of the privatestudentfolder with the way recommended by the docs.
+    $courseinstance = get_fast_modinfo($event->courseid)->instances['privatestudentfolder'][$event->instance];
+    $instance = new privatestudentfolder($courseinstance);
 
     // Only show this instance if it's open
     if ($instance->is_open()) {
         // Also don't show this instance when the user already uploaded one or more files
-        $files = $DB->count_records('publication_file', ['publication' => $event->instance, 'userid' => $USER->id]);
+        $files = $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $event->instance, 'userid' => $USER->id]);
 
         if ($files >= 1) {
             return null;
         }
 
         return $factory->create_instance(
-            get_string('add_uploads', 'publication'), // Name of the action button
-            new \moodle_url('/mod/publication/view.php', ['id' => $courseinstance->id]), // URL of the instance
+            get_string('add_uploads', 'privatestudentfolder'), // Name of the action button
+            new \moodle_url('/mod/privatestudentfolder/view.php', ['id' => $courseinstance->id]), // URL of the instance
             1, // Count of necessary actions
             true // Whether the user can take action on this folder.
         );
@@ -398,7 +398,7 @@ function mod_publication_core_calendar_provide_event_action(calendar_event $even
  * @param cm_info|stdClass $cm object with fields ->completion and ->customdata['customcompletionrules']
  * @return array $descriptions the array of descriptions for the custom rules.
  */
-function mod_publication_get_completion_active_rule_descriptions($cm) {
+function mod_privatestudentfolder_get_completion_active_rule_descriptions($cm) {
     // Values will be present in cm_info, and we assume these are up to date.
     if (empty($cm->customdata['customcompletionrules'])
         || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
@@ -410,7 +410,7 @@ function mod_publication_get_completion_active_rule_descriptions($cm) {
         switch ($key) {
             case 'completionupload':
                 if (!empty($val)) {
-                    $descriptions[] = get_string('completionupload', 'publication');
+                    $descriptions[] = get_string('completionupload', 'privatestudentfolder');
                 }
                 break;
             default:

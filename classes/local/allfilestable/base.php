@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,33 +17,33 @@
 /**
  * Base class for classes listing all files imported or uploaded
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_publication\local\allfilestable;
+namespace mod_privatestudentfolder\local\allfilestable;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
-require_once($CFG->dirroot . '/mod/publication/locallib.php');
+require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php');
 require_once($CFG->libdir . '/tablelib.php');
 
 /**
  * Base class for tables showing all (public) files (upload or import)
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class base extends \table_sql {
-    /** @var \publication publication object */
-    protected $publication = null;
+    /** @var \privatestudentfolder privatestudentfolder object */
+    protected $privatestudentfolder = null;
     /** @var \context_module context instance object */
     protected $context;
     /** @var \stdClass coursemodule object */
@@ -79,7 +79,7 @@ class base extends \table_sql {
     protected $options = [];
     /** @var int[] $users */
     protected $users = [];
-    protected $filter = PUBLICATION_FILTER_NOFILTER;
+    protected $filter = PRIVATESTUDENTFOLDER_FILTER_NOFILTER;
     protected $allfilespage = false;
 
     protected $obtainteacherapproval;
@@ -92,28 +92,28 @@ class base extends \table_sql {
      *
      * @param string $uniqueid a string identifying this table.Used as a key in session  vars.
      *                         It gets set automatically with the helper methods!
-     * @param \publication $publication publication object
+     * @param \privatestudentfolder $privatestudentfolder privatestudentfolder object
      */
-    public function __construct($uniqueid, \publication $publication, $filter) {
+    public function __construct($uniqueid, \privatestudentfolder $privatestudentfolder, $filter) {
         global $CFG, $OUTPUT;
 
-        $this->allfilespage = $publication->get_allfilespage();
+        $this->allfilespage = $privatestudentfolder->get_allfilespage();
         parent::__construct($uniqueid);
 
         $this->fs = get_file_storage();
-        $this->publication = $publication;
-        $instance = $publication->get_instance();
+        $this->privatestudentfolder = $privatestudentfolder;
+        $instance = $privatestudentfolder->get_instance();
 
         // $this->filesarepersonal = $instance->filesarepersonal;
         $this->obtainteacherapproval = $instance->obtainteacherapproval;
         $this->obtainstudentapproval = $instance->obtainstudentapproval;
 
-        $this->cm = get_coursemodule_from_instance('publication', $publication->get_instance()->id, 0, false, MUST_EXIST);
+        $this->cm = get_coursemodule_from_instance('privatestudentfolder', $privatestudentfolder->get_instance()->id, 0, false, MUST_EXIST);
         $this->context = \context_module::instance($this->cm->id);
         $this->groupmode = groups_get_activity_groupmode($this->cm);
         $this->currentgroup = groups_get_activity_group($this->cm, true);
         if (!$this->allfilespage) {
-            $this->filter = PUBLICATION_FILTER_APPROVED;
+            $this->filter = PRIVATESTUDENTFOLDER_FILTER_APPROVED;
         } else {
             $this->filter = $filter;
         }
@@ -123,7 +123,7 @@ class base extends \table_sql {
         $this->define_headers($headers);
         $this->define_help_for_headers($helpicons);
 
-        $this->define_baseurl($CFG->wwwroot . '/mod/publication/view.php?id=' . $this->cm->id . '&amp;currentgroup=' .
+        $this->define_baseurl($CFG->wwwroot . '/mod/privatestudentfolder/view.php?id=' . $this->cm->id . '&amp;currentgroup=' .
                 $this->currentgroup . '&amp;filter=' . $this->filter . '&amp;allfilespage=' . intval($this->allfilespage));
 
         $this->sortable(true, 'lastname'); // Sorted by lastname by default.
@@ -138,12 +138,12 @@ class base extends \table_sql {
 
         $this->set_attribute('cellspacing', '0');
         $this->set_attribute('id', 'attempts');
-        $this->set_attribute('class', 'publications');
+        $this->set_attribute('class', 'privatestudentfolders');
         $this->set_attribute('width', '100%');
 
         $this->no_sorting('studentapproval');
         $this->no_sorting('selection');
-        $this->no_sorting('publicationstatus');
+        $this->no_sorting('privatestudentfolderstatus');
         $this->no_sorting('files');
 
         $this->no_sorting('visibleforstudents');
@@ -153,16 +153,16 @@ class base extends \table_sql {
         // Save status of table(s) persistent as user preference!
         $this->is_persistent(true);
 
-        $this->valid = self::approval_icon('check', 'text-success', get_string('student_approved', 'publication'));
-        $this->questionmark = self::approval_icon('question', 'text-warning', get_string('student_pending', 'publication'));
-        $this->invalid = self::approval_icon('times', 'text-danger', get_string('student_rejected', 'publication'));
+        $this->valid = self::approval_icon('check', 'text-success', get_string('student_approved', 'privatestudentfolder'));
+        $this->questionmark = self::approval_icon('question', 'text-warning', get_string('student_pending', 'privatestudentfolder'));
+        $this->invalid = self::approval_icon('times', 'text-danger', get_string('student_rejected', 'privatestudentfolder'));
 
-        $this->studvisibleyes = self::approval_icon('check', 'text-success', get_string('visibleforstudents_yes', 'publication'));
-        $this->studvisibleno = self::approval_icon('times', 'text-danger', get_string('visibleforstudents_no', 'publication'));
+        $this->studvisibleyes = self::approval_icon('check', 'text-success', get_string('visibleforstudents_yes', 'privatestudentfolder'));
+        $this->studvisibleno = self::approval_icon('times', 'text-danger', get_string('visibleforstudents_no', 'privatestudentfolder'));
 
         $this->options = [];
-        $this->options[1] = get_string('teacher_approve', 'publication');
-        $this->options[2] = get_string('teacher_reject', 'publication');
+        $this->options[1] = get_string('teacher_approve', 'privatestudentfolder');
+        $this->options[2] = get_string('teacher_reject', 'privatestudentfolder');
     }
 
     /**
@@ -176,7 +176,7 @@ class base extends \table_sql {
 
         $this->print_initials_bar();
 
-        echo $OUTPUT->box(get_string('nofilestodisplay', 'publication'), 'font-italic');
+        echo $OUTPUT->box(get_string('nofilestodisplay', 'privatestudentfolder'), 'font-italic');
     }
 
     /**
@@ -197,7 +197,7 @@ class base extends \table_sql {
         $fields = \core_user\fields::for_identity($this->context, false);
         $useridentity = $fields->get_required_fields();
         foreach ($useridentity as $cur) {
-            if (has_capability('mod/publication:approve', $this->context) && $this->allfilespage) {
+            if (has_capability('mod/privatestudentfolder:approve', $this->context) && $this->allfilespage) {
                 $columns[] = $cur;
                 $headers[] = ($cur == 'phone1') ? get_string('phone') : get_string($cur);
                 $helpicons[] = null;
@@ -250,39 +250,39 @@ class base extends \table_sql {
                                 MAX(files.timecreated) AS timemodified ';
 
         // Also filters out users according to set activitygroupmode & current activitygroup!
-        $users = $this->publication->get_users();
+        $users = $this->privatestudentfolder->get_users();
         list($sqluserids, $userparams) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED, 'user');
-        $params = $params + $userparams + ['publication' => $this->cm->instance];
+        $params = $params + $userparams + ['privatestudentfolder' => $this->cm->instance];
 
         /* TODO: Add filter for filesarepersonal ?? */
 
         $having = '';
-        if ($this->filter == PUBLICATION_FILTER_NOFILTER) {
+        if ($this->filter == PRIVATESTUDENTFOLDER_FILTER_NOFILTER) {
             $from = '{user} u ' .
-                'LEFT JOIN {publication_file} files ON u.id = files.userid AND files.publication = :publication ';
-        } else if ($this->filter == PUBLICATION_FILTER_ALLFILES) {
+                'LEFT JOIN {privatestudentfolder_file} files ON u.id = files.userid AND files.privatestudentfolder = :privatestudentfolder ';
+        } else if ($this->filter == PRIVATESTUDENTFOLDER_FILTER_ALLFILES) {
             $from = '{user} u ' .
-                'JOIN {publication_file} files ON u.id = files.userid AND files.publication = :publication ';
-        } else if ($this->filter == PUBLICATION_FILTER_APPROVED) {
+                'JOIN {privatestudentfolder_file} files ON u.id = files.userid AND files.privatestudentfolder = :privatestudentfolder ';
+        } else if ($this->filter == PRIVATESTUDENTFOLDER_FILTER_APPROVED) {
             $from = '{user} u ' .
-                'JOIN {publication_file} files ON u.id = files.userid AND files.publication = :publication ';
+                'JOIN {privatestudentfolder_file} files ON u.id = files.userid AND files.privatestudentfolder = :privatestudentfolder ';
             if ($this->obtainteacherapproval == 1) {
                 $from .= ' AND files.teacherapproval = 1 ';
             }
             if ($this->obtainstudentapproval == 1) {
                 $from .= ' AND files.studentapproval = 1 ';
             }
-        } else if ($this->filter == PUBLICATION_FILTER_REJECTED) {
+        } else if ($this->filter == PRIVATESTUDENTFOLDER_FILTER_REJECTED) {
             $from = '{user} u ' .
-                'JOIN {publication_file} files ON u.id = files.userid AND files.publication = :publication ' .
+                'JOIN {privatestudentfolder_file} files ON u.id = files.userid AND files.privatestudentfolder = :privatestudentfolder ' .
                 'AND files.teacherapproval = 2 ';
-        } else if ($this->filter == PUBLICATION_FILTER_APPROVALREQUIRED) {
+        } else if ($this->filter == PRIVATESTUDENTFOLDER_FILTER_APPROVALREQUIRED) {
             $from = '{user} u ' .
-                'JOIN {publication_file} files ON u.id = files.userid AND files.publication = :publication ' .
+                'JOIN {privatestudentfolder_file} files ON u.id = files.userid AND files.privatestudentfolder = :privatestudentfolder ' .
                 'AND (files.teacherapproval = 3 OR files.teacherapproval IS NULL OR files.teacherapproval = 0) ';
-        } else if ($this->filter == PUBLICATION_FILTER_NOFILES) {
+        } else if ($this->filter == PRIVATESTUDENTFOLDER_FILTER_NOFILES) {
             $from = '{user} u ' .
-                'LEFT JOIN {publication_file} files ON u.id = files.userid AND files.publication = :publication ';
+                'LEFT JOIN {privatestudentfolder_file} files ON u.id = files.userid AND files.privatestudentfolder = :privatestudentfolder ';
             $having = ' HAVING timemodified IS NULL ';
         }
 
@@ -290,7 +290,7 @@ class base extends \table_sql {
         $groupby = $ufields . ' ' . $useridentityfields . ', u.username ' . $having;
 
         $this->set_sql($fields, $from, $where, $params, $groupby);
-        if ($this->filter != PUBLICATION_FILTER_NOFILES) {
+        if ($this->filter != PRIVATESTUDENTFOLDER_FILTER_NOFILES) {
             $this->set_count_sql("SELECT COUNT(a.uid) FROM (SELECT DISTINCT u.id AS uid FROM $from WHERE $where) a", $params);
         } else {
             $this->set_count_sql(
@@ -393,20 +393,20 @@ FROM
             return [$this->itemid, $this->files, $this->resources];
         }
 
-        $contextid = $this->publication->get_context()->id;
+        $contextid = $this->privatestudentfolder->get_context()->id;
         $filearea = 'attachment';
 
         $this->itemid = $itemid;
         $this->files = [];
         $this->resources = [];
 
-        $files = $this->fs->get_area_files($contextid, 'mod_publication', $filearea, $this->itemid, 'timemodified', false);
+        $files = $this->fs->get_area_files($contextid, 'mod_privatestudentfolder', $filearea, $this->itemid, 'timemodified', false);
 
-        $dbfiles = $DB->get_records('publication_file', ['userid' => $itemid], '', 'fileid, teacherapproval, studentapproval');
+        $dbfiles = $DB->get_records('privatestudentfolder_file', ['userid' => $itemid], '', 'fileid, teacherapproval, studentapproval');
         foreach ($files as $file) {
             if (isset($dbfiles[intval($file->get_id())])) {
                 $dbfile = $dbfiles[intval($file->get_id())];
-                if ($this->filter == PUBLICATION_FILTER_APPROVED) {
+                if ($this->filter == PRIVATESTUDENTFOLDER_FILTER_APPROVED) {
                     if ($this->obtainstudentapproval) {
                         if ($dbfile->studentapproval != 1) {
                             continue;
@@ -417,11 +417,11 @@ FROM
                             continue;
                         }
                     }
-                } else if ($this->filter == PUBLICATION_FILTER_REJECTED) {
+                } else if ($this->filter == PRIVATESTUDENTFOLDER_FILTER_REJECTED) {
                     if ($dbfile->teacherapproval != 2) {
                         continue;
                     }
-                } else if ($this->filter == PUBLICATION_FILTER_APPROVALREQUIRED) {
+                } else if ($this->filter == PRIVATESTUDENTFOLDER_FILTER_APPROVALREQUIRED) {
                     if ($dbfile->teacherapproval == 1 || $dbfile->teacherapproval == 2) {
                         continue;
                     }
@@ -477,18 +477,18 @@ FROM
         // This method does nothing here!
         // Get file data/record!
         $conditions = [
-                'publication' => $this->cm->instance,
+                'privatestudentfolder' => $this->cm->instance,
                 'userid' => $itemid,
                 'fileid' => $fileid,
-                'type' => PUBLICATION_MODE_ONLINETEXT,
+                'type' => PRIVATESTUDENTFOLDER_MODE_ONLINETEXT,
         ];
-        if (!$DB->record_exists('publication_file', $conditions)) {
+        if (!$DB->record_exists('privatestudentfolder_file', $conditions)) {
             return '';
         }
 
         $itemname = $this->get_itemname($itemid);
 
-        $url = new \moodle_url('/mod/publication/onlinepreview.php', [
+        $url = new \moodle_url('/mod/privatestudentfolder/onlinepreview.php', [
                 'id' => $this->cm->id,
                 'itemid' => $itemid,
                 'itemname' => $itemname,
@@ -547,17 +547,17 @@ FROM
      */
     public function col_fullname($values) {
         global $OUTPUT;
-        // Saves DB access in \mod_publication\local\allfilestable::get_itemname()!
+        // Saves DB access in \mod_privatestudentfolder\local\allfilestable::get_itemname()!
         if (!array_key_exists($values->id, $this->itemnames)) {
             $this->itemnames[$values->id] = fullname($values);
         }
 
-        $extension = $this->publication->user_extensionduedate($values->id);
+        $extension = $this->privatestudentfolder->user_extensionduedate($values->id);
         if ($extension) {
-            if ((has_capability('mod/publication:grantextension', $this->context) ||
-                    has_capability('mod/publication:approve', $this->context)) && $this->allfilespage) {
+            if ((has_capability('mod/privatestudentfolder:grantextension', $this->context) ||
+                    has_capability('mod/privatestudentfolder:approve', $this->context)) && $this->allfilespage) {
                 $extensiontxt = \html_writer::empty_tag('br') . "\n" .
-                        get_string('extensionto', 'publication') . ': ' . userdate($extension);
+                        get_string('extensionto', 'privatestudentfolder') . ': ' . userdate($extension);
             } else {
                 $extensiontxt = '';
             }
@@ -582,7 +582,7 @@ FROM
      * @return string Return group's name.
      */
     public function col_groupname($values) {
-        // Saves DB access in \mod_publication\local\allfilestable::get_itemname()!
+        // Saves DB access in \mod_privatestudentfolder\local\allfilestable::get_itemname()!
         if (!array_key_exists($values->id, $this->itemnames)) {
             $this->itemnames[$values->id] = $values->groupname;
         }
@@ -599,7 +599,7 @@ FROM
      * @return string Return user groups.
      */
     public function col_groups($values) {
-        $groups = groups_get_all_groups($this->publication->get_instance()->course, $values->id, 0, 'g.name');
+        $groups = groups_get_all_groups($this->privatestudentfolder->get_instance()->course, $values->id, 0, 'g.name');
         if (!empty($groups)) {
             $values->groups = '';
             foreach ($groups as $group) {
@@ -636,12 +636,12 @@ FROM
         $filetable->attributes = ['class' => 'filetable'];
 
         foreach ($files as $file) {
-            if (has_capability('mod/publication:approve', $this->context)
-                    || $this->publication->has_filepermission($file->get_id())) {
+            if (has_capability('mod/privatestudentfolder:approve', $this->context)
+                    || $this->privatestudentfolder->has_filepermission($file->get_id())) {
                 $filerow = [];
                 $filerow[] = $OUTPUT->pix_icon(file_file_icon($file), get_mimetype_description($file));
 
-                $url = new \moodle_url('/mod/publication/view.php', ['id' => $this->cm->id, 'download' => $file->get_id()]);
+                $url = new \moodle_url('/mod/privatestudentfolder/view.php', ['id' => $this->cm->id, 'download' => $file->get_id()]);
                 $filerow[] = \html_writer::link($url, $file->get_filename()) .
                         $this->add_onlinetext_preview($values->id, $file->get_id());
 
@@ -668,12 +668,12 @@ FROM
         $filetable->attributes = ['class' => 'filetable'];
 
         foreach ($files as $file) {
-            if ((has_capability('mod/publication:approve', $this->context))
-                || $this->publication->has_filepermission($file->get_id())) {
+            if ((has_capability('mod/privatestudentfolder:approve', $this->context))
+                || $this->privatestudentfolder->has_filepermission($file->get_id())) {
                 $filerow = [];
                 $filerow[] = $OUTPUT->pix_icon(file_file_icon($file), get_mimetype_description($file));
 
-                $url = new \moodle_url('/mod/publication/view.php', ['id' => $this->cm->id, 'download' => $file->get_id()]);
+                $url = new \moodle_url('/mod/privatestudentfolder/view.php', ['id' => $this->cm->id, 'download' => $file->get_id()]);
                 $filerow[] = \html_writer::link($url, $file->get_filename()) .
                     $this->add_onlinetext_preview($values->id, $file->get_id());
 
@@ -706,9 +706,9 @@ FROM
         $table->attributes = ['class' => 'statustable'];
 
         foreach ($files as $file) {
-            if (has_capability('mod/publication:approve', $this->context)
-                    || $this->publication->has_filepermission($file->get_id())) {
-                switch ($this->publication->student_approval($file)) {
+            if (has_capability('mod/privatestudentfolder:approve', $this->context)
+                    || $this->privatestudentfolder->has_filepermission($file->get_id())) {
+                switch ($this->privatestudentfolder->student_approval($file)) {
                     case 1:
                         $symbol = $this->valid;
                         break;
@@ -745,10 +745,10 @@ FROM
         $table->attributes = ['class' => 'permissionstable'];
 
         foreach ($files as $file) {
-            if ($this->publication->has_filepermission($file->get_id())
-                    || has_capability('mod/publication:approve', $this->context)) {
+            if ($this->privatestudentfolder->has_filepermission($file->get_id())
+                    || has_capability('mod/privatestudentfolder:approve', $this->context)) {
 
-                $checked = $this->publication->teacher_approval($file);
+                $checked = $this->privatestudentfolder->teacher_approval($file);
                 // Null if none found, DB-entry otherwise!
                 // TODO change that conversions and queue the real values! Everywhere!
                 $checked = ($checked === false || $checked === null) ? "" : $checked;
@@ -779,7 +779,7 @@ FROM
         $table->attributes = ['class' => 'statustable'];
 
         foreach ($files as $file) {
-            if ($this->publication->has_filepermission($file->get_id())) {
+            if ($this->privatestudentfolder->has_filepermission($file->get_id())) {
                 $table->data[] = [$this->studvisibleyes];
             } else {
                 $table->data[] = [$this->studvisibleno];
@@ -794,7 +794,7 @@ FROM
         }
     }
 
-    public function col_publicationstatus($values) {
+    public function col_privatestudentfolderstatus($values) {
 
         list(, $files, ) = $this->get_files($values->id);
 
@@ -805,10 +805,10 @@ FROM
             $row = [];
             // studentapproval!
             /*
-            if (!($this instanceof \mod_publication\local\allfilestable\upload)) {
-                if (has_capability('mod/publication:approve', $this->context)
-                    || $this->publication->has_filepermission($file->get_id())) {
-                    switch ($this->publication->student_approval($file)) {
+            if (!($this instanceof \mod_privatestudentfolder\local\allfilestable\upload)) {
+                if (has_capability('mod/privatestudentfolder:approve', $this->context)
+                    || $this->privatestudentfolder->has_filepermission($file->get_id())) {
+                    switch ($this->privatestudentfolder->student_approval($file)) {
                         case 2:
                             $symbol = $this->valid;
                             break;
@@ -827,10 +827,10 @@ FROM
 
             // teacherapproval!
 
-            if ($this->obtainteacherapproval && ($this->publication->has_filepermission($file->get_id())
-                || has_capability('mod/publication:approve', $this->context))) {
+            if ($this->obtainteacherapproval && ($this->privatestudentfolder->has_filepermission($file->get_id())
+                || has_capability('mod/privatestudentfolder:approve', $this->context))) {
 
-                $checked = $this->publication->teacher_approval($file);
+                $checked = $this->privatestudentfolder->teacher_approval($file);
                 // Null if none found, DB-entry otherwise!
                 // TODO change that conversions and queue the real values! Everywhere!
                 $checked = ($checked === false || $checked === null) ? "" : $checked;
@@ -840,7 +840,7 @@ FROM
             }
             // visibleforstudents
 
-            if ($this->publication->has_filepermission($file->get_id())) {
+            if ($this->privatestudentfolder->has_filepermission($file->get_id())) {
                 $row[] = $this->studvisibleyes;
             } else {
                 $row[] = $this->studvisibleno;
@@ -896,10 +896,10 @@ FROM
             'bootsrapcolor' => $bootsrapcolor,
             'title' => $title,
         ];
-        return $OUTPUT->render_from_template('mod_publication/approval_icon_fontawesome', $templatecontext);
+        return $OUTPUT->render_from_template('mod_privatestudentfolder/approval_icon_fontawesome', $templatecontext);
     }
 
     public static function get_table_uniqueid($instanceid) {
-        return 'mod-publication-allfiles-' . $instanceid;
+        return 'mod-privatestudentfolder-allfiles-' . $instanceid;
     }
 }

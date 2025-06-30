@@ -15,12 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Settings form for overrides in the publication module.
+ * Settings form for overrides in the privatestudentfolder module.
  *
- * @package    mod_publication
- * @copyright  2024 Academic Moodle Cooperation
- * @author     Simeon Naydenov (moninaydenov@gmail.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -29,8 +30,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 
 
-class publication_overrides_form extends moodleform {
-    private $_publication;
+class privatestudentfolder_overrides_form extends moodleform {
+    private $_privatestudentfolder;
 
     public function definition() {
         global $DB;
@@ -41,10 +42,10 @@ class publication_overrides_form extends moodleform {
         $mform->addElement('hidden', 'overrideid');
         $mform->setType('overrideid', PARAM_INT);
 
-        $this->_publication = $this->_customdata['publication'];
-        $mode = $this->_publication->get_mode();
-        if ($mode == PUBLICATION_MODE_ASSIGN_TEAMSUBMISSION) {
-            $groupids = $this->_publication->get_groups();
+        $this->_privatestudentfolder = $this->_customdata['privatestudentfolder'];
+        $mode = $this->_privatestudentfolder->get_mode();
+        if ($mode == PRIVATESTUDENTFOLDER_MODE_ASSIGN_TEAMSUBMISSION) {
+            $groupids = $this->_privatestudentfolder->get_groups();
             $groups = $DB->get_records_list('groups', 'id', $groupids);
 
             $mform->addElement('hidden', 'userid');
@@ -56,13 +57,13 @@ class publication_overrides_form extends moodleform {
             }
             $options = array(
                 'multiple' => false,
-                'noselectionstring' => get_string('override:group:choose', 'publication'),
+                'noselectionstring' => get_string('override:group:choose', 'privatestudentfolder'),
 
             );
             $mform->addElement('autocomplete', 'groupid', get_string('group'), $groupsclean, $options);
             $mform->addRule('groupid', null, 'required', null, 'client');
         } else {
-            $userids = $this->_publication->get_users([], true);
+            $userids = $this->_privatestudentfolder->get_users([], true);
             $users = $DB->get_records_list('user', 'id', $userids);
 
             $mform->addElement('hidden', 'groupid');
@@ -78,48 +79,48 @@ class publication_overrides_form extends moodleform {
             }
             $options = array(
                 'multiple' => false,
-                'noselectionstring' => get_string('override:user:choose', 'publication'),
+                'noselectionstring' => get_string('override:user:choose', 'privatestudentfolder'),
             );
             $mform->addElement('autocomplete', 'userid', get_string('user'), $usersclean, $options);
             $mform->addRule('userid', null, 'required', null, 'client');
         }
 
         $itemsadded = false;
-        if ($mode == PUBLICATION_MODE_FILEUPLOAD) {
-            $mform->addElement('header', 'submissionsettings', get_string('submissionsettings', 'publication'));
+        if ($mode == PRIVATESTUDENTFOLDER_MODE_FILEUPLOAD) {
+            $mform->addElement('header', 'submissionsettings', get_string('submissionsettings', 'privatestudentfolder'));
             $mform->setExpanded('submissionsettings');
 
-            $name = get_string('allowsubmissionsfromdate', 'publication');
+            $name = get_string('allowsubmissionsfromdate', 'privatestudentfolder');
             $options = ['optional' => true];
             $mform->addElement('date_time_selector', 'allowsubmissionsfromdate', $name, $options);
-            $mform->addHelpButton('allowsubmissionsfromdate', 'allowsubmissionsfromdate', 'publication');
+            $mform->addHelpButton('allowsubmissionsfromdate', 'allowsubmissionsfromdate', 'privatestudentfolder');
             $mform->setDefault('allowsubmissionsfromdate', time());
-            $mform->hideIf('allowsubmissionsfromdate', 'mode', 'neq', PUBLICATION_MODE_UPLOAD);
+            $mform->hideIf('allowsubmissionsfromdate', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_UPLOAD);
 
-            $name = get_string('duedate', 'publication');
+            $name = get_string('duedate', 'privatestudentfolder');
             $mform->addElement('date_time_selector', 'duedate', $name, ['optional' => true]);
-            $mform->addHelpButton('duedate', 'duedate', 'publication');
+            $mform->addHelpButton('duedate', 'duedate', 'privatestudentfolder');
             $mform->setDefault('duedate', time() + 7 * 24 * 3600);
-            $mform->hideIf('duedate', 'mode', 'neq', PUBLICATION_MODE_UPLOAD);
+            $mform->hideIf('duedate', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_UPLOAD);
             $itemsadded = true;
         }
 
-        if ($this->_publication->get_instance()->obtainstudentapproval == 1) {
-            $mform->addElement('header', 'approvalsettings', get_string('approvalsettings', 'publication'));
+        if ($this->_privatestudentfolder->get_instance()->obtainstudentapproval == 1) {
+            $mform->addElement('header', 'approvalsettings', get_string('approvalsettings', 'privatestudentfolder'));
             $mform->setExpanded('approvalsettings', true);
 
-            $mform->addElement('date_time_selector', 'approvalfromdate', get_string('approvalfromdate', 'publication'), ['optional' => true]);
-            $mform->addHelpButton('approvalfromdate', 'approvalfromdate', 'publication');
+            $mform->addElement('date_time_selector', 'approvalfromdate', get_string('approvalfromdate', 'privatestudentfolder'), ['optional' => true]);
+            $mform->addHelpButton('approvalfromdate', 'approvalfromdate', 'privatestudentfolder');
             $mform->setDefault('approvalfromdate', time());
 
-            $mform->addElement('date_time_selector', 'approvaltodate', get_string('approvaltodate', 'publication'), ['optional' => true]);
-            $mform->addHelpButton('approvaltodate', 'approvaltodate', 'publication');
+            $mform->addElement('date_time_selector', 'approvaltodate', get_string('approvaltodate', 'privatestudentfolder'), ['optional' => true]);
+            $mform->addHelpButton('approvaltodate', 'approvaltodate', 'privatestudentfolder');
             $mform->setDefault('approvaltodate', time() + 7 * 24 * 3600);
             $itemsadded = true;
         }
 
         if (!$itemsadded) {
-            $mform->addElement('html', '<div class="alert alert-info">' . get_string('override:nothingtochange', 'mod_publication') . '</div>');
+            $mform->addElement('html', '<div class="alert alert-info">' . get_string('override:nothingtochange', 'mod_privatestudentfolder') . '</div>');
         }
         $this->add_action_buttons(true);
     }

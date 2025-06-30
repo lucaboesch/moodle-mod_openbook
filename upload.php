@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,21 +17,21 @@
 /**
  * Handles file uploads by students!
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once('../../config.php');
-require_once($CFG->dirroot . '/mod/publication/locallib.php');
-require_once($CFG->dirroot . '/mod/publication/upload_form.php');
+require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php');
+require_once($CFG->dirroot . '/mod/privatestudentfolder/upload_form.php');
 
 $cmid = required_param('cmid', PARAM_INT); // Course Module ID.
 $id = optional_param('id', 0, PARAM_INT); // EntryID.
 
-if (!$cm = get_coursemodule_from_id('publication', $cmid)) {
+if (!$cm = get_coursemodule_from_id('privatestudentfolder', $cmid)) {
     throw new \moodle_exception('invalidcoursemodule');
 }
 
@@ -43,18 +43,18 @@ require_login($course, false, $cm);
 
 $context = context_module::instance($cm->id);
 
-require_capability('mod/publication:upload', $context);
+require_capability('mod/privatestudentfolder:upload', $context);
 
-$publication = new publication($cm, $course, $context);
+$privatestudentfolder = new privatestudentfolder($cm, $course, $context);
 
-$url = new moodle_url('/mod/publication/upload.php', ['cmid' => $cm->id]);
+$url = new moodle_url('/mod/privatestudentfolder/upload.php', ['cmid' => $cm->id]);
 if (!empty($id)) {
     $url->param('id', $id);
 }
 $PAGE->set_url($url);
 
-if (!$publication->is_open()) {
-    redirect(new moodle_url('/mod/publication/view.php', ['id' => $cm->id]), get_string('uploadnotopen', 'mod_publication'));
+if (!$privatestudentfolder->is_open()) {
+    redirect(new moodle_url('/mod/privatestudentfolder/view.php', ['id' => $cm->id]), get_string('uploadnotopen', 'mod_privatestudentfolder'));
 }
 
 $entry = new stdClass();
@@ -63,10 +63,10 @@ $entry->id = $USER->id;
 $entry->definition = '';          // Updated later.
 $entry->definitionformat = FORMAT_HTML; // Updated later.
 
-$maxfiles = $publication->get_instance()->maxfiles;
-$maxbytes = $publication->get_instance()->maxbytes;
+$maxfiles = $privatestudentfolder->get_instance()->maxfiles;
+$maxbytes = $privatestudentfolder->get_instance()->maxbytes;
 
-$acceptedfiletypes = $publication->get_accepted_types();
+$acceptedfiletypes = $privatestudentfolder->get_accepted_types();
 
 $definitionoptions = [
         'trusttext' => true,
@@ -83,38 +83,38 @@ $attachmentoptions = [
         'accepted_types' => $acceptedfiletypes,
 ];
 
-$entry = file_prepare_standard_editor($entry, 'definition', $definitionoptions, $context, 'mod_publication', 'entry', $entry->id);
-$entry = file_prepare_standard_filemanager($entry, 'attachment', $attachmentoptions, $context, 'mod_publication',
+$entry = file_prepare_standard_editor($entry, 'definition', $definitionoptions, $context, 'mod_privatestudentfolder', 'entry', $entry->id);
+$entry = file_prepare_standard_filemanager($entry, 'attachment', $attachmentoptions, $context, 'mod_privatestudentfolder',
         'attachment', $entry->id);
 
 $entry->cmid = $cm->id;
 
 // Create a new form object (found in lib.php).
-$mform = new mod_publication_upload_form(null, [
+$mform = new mod_privatestudentfolder_upload_form(null, [
         'current' => $entry,
         'cm' => $cm,
-        'publication' => $publication,
+        'privatestudentfolder' => $privatestudentfolder,
         'definitionoptions' => $definitionoptions,
         'attachmentoptions' => $attachmentoptions,
 ]);
 
 if ($mform->is_cancelled()) {
-    redirect(new moodle_url('/mod/publication/view.php', ['id' => $cm->id]));
+    redirect(new moodle_url('/mod/privatestudentfolder/view.php', ['id' => $cm->id]));
 
 } else if ($data = $mform->get_data()) {
     // Store updated set of files.
 
     // Save and relink embedded images and save attachments.
     $entry = file_postupdate_standard_editor($entry, 'definition', $definitionoptions,
-            $context, 'mod_publication', 'entry', $entry->id);
+            $context, 'mod_privatestudentfolder', 'entry', $entry->id);
     $entry = file_postupdate_standard_filemanager($entry, 'attachment', $attachmentoptions,
-            $context, 'mod_publication', 'attachment', $entry->id);
+            $context, 'mod_privatestudentfolder', 'attachment', $entry->id);
 
     $filearea = 'attachment';
     $sid = $USER->id;
     $fs = get_file_storage();
 
-    $files = $fs->get_area_files($context->id, 'mod_publication', $filearea, $sid, 'timemodified', false);
+    $files = $fs->get_area_files($context->id, 'mod_privatestudentfolder', $filearea, $sid, 'timemodified', false);
 
     $values = [];
     foreach ($files as $file) {
@@ -122,7 +122,7 @@ if ($mform->is_cancelled()) {
     }
 
     $filescount = count($values);
-    $rows = $DB->get_records('publication_file', ['publication' => $publication->get_instance()->id, 'userid' => $USER->id]);
+    $rows = $DB->get_records('privatestudentfolder_file', ['privatestudentfolder' => $privatestudentfolder->get_instance()->id, 'userid' => $USER->id]);
 
     // Find new files and store in db.
     foreach ($files as $file) {
@@ -136,22 +136,22 @@ if ($mform->is_cancelled()) {
 
         if (!$found) {
             $dataobject = new stdClass();
-            $dataobject->publication = $publication->get_instance()->id;
+            $dataobject->privatestudentfolder = $privatestudentfolder->get_instance()->id;
             $dataobject->userid = $USER->id;
             $dataobject->timecreated = $file->get_timecreated();
             $dataobject->fileid = $file->get_id();
             $dataobject->studentapproval = 0;
             $dataobject->teacherapproval = 0;
             $dataobject->filename = $file->get_filename();
-            $dataobject->type = PUBLICATION_MODE_UPLOAD;
+            $dataobject->type = PRIVATESTUDENTFOLDER_MODE_UPLOAD;
 
-            $dataobject->id = $DB->insert_record('publication_file', $dataobject);
+            $dataobject->id = $DB->insert_record('privatestudentfolder_file', $dataobject);
 
-            if ($publication->get_instance()->notifyfilechange != 0) {
-                publication::send_notification_filechange($cm, $dataobject, null, $publication);
+            if ($privatestudentfolder->get_instance()->notifyfilechange != 0) {
+                privatestudentfolder::send_notification_filechange($cm, $dataobject, null, $privatestudentfolder);
             }
 
-            \mod_publication\event\publication_file_uploaded::create_from_object($cm, $dataobject)->trigger();
+            \mod_privatestudentfolder\event\privatestudentfolder_file_uploaded::create_from_object($cm, $dataobject)->trigger();
         }
     }
 
@@ -166,24 +166,24 @@ if ($mform->is_cancelled()) {
         }
 
         if (!$found) {
-            $dataobject = $DB->get_record('publication_file', ['id' => $row->id]);
-            \mod_publication\event\publication_file_deleted::create_from_object($cm, $dataobject)->trigger();
-            $DB->delete_records('publication_file', ['id' => $row->id]);
+            $dataobject = $DB->get_record('privatestudentfolder_file', ['id' => $row->id]);
+            \mod_privatestudentfolder\event\privatestudentfolder_file_deleted::create_from_object($cm, $dataobject)->trigger();
+            $DB->delete_records('privatestudentfolder_file', ['id' => $row->id]);
         }
     }
 
     // Update competion status - if filescount == 0 => activity not completed, else => activity completed
 
     $completion = new completion_info($course);
-    if ($completion->is_enabled($cm) && $publication->get_instance()->completionupload) {
+    if ($completion->is_enabled($cm) && $privatestudentfolder->get_instance()->completionupload) {
         if ($filescount == 0) {
             $completion->update_state($cm, COMPLETION_INCOMPLETE, $USER->id);
         } else {
             $completion->update_state($cm, COMPLETION_COMPLETE, $USER->id);
         }
     }
-    publication::send_all_pending_notifications();
-    redirect(new moodle_url('/mod/publication/view.php', ['id' => $cm->id]));
+    privatestudentfolder::send_all_pending_notifications();
+    redirect(new moodle_url('/mod/privatestudentfolder/view.php', ['id' => $cm->id]));
 }
 
 // Load existing files into draft area.

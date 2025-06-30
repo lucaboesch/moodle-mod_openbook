@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_publication external file
+ * mod_privatestudentfolder external file
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -28,17 +28,12 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 require_once($CFG->libdir . "/externallib.php");
-require_once($CFG->dirroot . "/mod/publication/locallib.php");
+require_once($CFG->dirroot . "/mod/privatestudentfolder/locallib.php");
 
 /**
- * Class mod_publication_external contains external functions used by mod_publication's AJAX
- *
- * @package       mod_publication
- * @author        Philipp Hager
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Class mod_privatestudentfolder_external contains external functions used by mod_privatestudentfolder's AJAX
  */
-class mod_publication_external extends external_api {
+class mod_privatestudentfolder_external extends external_api {
 
     /**
      * Returns description of method parameters
@@ -74,14 +69,14 @@ class mod_publication_external extends external_api {
                         'itemid' => $itemid,
                         'cmid' => $cmid,
                 ]);
-        $cm = get_coursemodule_from_id('publication', $params['cmid'], 0, false, MUST_EXIST);
+        $cm = get_coursemodule_from_id('privatestudentfolder', $params['cmid'], 0, false, MUST_EXIST);
         $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
         $context = context_module::instance($cm->id);
         self::validate_context($context);
-        require_capability('mod/publication:view', $context);
+        require_capability('mod/privatestudentfolder:view', $context);
         require_login($course, true, $cm);
 
-        $text = publication::export_onlinetext_for_preview($params['itemid'], $cm->instance, $context->id);
+        $text = privatestudentfolder::export_onlinetext_for_preview($params['itemid'], $cm->instance, $context->id);
 
         return format_text($text, FORMAT_HTML);
     }

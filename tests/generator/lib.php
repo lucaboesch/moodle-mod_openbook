@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,30 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Generator file for mod_publication's PHPUnit tests
+ * Generator file for mod_privatestudentfolder's PHPUnit tests
  *
- * @package   mod_publication
- * @category  test
- * @author    Philipp Hager
- * @copyright 2017 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package       mod_privatestudentfolder
+ * @category      test
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * publication module data generator class
+ * privatestudentfolder module data generator class
  *
- * @package   mod_publication
- * @category  test
- * @author    Philipp Hager
- * @copyright 2017 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package       mod_privatestudentfolder
+ * @category      test
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_publication_generator extends testing_module_generator {
+class mod_privatestudentfolder_generator extends testing_module_generator {
 
     /**
-     * Generator method creating a mod_publication instance.
+     * Generator method creating a mod_privatestudentfolder instance.
      *
      * @param array|stdClass $record (optional) Named array containing instance settings
      * @param array $options (optional) general options for course module. Can be merged into $record
@@ -50,7 +52,7 @@ class mod_publication_generator extends testing_module_generator {
         $timecreated = time();
 
         $defaultsettings = [
-                'name' => 'publication',
+                'name' => 'privatestudentfolder',
                 'intro' => 'Introtext',
                 'introformat' => 1,
                 'alwaysshowdescription' => 1,
@@ -59,11 +61,11 @@ class mod_publication_generator extends testing_module_generator {
                 'duedate' => $timecreated + 604800, // 1 week later!
                 'allowsubmissionsfromdate' => $timecreated,
                 'cutoffdate' => 0,
-                'mode' => 0, // Equals PUBLICATION_MODE_UPLOAD!
+                'mode' => 0, // Equals PRIVATESTUDENTFOLDER_MODE_UPLOAD!
                 'importfrom' => -1,
                 'autoimport' => 1,
                 'obtainstudentapproval' => 1,
-                'groupapproval' => 0, // Equals PUBLICATION_APPROVAL_ALL!
+                'groupapproval' => 0, // Equals PRIVATESTUDENTFOLDER_APPROVAL_ALL!
                 'maxfiles' => 5,
                 'maxbytes' => 2,
                 'allowedfiletypes' => '',

@@ -1,8 +1,8 @@
-@mod @mod_publication
-Feature: Create publication instance
+@mod @mod_privatestudentfolder
+Feature: Create privatestudentfolder instance
 
   @javascript
-  Scenario: Create publication instance in course1
+  Scenario: Create privatestudentfolder instance in course1
     Given the following "users" exist:
         | username | firstname | lastname | email |
         | teacher1 | Teacher | 1 | teacher1@asd.com |

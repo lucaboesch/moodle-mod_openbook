@@ -1,4 +1,4 @@
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,23 +16,22 @@
 /**
  * Resets checked checkboxes after ZIP file was loaded!
  *
- * @module        mod_publication/filesform
- * @package
- * @author        Philipp Hager
- * @author        Hannes Laimer
- * @author        Andreas Windbichler
- * @copyright     2020 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @module        mod_privatestudentfolder/filesform
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * @module mod_publication/filesform
+ * @module mod_privatestudentfolder/filesform
  */
 define(['jquery', 'core/log'], function($, log) {
 
     /**
      * @constructor
-     * @alias module:mod_publication/modform
+     * @alias module:mod_privatestudentfolder/modform
      */
     var Filesform = function() {
         this.form = $('#fastg');
@@ -44,7 +43,7 @@ define(['jquery', 'core/log'], function($, log) {
     var instance = new Filesform();
 
     instance.initializer = function() {
-        log.info('Initialize filesform JS!', 'mod_publication');
+        log.info('Initialize filesform JS!', 'mod_privatestudentfolder');
         instance.form.on('submit', function() {
             if (instance.menuaction.val() === 'zipusers') {
                 setTimeout(function() {

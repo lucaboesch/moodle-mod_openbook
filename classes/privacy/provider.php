@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,13 @@
 /**
  * Privacy class for requesting user data.
  *
- * @package    mod_publication
- * @author     Philipp Hager
- * @copyright  2018 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace mod_publication\privacy;
+namespace mod_privatestudentfolder\privacy;
 
 use core_privacy\local\metadata\collection;
 use core_privacy\local\metadata\provider as metadataprovider;
@@ -39,29 +40,24 @@ use core_privacy\local\request\approved_userlist;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/publication/locallib.php');
+require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php');
 
 /**
  * Privacy class for requesting user data.
- *
- * @package    mod_publication
- * @author     Philipp Hager
- * @copyright  2018 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements metadataprovider, pluginprovider, preference_provider, core_userlist_provider {
     /**
-     * Provides meta data that is stored about a user with mod_publication
+     * Provides meta data that is stored about a user with mod_privatestudentfolder
      *
      * @param  collection $collection A collection of meta data items to be added to.
      * @return  collection Returns the collection of metadata.
      */
     public static function get_metadata(collection $collection): collection {
-        $publicationextduedates = [
+        $privatestudentfolderextduedates = [
                 'userid' => 'privacy:metadata:userid',
                 'extensionduedate' => 'privacy:metadata:extensionduedate',
         ];
-        $publicationfile = [
+        $privatestudentfolderfile = [
                 'userid' => 'privacy:metadata:userid',
                 'timecreated' => 'privacy:metadata:timecreated',
                 'fileid' => 'privacy:metadata:fileid',
@@ -72,21 +68,21 @@ class provider implements metadataprovider, pluginprovider, preference_provider,
                 'teacherapproval' => 'privacy:metadata:teacherapproval',
                 'studentapproval' => 'privacy:metadata:studentapproval',
         ];
-        $publicationgroupapproval = [
+        $privatestudentfoldergroupapproval = [
                 'fileid' => 'privacy:metadata:fileid',
                 'userid' => 'privacy:metadata:userid',
                 'approval' => 'privacy:metadata:approval',
                 'timemodified' => 'privacy:metadata:timemodified',
         ];
 
-        $collection->add_database_table('publication_extduedates', $publicationextduedates, 'privacy:metadata:extduedates');
-        $collection->add_database_table('publication_file', $publicationfile, 'privacy:metadata:files');
-        $collection->add_database_table('publication_groupapproval', $publicationgroupapproval, 'privacy:metadata:groupapproval');
+        $collection->add_database_table('privatestudentfolder_extduedates', $privatestudentfolderextduedates, 'privacy:metadata:extduedates');
+        $collection->add_database_table('privatestudentfolder_file', $privatestudentfolderfile, 'privacy:metadata:files');
+        $collection->add_database_table('privatestudentfolder_groupapproval', $privatestudentfoldergroupapproval, 'privacy:metadata:groupapproval');
 
-        $collection->add_user_preference('publication_perpage', 'privacy:metadata:publicationperpage');
+        $collection->add_user_preference('privatestudentfolder_perpage', 'privacy:metadata:privatestudentfolderperpage');
 
         // Link to subplugins.
-        $collection->add_subsystem_link('core_files', [], 'privacy:metadata:publicationfileexplanation');
+        $collection->add_subsystem_link('core_files', [], 'privacy:metadata:privatestudentfolderfileexplanation');
 
         return $collection;
     }
@@ -101,7 +97,7 @@ class provider implements metadataprovider, pluginprovider, preference_provider,
         global $DB;
 
         $params = [
-                'modulename' => 'publication',
+                'modulename' => 'privatestudentfolder',
                 'contextlevel' => CONTEXT_MODULE,
                 'userid' => $userid,
                 'guserid' => $userid,
@@ -128,16 +124,16 @@ class provider implements metadataprovider, pluginprovider, preference_provider,
          *
          * I know it's not the best design, but when implementing the teamsubmission-imports we had not much time to add another
          * field to reference group-ids.
-         * TODO: split {publication_file}.userid to a userid and a groupid field or rename it at least to itemid! */
+         * TODO: split {privatestudentfolder_file}.userid to a userid and a groupid field or rename it at least to itemid! */
         $sql = "
    SELECT DISTINCT ctx.id
      FROM {course_modules} cm
      JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
-     JOIN {publication} p ON cm.instance = p.id
+     JOIN {privatestudentfolder} p ON cm.instance = p.id
      JOIN {context} ctx ON cm.id = ctx.instanceid AND ctx.contextlevel = :contextlevel
-LEFT JOIN {publication_extduedates} ext ON p.id = ext.publication
-LEFT JOIN {publication_file} f ON p.id = f.publication
-LEFT JOIN {publication_groupapproval} ga ON f.id = ga.fileid
+LEFT JOIN {privatestudentfolder_extduedates} ext ON p.id = ext.privatestudentfolder
+LEFT JOIN {privatestudentfolder_file} f ON p.id = f.privatestudentfolder
+LEFT JOIN {privatestudentfolder_groupapproval} ga ON f.id = ga.fileid
 LEFT JOIN {assign} a ON p.importfrom = a.id
 LEFT JOIN {groups} g ON g.courseid = p.course
 LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
@@ -164,10 +160,10 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
         }
 
         $params = [
-                'modulename' => 'publication',
+                'modulename' => 'privatestudentfolder',
                 'contextid' => $context->id,
                 'contextlevel' => CONTEXT_MODULE,
-                'upload' => PUBLICATION_MODE_UPLOAD,
+                'upload' => PRIVATESTUDENTFOLDER_MODE_UPLOAD,
         ];
 
         // Get all who uploaded/have files imported!
@@ -176,20 +172,20 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
                   FROM {context} ctx
                   JOIN {course_modules} cm ON cm.id = ctx.instanceid
                   JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
-                  JOIN {publication} p ON p.id = cm.instance
-                  JOIN {publication_file} f ON p.id = f.publication
+                  JOIN {privatestudentfolder} p ON p.id = cm.instance
+                  JOIN {privatestudentfolder_file} f ON p.id = f.privatestudentfolder
                  WHERE ctx.id = :contextid AND ctx.contextlevel = :contextlevel AND p.mode = :upload";
         $userlist->add_from_sql('userid', $sql, $params);
 
         unset($params['upload']);
-        $params['import'] = PUBLICATION_MODE_IMPORT;
+        $params['import'] = PRIVATESTUDENTFOLDER_MODE_IMPORT;
         // Second get all imported file's users.
         $sql = "SELECT gm.userid
                   FROM {context} ctx
                   JOIN {course_modules} cm ON cm.id = ctx.instanceid
                   JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
-                  JOIN {publication} p ON p.id = cm.instance
-                  JOIN {publication_file} f ON p.id = f.publication
+                  JOIN {privatestudentfolder} p ON p.id = cm.instance
+                  JOIN {privatestudentfolder_file} f ON p.id = f.privatestudentfolder
              LEFT JOIN {assign} a ON p.importfrom = a.id
              LEFT JOIN {groups} g ON g.courseid = p.course AND f.userid = g.id
              LEFT JOIN {groups_members} gm ON g.id = gm.groupid
@@ -200,8 +196,8 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
                   FROM {context} ctx
                   JOIN {course_modules} cm ON cm.id = ctx.instanceid
                   JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
-                  JOIN {publication} p ON p.id = cm.instance
-                  JOIN {publication_file} f ON p.id = f.publication
+                  JOIN {privatestudentfolder} p ON p.id = cm.instance
+                  JOIN {privatestudentfolder_file} f ON p.id = f.privatestudentfolder
              LEFT JOIN {assign} a ON p.importfrom = a.id
                  WHERE ctx.id = :contextid AND ctx.contextlevel = :contextlevel AND p.mode = :import
                        AND (p.importfrom > 0 AND a.teamsubmission = 0)";
@@ -213,8 +209,8 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
                   FROM {context} ctx
                   JOIN {course_modules} cm ON cm.id = ctx.instanceid
                   JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
-                  JOIN {publication} p ON p.id = cm.instance
-                  JOIN {publication_extduedates} e ON p.id = e.publication
+                  JOIN {privatestudentfolder} p ON p.id = cm.instance
+                  JOIN {privatestudentfolder_extduedates} e ON p.id = e.privatestudentfolder
                  WHERE ctx.id = :contextid AND ctx.contextlevel = :contextlevel";
         $userlist->add_from_sql('userid', $sql, $params);
 
@@ -223,9 +219,9 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
                   FROM {context} ctx
                   JOIN {course_modules} cm ON cm.id = ctx.instanceid
                   JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
-                  JOIN {publication} p ON p.id = cm.instance
-                  JOIN {publication_file} f ON p.id = f.publication
-                  JOIN {publication_groupapproval} ga ON p.id = ga.fileid
+                  JOIN {privatestudentfolder} p ON p.id = cm.instance
+                  JOIN {privatestudentfolder_file} f ON p.id = f.privatestudentfolder
+                  JOIN {privatestudentfolder_groupapproval} ga ON p.id = ga.fileid
                  WHERE ctx.id = :contextid AND ctx.contextlevel = :contextlevel";
         $userlist->add_from_sql('userid', $sql, $params);
     }
@@ -244,12 +240,12 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
             // Apparently we can't trust anything that comes via the context.
             // Go go mega query to find out it we have an checkmark context that matches an existing checkmark.
             $sql = "SELECT p.id
-                    FROM {publication} p
+                    FROM {privatestudentfolder} p
                     JOIN {course_modules} cm ON p.id = cm.instance AND p.course = cm.course
                     JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
                     JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :contextmodule
                     WHERE ctx.id = :contextid";
-            $params = ['modulename' => 'publication', 'contextmodule' => CONTEXT_MODULE, 'contextid' => $context->id];
+            $params = ['modulename' => 'privatestudentfolder', 'contextmodule' => CONTEXT_MODULE, 'contextid' => $context->id];
             $id = $DB->get_field_sql($sql, $params);
             // If we have an id over zero then we can proceed.
             if ($id > 0) {
@@ -262,10 +258,10 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
 
                 list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'usr');
 
-                // Delete users' files, extended due dates and groupapprovals for this publication!
-                $DB->delete_records_select('publication_extduedates', "publication = :id AND userid ".$usersql,
+                // Delete users' files, extended due dates and groupapprovals for this privatestudentfolder!
+                $DB->delete_records_select('privatestudentfolder_extduedates', "privatestudentfolder = :id AND userid ".$usersql,
                         ['id' => $id] + $userparams);
-                $files = $DB->get_records_select('publication_file', "publication = :id AND userid ".$usersql,
+                $files = $DB->get_records_select('privatestudentfolder_file', "privatestudentfolder = :id AND userid ".$usersql,
                         ['id' => $id] + $userparams);
 
                 if ($files) {
@@ -275,9 +271,9 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
                         $file->delete();
                     }
                     list($filesql, $fileparams) = $DB->get_in_or_equal($fileids, SQL_PARAMS_NAMED, 'file');
-                    $DB->delete_records_select('publication_groupapproval', "(fileid $filesql) AND (userid ".$usersql.")",
+                    $DB->delete_records_select('privatestudentfolder_groupapproval', "(fileid $filesql) AND (userid ".$usersql.")",
                             $fileparams + $userparams);
-                    $DB->delete_records_list('publication_file', 'id', $fileids);
+                    $DB->delete_records_list('privatestudentfolder_file', 'id', $fileids);
                 }
 
             }
@@ -310,46 +306,46 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
                     cm.id AS cmid
                   FROM {context} c
                   JOIN {course_modules} cm ON cm.id = c.instanceid
-                  JOIN {publication} p ON p.id = cm.instance
+                  JOIN {privatestudentfolder} p ON p.id = cm.instance
                  WHERE c.id {$contextsql}";
 
-        // Keep a mapping of publicationid to contextid.
+        // Keep a mapping of privatestudentfolderid to contextid.
         $mappings = [];
 
-        $publications = $DB->get_records_sql($sql, $contextparams);
+        $privatestudentfolders = $DB->get_records_sql($sql, $contextparams);
 
         $user = $contextlist->get_user();
 
-        foreach ($publications as $publication) {
-            $context = \context_module::instance($publication->cmid);
-            $mappings[$publication->id] = $publication->contextid;
+        foreach ($privatestudentfolders as $privatestudentfolder) {
+            $context = \context_module::instance($privatestudentfolder->cmid);
+            $mappings[$privatestudentfolder->id] = $privatestudentfolder->contextid;
 
             // Check that the context is a module context.
             if ($context->contextlevel != CONTEXT_MODULE) {
                 continue;
             }
 
-            $publicationdata = helper::get_context_data($context, $user);
+            $privatestudentfolderdata = helper::get_context_data($context, $user);
             helper::export_context_files($context, $user);
 
-            $cm = get_coursemodule_from_instance('publication', $publication->id);
+            $cm = get_coursemodule_from_instance('privatestudentfolder', $privatestudentfolder->id);
 
             $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
-            $publication = new \publication($cm, $course, $context);
+            $privatestudentfolder = new \privatestudentfolder($cm, $course, $context);
 
-            writer::with_context($context)->export_data([], $publicationdata);
+            writer::with_context($context)->export_data([], $privatestudentfolderdata);
 
             /* We don't differentiate between roles, if we have data about the user, we give it freely ;) - no sensible
              * information here! */
 
             static::export_user_preferences($user->id);
-            static::export_extensions($context, $publication, $user);
-            static::export_files($context, $publication, $user, []);
+            static::export_extensions($context, $privatestudentfolder, $user);
+            static::export_files($context, $privatestudentfolder, $user, []);
         }
     }
 
     /**
-     * Stores the user preferences related to mod_publication.
+     * Stores the user preferences related to mod_privatestudentfolder.
      *
      * @param  int $userid The user ID that we want the preferences for.
      * @throws \dml_exception
@@ -365,17 +361,17 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
         $namelike = $DB->sql_like('name', ':name');
         $sql .= $namelike;
 
-        $params = ['userid' => $userid, 'name' => 'mod-publication-perpage-%'];
+        $params = ['userid' => $userid, 'name' => 'mod-privatestudentfolder-perpage-%'];
         $userprefs = $DB->get_records_sql($sql, $params);
         foreach ($userprefs as $userpref) {
-            writer::with_context($context)->export_user_preference('mod_publication', $userpref->name, $userpref->value,
-                    get_string('privacy:metadata:publicationperpage', 'mod_publication'));
+            writer::with_context($context)->export_user_preference('mod_privatestudentfolder', $userpref->name, $userpref->value,
+                    get_string('privacy:metadata:privatestudentfolderperpage', 'mod_privatestudentfolder'));
         }
-        $params['name'] = \mod_publication\local\allfilestable\base::get_table_uniqueid('%');
+        $params['name'] = \mod_privatestudentfolder\local\allfilestable\base::get_table_uniqueid('%');
         $userprefs = $DB->get_records_sql($sql, $params);
         foreach ($userprefs as $userpref) {
-            writer::with_context($context)->export_user_preference('mod_publication', $userpref->name, $userpref->value,
-                    get_string('privacy:metadata:publicationperpage', 'mod_publication'));
+            writer::with_context($context)->export_user_preference('mod_privatestudentfolder', $userpref->name, $userpref->value,
+                    get_string('privacy:metadata:privatestudentfolderperpage', 'mod_privatestudentfolder'));
         }
     }
 
@@ -383,15 +379,15 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
      * Export overrides for this assignment.
      *
      * @param  \context $context Context
-     * @param  \publication $pub The publication object.
+     * @param  \privatestudentfolder $pub The privatestudentfolder object.
      * @param  \stdClass $user The user object.
      * @throws \coding_exception
      */
-    public static function export_extensions(\context $context, \publication $pub, \stdClass $user) {
+    public static function export_extensions(\context $context, \privatestudentfolder $pub, \stdClass $user) {
         $ext = $pub->user_extensionduedate($user->id);
         // Overrides returns an array with data in it, but an override with actual data will have the assign ID set.
         if ($ext > 0) {
-            $data = (object)[get_string('privacy:extensionduedate', 'mod_publication') => transform::datetime($ext)];
+            $data = (object)[get_string('privacy:extensionduedate', 'mod_privatestudentfolder') => transform::datetime($ext)];
             writer::with_context($context)->export_data([], $data);
         }
     }
@@ -400,18 +396,18 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
      * Fetches all of the user's files and adds them to the export
      *
      * @param  \context_module $context
-     * @param  \publication $pub
+     * @param  \privatestudentfolder $pub
      * @param  \stdClass $user
      * @param  array $path Current directory path that we are exporting to.
      * @throws \dml_exception
      * @throws \coding_exception
      */
-    protected static function export_files(\context_module $context, \publication $pub, \stdClass $user, array $path) {
+    protected static function export_files(\context_module $context, \privatestudentfolder $pub, \stdClass $user, array $path) {
         global $DB;
 
         $groupimports = false;
         $emptygroup = false;
-        if (($pub->get_instance()->mode == PUBLICATION_MODE_IMPORT) && ($pub->get_instance()->importfrom > 0)) {
+        if (($pub->get_instance()->mode == PRIVATESTUDENTFOLDER_MODE_IMPORT) && ($pub->get_instance()->importfrom > 0)) {
             $assign = $DB->get_record('assign', ['id' => $pub->get_instance()->importfrom],
                     'name, teamsubmission, preventsubmissionnotingroup');
             $groupimports = $assign->teamsubmission;
@@ -426,35 +422,35 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
             if (!$emptygroup) {
                 $rs = $DB->get_recordset_sql("
                     SELECT f.*
-                      FROM {publication} p
-                      JOIN {publication_file} f ON p.id = f.publication
+                      FROM {privatestudentfolder} p
+                      JOIN {privatestudentfolder_file} f ON p.id = f.privatestudentfolder
                       JOIN {groups} g ON g.courseid = p.course
                       JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :userid AND f.userid = gm.groupid
-                     WHERE p.id = :publication", [
-                        'publication' => $pub->get_instance()->id,
+                     WHERE p.id = :privatestudentfolder", [
+                        'privatestudentfolder' => $pub->get_instance()->id,
                         'userid' => $user->id,
                 ]);
             } else {
-                $rs = $DB->get_recordset("publication_file", [
-                        'publication' => $pub->get_instance()->id,
+                $rs = $DB->get_recordset("privatestudentfolder_file", [
+                        'privatestudentfolder' => $pub->get_instance()->id,
                         'userid' => 0,
                 ]);
             }
         } else {
             // Imported and uploaded files are saved with user's ID!
             $rs = $DB->get_recordset_sql("SELECT f.*
-                  FROM {publication} p
-                  JOIN {publication_file} f ON p.id = f.publication
-                 WHERE p.id = :publication AND f.userid = :userid", [
-                    'publication' => $pub->get_instance()->id,
+                  FROM {privatestudentfolder} p
+                  JOIN {privatestudentfolder_file} f ON p.id = f.privatestudentfolder
+                 WHERE p.id = :privatestudentfolder AND f.userid = :userid", [
+                    'privatestudentfolder' => $pub->get_instance()->id,
                     'userid' => $user->id,
             ]);
         }
 
         foreach ($rs as $cur) {
-            $filepath = array_merge($path, [get_string('privacy:path:files', 'mod_publication'), $cur->filename]);
+            $filepath = array_merge($path, [get_string('privacy:path:files', 'mod_privatestudentfolder'), $cur->filename]);
             switch ($cur->type) {
-                case PUBLICATION_MODE_ONLINETEXT:
+                case PRIVATESTUDENTFOLDER_MODE_ONLINETEXT:
                     static::export_onlinetext($context, $cur, $filepath);
                     break;
                 default:
@@ -507,14 +503,14 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
                 'studentapproval' => transform::yesno($file->studentapproval),
         ];
         switch ($file->type) {
-            case PUBLICATION_MODE_IMPORT:
-                $export->type = get_string('privacy:type:import', 'publication');
+            case PRIVATESTUDENTFOLDER_MODE_IMPORT:
+                $export->type = get_string('privacy:type:import', 'privatestudentfolder');
                 break;
-            case PUBLICATION_MODE_UPLOAD:
-                $export->type = get_string('privacy:type:upload', 'publication');
+            case PRIVATESTUDENTFOLDER_MODE_UPLOAD:
+                $export->type = get_string('privacy:type:upload', 'privatestudentfolder');
                 break;
-            case PUBLICATION_MODE_ONLINETEXT:
-                $export->type = get_string('privacy:type:onlinetext', 'publication');
+            case PRIVATESTUDENTFOLDER_MODE_ONLINETEXT:
+                $export->type = get_string('privacy:type:onlinetext', 'privatestudentfolder');
                 break;
         }
 
@@ -547,7 +543,7 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
          * We won't use writer::with_context($context)->export_area_files() due to us only needing a subdirectory!
          */
         $resources = $fs->get_directory_files($context->id,
-                'mod_publication',
+                'mod_privatestudentfolder',
                 'attachment',
                 $fsfile->get_itemid(),
                 '/resources/',
@@ -556,7 +552,7 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
         if (count($resources) > 0) {
             foreach ($resources as $cur) {
                 writer::with_context($context)->export_custom_file(array_merge($path, [
-                        get_string('privacy:path:resources', 'mod_publication'),
+                        get_string('privacy:path:resources', 'mod_privatestudentfolder'),
                 ]), $cur->get_filename(), $cur->get_content());
             }
         }
@@ -566,22 +562,22 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
      * Fetches all of the user's group approvals and adds them to the export
      *
      * @param  \context $context
-     * @param  \publication $pub
+     * @param  \privatestudentfolder $pub
      * @param  \stdClass $user
      * @param  array $path Current directory path that we are exporting to.
      * @throws \dml_exception
      */
-    protected static function export_groupapprovals(\context $context, \publication $pub, \stdClass $user, array $path) {
+    protected static function export_groupapprovals(\context $context, \privatestudentfolder $pub, \stdClass $user, array $path) {
         global $DB;
 
         // Fetch all approvals!
         $rs = $DB->get_recordset_sql("SELECT ga.id, f.filename, ga.userid, ga.approval, ga.timecreated, ga.timemodified,
                                              f.userid AS groupid
-                                        FROM {publication_groupapproval} ga
-                                        JOIN {publication_file} f ON ga.fileid = f.id
-                                       WHERE ga.userid = :userid AND f.publication = :publication", [
+                                        FROM {privatestudentfolder_groupapproval} ga
+                                        JOIN {privatestudentfolder_file} f ON ga.fileid = f.id
+                                       WHERE ga.userid = :userid AND f.privatestudentfolder = :privatestudentfolder", [
                 'userid' => $user->id,
-                'publication' => $pub->get_instance()->id,
+                'privatestudentfolder' => $pub->get_instance()->id,
         ]);
 
         foreach ($rs as $cur) {
@@ -625,29 +621,29 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
             // Apparently we can't trust anything that comes via the context.
             // Go go mega query to find out it we have an assign context that matches an existing assignment.
             $sql = "SELECT p.id
-                    FROM {publication} p
+                    FROM {privatestudentfolder} p
                     JOIN {course_modules} cm ON p.id = cm.instance AND p.course = cm.course
                     JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
                     JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :contextmodule
                     WHERE ctx.id = :contextid";
-            $params = ['modulename' => 'publication', 'contextmodule' => CONTEXT_MODULE, 'contextid' => $context->id];
+            $params = ['modulename' => 'privatestudentfolder', 'contextmodule' => CONTEXT_MODULE, 'contextid' => $context->id];
             $id = $DB->get_field_sql($sql, $params);
             // If we have a count over zero then we can proceed.
             if ($id > 0) {
-                // Get all publication files and group approvals to delete them!
-                if ($files = $DB->get_records('publication_file', ['publication' => $id])) {
+                // Get all privatestudentfolder files and group approvals to delete them!
+                if ($files = $DB->get_records('privatestudentfolder_file', ['privatestudentfolder' => $id])) {
                     $fileids = array_keys($files);
 
                     // Go through all files and delete files and resources in filespace!
                     foreach ($files as $cur) {
-                        $fs->delete_area_files($context->id, 'mod_publication', 'attachment', $cur->userid);
+                        $fs->delete_area_files($context->id, 'mod_privatestudentfolder', 'attachment', $cur->userid);
                     }
 
-                    $DB->delete_records_list('publication_groupapproval', 'fileid', $fileids);
-                    $DB->delete_records_list('publication_file', 'id', $fileids);
+                    $DB->delete_records_list('privatestudentfolder_groupapproval', 'fileid', $fileids);
+                    $DB->delete_records_list('privatestudentfolder_file', 'id', $fileids);
                 }
 
-                $DB->delete_records('publication_extduedates', ['publication' => $id]);
+                $DB->delete_records('privatestudentfolder_extduedates', ['privatestudentfolder' => $id]);
             }
         }
     }
@@ -676,12 +672,12 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
         // Apparently we can't trust anything that comes via the context.
         // Go go mega query to find out it we have an assign context that matches an existing assignment.
         $sql = "SELECT ctx.id AS ctxid, p.*
-                    FROM {publication} p
+                    FROM {privatestudentfolder} p
                     JOIN {course_modules} cm ON p.id = cm.instance AND p.course = cm.course
                     JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
                     JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :contextmodule
                     WHERE ctx.id ".$ctxsql;
-        $params = ['modulename' => 'publication', 'contextmodule' => CONTEXT_MODULE];
+        $params = ['modulename' => 'privatestudentfolder', 'contextmodule' => CONTEXT_MODULE];
 
         if (!$records = $DB->get_records_sql($sql, $params + $ctxparams)) {
             return;
@@ -696,7 +692,7 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
 
             $teams = false;
             $emptygroup = false;
-            if ($pub->mode === PUBLICATION_MODE_IMPORT) {
+            if ($pub->mode === PRIVATESTUDENTFOLDER_MODE_IMPORT) {
                 $assign = $DB->get_record('assign', ['id' => $pub->importfrom]);
                 $teams = $assign->teamsubmission;
                 $usergroups = groups_get_user_groups($pub->course, $user->id);
@@ -704,15 +700,15 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
             }
 
             if ($emptygroup) {
-                $files = $DB->get_records('publication_file', ['publication' => $pub->id, 'userid' => 0]);
+                $files = $DB->get_records('privatestudentfolder_file', ['privatestudentfolder' => $pub->id, 'userid' => 0]);
             } else if (!$teams) {
-                $files = $DB->get_records('publication_file', ['publication' => $pub->id, 'userid' => $user->id]);
+                $files = $DB->get_records('privatestudentfolder_file', ['privatestudentfolder' => $pub->id, 'userid' => $user->id]);
             } else {
                 $files = [];
 
                 $usergroups = groups_get_all_groups($pub->course, $user->id);
                 foreach (array_keys($usergroups) as $grpid) {
-                    $files = $files + $DB->get_records('publication_file', ['publication' => $pub->id, 'userid' => $grpid]);
+                    $files = $files + $DB->get_records('privatestudentfolder_file', ['privatestudentfolder' => $pub->id, 'userid' => $grpid]);
                 }
             }
 
@@ -722,21 +718,21 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
                 // Go through all files and delete files and resources in filespace!
                 foreach ($files as $cur) {
                     if (!$teams) {
-                        $fs->delete_area_files($context->id, 'mod_publication', 'attachment', $cur->userid);
+                        $fs->delete_area_files($context->id, 'mod_privatestudentfolder', 'attachment', $cur->userid);
                     } else {
                         groups_remove_member($cur->userid, $user->id);
                     }
                 }
 
                 list($filesql, $fileparams) = $DB->get_in_or_equal($fileids, SQL_PARAMS_NAMED, 'file');
-                $DB->delete_records_select('publication_groupapproval', 'userid = :userid AND fileid '.$filesql,
+                $DB->delete_records_select('privatestudentfolder_groupapproval', 'userid = :userid AND fileid '.$filesql,
                         ['userid' => $user->id] + $fileparams);
                 if (!$teams) {
-                    $DB->delete_records_list('publication_file', 'id', $fileids);
+                    $DB->delete_records_list('privatestudentfolder_file', 'id', $fileids);
                 }
             }
 
-            $DB->delete_records('publication_extduedates', ['publication' => $pub->id, 'userid' => $user->id]);
+            $DB->delete_records('privatestudentfolder_extduedates', ['privatestudentfolder' => $pub->id, 'userid' => $user->id]);
         }
     }
 }

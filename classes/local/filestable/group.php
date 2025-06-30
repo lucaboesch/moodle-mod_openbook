@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,51 +17,49 @@
 /**
  * Contains class for files table listing files imported from one's group(s) (and options for approving them)
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_publication\local\filestable;
+namespace mod_privatestudentfolder\local\filestable;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Table showing my group files
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class group extends base {
     /** @var int $groupingid saves the team-assignments submission grouping id */
     protected $groupingid = 0;
 
-
-
     public function get_approval_status_for_file($file) {
         global $OUTPUT, $DB, $USER;
 
-        $pubfileid = $DB->get_field('publication_file', 'id', [
-            'publication' => $this->publication->get_instance()->id,
+        $pubfileid = $DB->get_field('privatestudentfolder_file', 'id', [
+            'privatestudentfolder' => $this->privatestudentfolder->get_instance()->id,
             'fileid' => $file->get_id(),
         ]);
         $templatecontext = new \stdClass;
         // Now add the specific data to the table!
-        $teacherapproval = $this->publication->teacher_approval($file);
-        list($studentapproval, $approvaldetails) = $this->publication->group_approval($pubfileid);
+        $teacherapproval = $this->privatestudentfolder->teacher_approval($file);
+        list($studentapproval, $approvaldetails) = $this->privatestudentfolder->group_approval($pubfileid);
 
-        $obtainteacherapproval = $this->publication->get_instance()->obtainteacherapproval;
-        $obtainstudentapproval = $this->publication->get_instance()->obtainstudentapproval;
+        $obtainteacherapproval = $this->privatestudentfolder->get_instance()->obtainteacherapproval;
+        $obtainstudentapproval = $this->privatestudentfolder->get_instance()->obtainstudentapproval;
 
         $studentapproved = false;
         $studentdenied = false;
         $studentpending = false;
         $hint = '';
-
-
 
         if ($obtainstudentapproval == 1) {
 
@@ -78,20 +76,20 @@ class group extends base {
                     $approvedstudents[] = fullname($cur);
                 }
             }
-            $rejected = get_string('rejected', 'publication') . ': ' . implode(', ', $rejectedstudents) .'. ';
-            $pending = get_string('pending', 'publication') . ': ' . implode(', ', $pendingstudents) .'. ';
-            $approved = get_string('approved', 'publication') . ': ' . implode(', ', $approvedstudents) .'. ';
+            $rejected = get_string('rejected', 'privatestudentfolder') . ': ' . implode(', ', $rejectedstudents) .'. ';
+            $pending = get_string('pending', 'privatestudentfolder') . ': ' . implode(', ', $pendingstudents) .'. ';
+            $approved = get_string('approved', 'privatestudentfolder') . ': ' . implode(', ', $approvedstudents) .'. ';
 
             if ($studentapproval == 1) {
                 $studentapproved = true;
-                if ($this->publication->get_instance()->groupapproval == PUBLICATION_APPROVAL_SINGLE) {
+                if ($this->privatestudentfolder->get_instance()->groupapproval == PRIVATESTUDENTFOLDER_APPROVAL_SINGLE) {
                     $hint = $approved;
                 } else {
-                    $hint = get_string('group_approved', 'publication');
+                    $hint = get_string('group_approved', 'privatestudentfolder');
                 }
             } else if ($studentapproval == 2 || !empty($rejectedstudents)) {
                 $studentdenied = true;
-               // $hint = get_string('student_rejected', 'publication');
+               // $hint = get_string('student_rejected', 'privatestudentfolder');
                 $hint = $rejected;
             } else {
                 $hint = $pending;
@@ -109,7 +107,7 @@ class group extends base {
 
             if (!$currentstudentfound || $currentstudentpending) {
                 if (empty($rejectedstudents)) {
-                    if ($this->publication->is_approval_open()) {
+                    if ($this->privatestudentfolder->is_approval_open()) {
                         $this->changepossible = true;
                         return \html_writer::select($this->options, 'studentapproval[' . $file->get_id() . ']', '0');
                     }
@@ -120,7 +118,7 @@ class group extends base {
 
         } else {
             $studentapproved = true;
-            $hint = get_string('student_approved_automatically', 'publication');
+            $hint = get_string('student_approved_automatically', 'privatestudentfolder');
         }
 
         $hint .= ' ';
@@ -132,17 +130,17 @@ class group extends base {
         if ($obtainteacherapproval == 1) {
             if ($teacherapproval == 1) {
                 $teacherapproved = true;
-                $hint .= get_string('teacher_approved', 'publication');
+                $hint .= get_string('teacher_approved', 'privatestudentfolder');
             } else if ($teacherapproval == 2) {
                 $teacherdenied = true;
-                $hint .= get_string('teacher_rejected', 'publication');
+                $hint .= get_string('teacher_rejected', 'privatestudentfolder');
             } else {
                 $teacherpending = true;
-                $hint .= get_string('teacher_pending', 'publication');
+                $hint .= get_string('teacher_pending', 'privatestudentfolder');
             }
         } else {
             $teacherapproved = true;
-            $hint .= get_string('teacher_approved_automatically', 'publication');
+            $hint .= get_string('teacher_approved_automatically', 'privatestudentfolder');
         }
 
 
@@ -154,7 +152,7 @@ class group extends base {
             $templatecontext->icon = $this->questionmark;
         }
         $templatecontext->hint = $hint;
-        return $OUTPUT->render_from_template('mod_publication/approval_icon', $templatecontext);
+        return $OUTPUT->render_from_template('mod_privatestudentfolder/approval_icon', $templatecontext);
     }
 
     /**
@@ -172,14 +170,14 @@ class group extends base {
         $templatecontext = new \stdClass;
 
         // Now add the specific data to the table!
-        $teacherapproval = $this->publication->teacher_approval($file);
-        if ($teacherapproval && $this->publication->get_instance()->obtainstudentapproval) {
-            $pubfileid = $DB->get_field('publication_file', 'id', [
-                    'publication' => $this->publication->get_instance()->id,
+        $teacherapproval = $this->privatestudentfolder->teacher_approval($file);
+        if ($teacherapproval && $this->privatestudentfolder->get_instance()->obtainstudentapproval) {
+            $pubfileid = $DB->get_field('privatestudentfolder_file', 'id', [
+                    'privatestudentfolder' => $this->privatestudentfolder->get_instance()->id,
                     'fileid' => $file->get_id(),
             ]);
-            list($studentapproval, $approvaldetails) = $this->publication->group_approval($pubfileid);
-            if ($this->publication->is_open()
+            list($studentapproval, $approvaldetails) = $this->privatestudentfolder->group_approval($pubfileid);
+            if ($this->privatestudentfolder->is_open()
                     && (!key_exists($USER->id, $approvaldetails) || ($approvaldetails[$USER->id]->approval === null))) {
                 $this->changepossible = true;
                 if (!key_exists($USER->id, $approvaldetails)) {
@@ -192,10 +190,10 @@ class group extends base {
             } else {
                 if ($studentapproval === null) {
                     $templatecontext->icon = $this->questionmark;
-                    $templatecontext->hint = get_string('student_pending', 'publication');
+                    $templatecontext->hint = get_string('student_pending', 'privatestudentfolder');
                 } else if ($studentapproval) {
                     $templatecontext->icon = $this->valid;
-                    $templatecontext->hint = get_string('student_approved', 'publication');
+                    $templatecontext->hint = get_string('student_approved', 'privatestudentfolder');
                 } else {
                     $rejected = [];
                     $pending = [];
@@ -207,14 +205,14 @@ class group extends base {
                         }
                     }
                     $templatecontext->icon = $this->questionmark;
-                    $templatecontext->hint = get_string('student_pending', 'publication');
+                    $templatecontext->hint = get_string('student_pending', 'privatestudentfolder');
                     if (count($rejected) > 0) {
                         $templatecontext->icon = $this->invalid;
-                        $rejected = get_string('rejected', 'publication') . ': ' . implode(', ', $rejected);
-                        $templatecontext->hint = get_string('student_rejected', 'publication') . $rejected;
-                    } else if ($this->publication->get_instance()->groupapproval == PUBLICATION_APPROVAL_ALL) {
+                        $rejected = get_string('rejected', 'privatestudentfolder') . ': ' . implode(', ', $rejected);
+                        $templatecontext->hint = get_string('student_rejected', 'privatestudentfolder') . $rejected;
+                    } else if ($this->privatestudentfolder->get_instance()->groupapproval == PRIVATESTUDENTFOLDER_APPROVAL_ALL) {
                         if (count($pending) > 0) {
-                            $rejected = get_string('pending', 'publication') . ': ' . implode(', ', $pending);
+                            $rejected = get_string('pending', 'privatestudentfolder') . ': ' . implode(', ', $pending);
                             $templatecontext->hint .= $rejected;
                         }
                     } else {
@@ -223,7 +221,7 @@ class group extends base {
                     } else {
                         $rejected = '';
                     }
-                    //$templatecontext->hint = get_string('student_rejected', 'publication')  . $rejected;
+                    //$templatecontext->hint = get_string('student_rejected', 'privatestudentfolder')  . $rejected;
 
                 }
             }
@@ -231,19 +229,19 @@ class group extends base {
             switch ($teacherapproval) {
                 case 1:
                     $templatecontext->icon = $this->valid;
-                    $templatecontext->hint = get_string('teacher_approved', 'publication');
+                    $templatecontext->hint = get_string('teacher_approved', 'privatestudentfolder');
                     break;
                 case 3:
                     $templatecontext->icon = $this->questionmark;
-                    $templatecontext->hint = get_string('teacher_pending', 'publication');
+                    $templatecontext->hint = get_string('teacher_pending', 'privatestudentfolder');
                     break;
                 default:
                     $templatecontext->icon = $this->questionmark;
-                    $templatecontext->hint = get_string('student_pending', 'publication');
+                    $templatecontext->hint = get_string('student_pending', 'privatestudentfolder');
             }
         }
         if ($templatecontext) {
-            $data[] = $OUTPUT->render_from_template('mod_publication/approval_icon', $templatecontext);
+            $data[] = $OUTPUT->render_from_template('mod_privatestudentfolder/approval_icon', $templatecontext);
         }
 
         return $data;
@@ -261,15 +259,15 @@ class group extends base {
             return $this->files;
         }
 
-        $contextid = $this->publication->get_context()->id;
+        $contextid = $this->privatestudentfolder->get_context()->id;
         $filearea = 'attachment';
 
         /* OK, assign is a little bit inconsistent with implementation and doc-comments, it states it will return false for user's
          * group if there's no group or multiple groups, instead it uses just the first group it finds for the user!
          * So if assign doesn't behave that exact, we just use all users groups (except there's a groupingid set for submission! */
-        $assignid = $this->publication->get_instance()->importfrom;
+        $assignid = $this->privatestudentfolder->get_instance()->importfrom;
         $this->groupingid = $DB->get_field('assign', 'teamsubmissiongroupingid', ['id' => $assignid]);
-        $groups = groups_get_all_groups($this->publication->get_instance()->course, $USER->id, $this->groupingid);
+        $groups = groups_get_all_groups($this->privatestudentfolder->get_instance()->course, $USER->id, $this->groupingid);
         if (empty($groups)) {
             // Users without group membership get assigned group id 0!
             $groups = [];
@@ -280,7 +278,7 @@ class group extends base {
         foreach ($groups as $group) {
             $itemid = $group->id;
 
-            $files = $this->fs->get_area_files($contextid, 'mod_publication', $filearea, $itemid, 'timemodified', false);
+            $files = $this->fs->get_area_files($contextid, 'mod_privatestudentfolder', $filearea, $itemid, 'timemodified', false);
 
             foreach ($files as $file) {
                 if ($file->get_filepath() == '/resources/') {

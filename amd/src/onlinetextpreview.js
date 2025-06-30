@@ -1,4 +1,4 @@
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,22 +16,23 @@
 /**
  * JS showing detailed infos about user's approval status for group approvals in a modal window
  *
- * @module        mod_publication/onlinetextpreview
- * @package
- * @author        Philipp Hager
- * @copyright     2020 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @module        mod_privatestudentfolder/onlinetextpreview
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * @module mod_publication/onlinetextpreview
+ * @module mod_privatestudentfolder/onlinetextpreview
  */
 define(['jquery', 'core/modal_factory', 'core/str', 'core/ajax', 'core/log', 'core/notification'], function($,
         ModalFactory, str, ajax, log, notification) {
 
     /**
      * @constructor
-     * @alias module:mod_publication/Onlinetextpreview
+     * @alias module:mod_privatestudentfolder/Onlinetextpreview
      */
     var Onlinetextpreview = function() {
         this.cmid = '';
@@ -40,7 +41,7 @@ define(['jquery', 'core/modal_factory', 'core/str', 'core/ajax', 'core/log', 'co
     var instance = new Onlinetextpreview();
 
     /**
-     * Initialises the JavaScript for publication's group approval status tooltips
+     * Initialises the JavaScript for privatestudentfolder's group approval status tooltips
      *
      *
      * @param {Object} config The configuration
@@ -48,7 +49,7 @@ define(['jquery', 'core/modal_factory', 'core/str', 'core/ajax', 'core/log', 'co
     instance.initializer = function(config) {
         instance.cmid = config.cmid;
 
-        log.info('Initialize onlinetextpreview JS!', 'mod_publication');
+        log.info('Initialize onlinetextpreview JS!', 'mod_privatestudentfolder');
 
         // Prepare modal object!
         if (!instance.modal) {
@@ -63,11 +64,11 @@ define(['jquery', 'core/modal_factory', 'core/str', 'core/ajax', 'core/log', 'co
             {key: 'onlinetextfilename', component: 'assignsubmission_onlinetext'},
             {key: 'from', component: 'core'}
         ]).done(function(s) {
-            log.info('Done loading strings...', 'mod_publication');
+            log.info('Done loading strings...', 'mod_privatestudentfolder');
             instance.modalpromise.done(function(modal) {
-                log.info('Done preparing modal', 'mod_publication');
+                log.info('Done preparing modal', 'mod_privatestudentfolder');
                 instance.modal = modal;
-                $('.path-mod-publication table.publications .onlinetextpreview *').click(function(e) {
+                $('.path-mod-privatestudentfolder table.privatestudentfolders .onlinetextpreview *').click(function(e) {
                     e.stopPropagation();
                     e.preventDefault();
                     var element = $(e.target);
@@ -83,7 +84,7 @@ define(['jquery', 'core/modal_factory', 'core/str', 'core/ajax', 'core/log', 'co
 
                     ajax.call([
                         {
-                            methodname: 'mod_publication_get_onlinetextpreview',
+                            methodname: 'mod_privatestudentfolder_get_onlinetextpreview',
                             args: {itemid: itemid, cmid: instance.cmid},
                             done: function(data) {
                                 var itemname = '';
@@ -102,7 +103,7 @@ define(['jquery', 'core/modal_factory', 'core/str', 'core/ajax', 'core/log', 'co
                 });
             });
         }).fail(function(ex) {
-            log.error('Error getting strings: ' + ex, 'mod_publication');
+            log.error('Error getting strings: ' + ex, 'mod_privatestudentfolder');
         });
     };
 

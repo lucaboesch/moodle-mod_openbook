@@ -17,15 +17,16 @@
 /**
  * Contains the class for fetching the important dates in mod_assign for a given module instance and a user.
  *
- * @package   mod_publication
- * @copyright 2022 Simeon Naydenov (moniNaydenov@gmail.com)
- * @copyright 2022 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 declare(strict_types=1);
 
-namespace mod_publication;
+namespace mod_privatestudentfolder;
 
 use core\activity_dates;
 
@@ -44,18 +45,18 @@ class dates extends activity_dates {
      */
     protected function get_dates(): array {
         global $CFG, $USER;
-        require_once($CFG->dirroot . '/mod/publication/locallib.php');
+        require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php');
 
         $course = get_course($this->cm->course);
         $context = \context_module::instance($this->cm->id);
 
-        $publication = new \publication($this->cm, $course, $context);
-        $instance = $publication->get_instance();
+        $privatestudentfolder = new \privatestudentfolder($this->cm, $course, $context);
+        $instance = $privatestudentfolder->get_instance();
 
-        $textsuffix = ($instance->mode == PUBLICATION_MODE_IMPORT) ? "_import" : "_upload";
+        $textsuffix = ($instance->mode == PRIVATESTUDENTFOLDER_MODE_IMPORT) ? "_import" : "_upload";
         $dates = [];
 
-        $override = $publication->override_get_currentuserorgroup();
+        $override = $privatestudentfolder->override_get_currentuserorgroup();
 
         if ($override && $override->submissionoverride) {
             $instance->duedate = $override->duedate;
@@ -63,22 +64,22 @@ class dates extends activity_dates {
         }
         if ($instance->allowsubmissionsfromdate) {
             $dates[] = [
-                'label' => get_string('allowsubmissionsfromdate' . $textsuffix, 'publication') . ':',
+                'label' => get_string('allowsubmissionsfromdate' . $textsuffix, 'privatestudentfolder') . ':',
                 'timestamp' => $instance->allowsubmissionsfromdate,
             ];
         }
         if ($instance->duedate) {
             $dates[] = [
-                'label' => get_string('duedate' . $textsuffix, 'publication') . ':',
+                'label' => get_string('duedate' . $textsuffix, 'privatestudentfolder') . ':',
                 'timestamp' => $instance->duedate,
             ];
         }
 
-        $extensionduedate = $publication->user_extensionduedate($USER->id);
+        $extensionduedate = $privatestudentfolder->user_extensionduedate($USER->id);
 
         if ($extensionduedate) {
             $dates[] = [
-                'label' => get_string('extensionto', 'publication') . ':',
+                'label' => get_string('extensionto', 'privatestudentfolder') . ':',
                 'timestamp' => $extensionduedate,
             ];
         }
@@ -90,13 +91,13 @@ class dates extends activity_dates {
             }
             if ($instance->approvalfromdate) {
                 $dates[] = [
-                    'label' => get_string('approvalfromdate', 'publication') . ':',
+                    'label' => get_string('approvalfromdate', 'privatestudentfolder') . ':',
                     'timestamp' => $instance->approvalfromdate,
                 ];
             }
             if ($instance->approvaltodate) {
                 $dates[] = [
-                    'label' => get_string('approvaltodate', 'publication') . ':',
+                    'label' => get_string('approvaltodate', 'privatestudentfolder') . ':',
                     'timestamp' => $instance->approvaltodate,
                 ];
             }

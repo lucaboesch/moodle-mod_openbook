@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,31 +15,34 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit Tests for mod/publication's privacy providers!
+ * Unit Tests for mod/privatestudentfolder's privacy providers!
  *
- * @package    mod_publication
- * @copyright  2019 Academic Moodle Cooperation https://www.academic-moodle-cooperation.org/
- * @author Philipp Hager <philipp.hager@tuwien.ac.at> strongly based on mod_assign's privacy unit tests!
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_publication\local\tests;
+namespace mod_privatestudentfolder\local\tests;
 
-use mod_publication\privacy\provider;
+use mod_privatestudentfolder\privacy\provider;
 use context_module;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/mod/publication/locallib.php');
+require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php');
 
 /**
- * Unit Tests for mod/publication's privacy providers! TODO: finish these unit tests here!
+ * Unit Tests for mod/privatestudentfolder's privacy providers! TODO: finish these unit tests here!
  *
- * @copyright  2019 Academic Moodle Cooperation https://www.academic-moodle-cooperation.org/
- * @author Philipp Hager <philipp.hager@tuwien.ac.at> strongly based on mod_assign's privacy unit tests!
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class privacy_testcase extends base {
     /** @var stdClass */
@@ -62,23 +65,23 @@ class privacy_testcase extends base {
     private $user3;
     /** @var stdClass */
     private $teacher1;
-    /** @var publication */
+    /** @var privatestudentfolder */
     private $pubupload;
-    /** @var publication */
+    /** @var privatestudentfolder */
     private $pubupload2;
     /** @var \testable_assign */
     private $assign;
     /** @var \testable_assign */
     private $assign2;
-    /** @var publication */
+    /** @var privatestudentfolder */
     private $pubimport;
     /** @var \testable_assign */
     private $teamassign;
     /** @var \testable_assign */
     private $teamassign2;
-    /** @var publication */
+    /** @var privatestudentfolder */
     private $pubteamimport;
-    /** @var publication */
+    /** @var privatestudentfolder */
     private $pubteamimport2;
 
     /**
@@ -123,7 +126,7 @@ class privacy_testcase extends base {
         self::getDataGenerator()->create_group_member((object)['userid' => $this->user2->id, 'groupid' => $this->group12->id]);
         self::getDataGenerator()->create_group_member((object)['userid' => $this->user2->id, 'groupid' => $this->group22->id]);
 
-        // Create multiple publication instances.
+        // Create multiple privatestudentfolder instances.
         // Publication with uploads.
         $this->pubupload = $this->create_instance([
                 'name' => 'Pub Upload 1',
@@ -144,7 +147,7 @@ class privacy_testcase extends base {
         $this->pubimport = $this->create_instance([
                 'name' => 'Pub Import 1',
                 'course' => $this->course1,
-                'mode' => PUBLICATION_MODE_IMPORT,
+                'mode' => PRIVATESTUDENTFOLDER_MODE_IMPORT,
                 'importfrom' => $this->assign->get_instance()->id,
         ]);
 
@@ -164,7 +167,7 @@ class privacy_testcase extends base {
         $this->pubteamimport = $this->create_instance([
                 'name' => 'Teamimport 1',
                 'course' => $this->course1,
-                'mode' => PUBLICATION_MODE_IMPORT,
+                'mode' => PRIVATESTUDENTFOLDER_MODE_IMPORT,
                 'importfrom' => $this->teamassign->get_instance()->id,
                 'requireallteammemberssubmit' => false,
                 'preventsubmissionnotingroup' => false,
@@ -172,7 +175,7 @@ class privacy_testcase extends base {
         $this->pubteamimport2 = $this->create_instance([
                 'name' => 'Teamimport 2',
                 'course' => $this->course2,
-                'mode' => PUBLICATION_MODE_IMPORT,
+                'mode' => PRIVATESTUDENTFOLDER_MODE_IMPORT,
                 'importfrom' => $this->teamassign2->get_instance()->id,
                 'requireallteammemberssubmit' => false,
                 'preventsubmissionnotingroup' => false,
@@ -199,10 +202,10 @@ class privacy_testcase extends base {
         $this->add_submission($this->user1, $this->teamassign, 'Textsubmission in teamassign1 by user1!', true);
         $this->create_upload($this->user1->id, $this->pubupload->get_instance()->id, 'upload-no-1.txt',
                 'THis is the first upload here!');
-        // User 3 also submits to general assign & uploads in general publication!
+        // User 3 also submits to general assign & uploads in general privatestudentfolder!
         $this->add_submission($this->user3, $this->assign2, 'Textsubmission for assign2 by user3!', true);
         $this->create_upload($this->user3->id, $this->pubupload2->get_instance()->id, 'upload-no-2.txt',
-                'This is another upload in another publication');
+                'This is another upload in another privatestudentfolder');
 
         // Then we check, if user 1 appears only in pubimport1, pubupload1 and pubteamimport1!
         $contextlist = provider::get_contexts_for_userid($this->user1->id);
@@ -240,36 +243,36 @@ class privacy_testcase extends base {
         $this->create_upload($this->user1->id, $this->pubupload->get_instance()->id, 'upload-no-1.txt',
                 'This is the first upload here!');
 
-        $uploadcm = get_coursemodule_from_instance('publication', $this->pubupload->get_instance()->id);
+        $uploadcm = get_coursemodule_from_instance('privatestudentfolder', $this->pubupload->get_instance()->id);
         $uploadctx = context_module::instance($uploadcm->id);
-        $userlist = new \core_privacy\local\request\userlist($uploadctx, 'publication');
+        $userlist = new \core_privacy\local\request\userlist($uploadctx, 'privatestudentfolder');
         provider::get_users_in_context($userlist);
         $userids = $userlist->get_userids();
         self::assertTrue(in_array($this->user1->id, $userids));
         self::assertFalse(in_array($this->user2->id, $userids));
         self::assertFalse(in_array($this->user3->id, $userids));
 
-        $upload2cm = get_coursemodule_from_instance('publication', $this->pubupload2->get_instance()->id);
+        $upload2cm = get_coursemodule_from_instance('privatestudentfolder', $this->pubupload2->get_instance()->id);
         $upload2ctx = context_module::instance($upload2cm->id);
-        $userlist2 = new \core_privacy\local\request\userlist($upload2ctx, 'publication');
+        $userlist2 = new \core_privacy\local\request\userlist($upload2ctx, 'privatestudentfolder');
         provider::get_users_in_context($userlist2);
         $userids2 = $userlist2->get_userids();
         self::assertFalse(in_array($this->user1->id, $userids2));
         self::assertFalse(in_array($this->user2->id, $userids2));
         self::assertFalse(in_array($this->user3->id, $userids2));
 
-        $importcm = get_coursemodule_from_instance('publication', $this->pubimport->get_instance()->id);
+        $importcm = get_coursemodule_from_instance('privatestudentfolder', $this->pubimport->get_instance()->id);
         $importctx = context_module::instance($importcm->id);
-        $importuserlist = new \core_privacy\local\request\userlist($importctx, 'publication');
+        $importuserlist = new \core_privacy\local\request\userlist($importctx, 'privatestudentfolder');
         provider::get_users_in_context($importuserlist);
         $importuserids = $importuserlist->get_userids();
         self::assertTrue(in_array($this->user1->id, $importuserids));
         self::assertFalse(in_array($this->user2->id, $importuserids));
         self::assertFalse(in_array($this->user3->id, $importuserids));
 
-        $teamcm = get_coursemodule_from_instance('publication', $this->pubteamimport->get_instance()->id);
+        $teamcm = get_coursemodule_from_instance('privatestudentfolder', $this->pubteamimport->get_instance()->id);
         $teamctx = context_module::instance($teamcm->id);
-        $teamuserlist = new \core_privacy\local\request\userlist($teamctx, 'publication');
+        $teamuserlist = new \core_privacy\local\request\userlist($teamctx, 'privatestudentfolder');
         provider::get_users_in_context($teamuserlist);
         $teamuserids = $teamuserlist->get_userids();
         self::assertTrue(in_array($this->user1->id, $teamuserids));
@@ -340,35 +343,35 @@ class privacy_testcase extends base {
                 'This is the second upload here!');
 
         // Test for the data to be in place!
-        self::assertEquals(2, $DB->count_records('publication_file', ['publication' => $this->pubimport->get_instance()->id]));
-        self::assertEquals(2, $DB->count_records('publication_file', ['publication' => $this->pubteamimport->get_instance()->id]));
-        self::assertEquals(2, $DB->count_records('publication_file', ['publication' => $this->pubupload->get_instance()->id]));
+        self::assertEquals(2, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubimport->get_instance()->id]));
+        self::assertEquals(2, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubteamimport->get_instance()->id]));
+        self::assertEquals(2, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubupload->get_instance()->id]));
 
-        $userlist = new \core_privacy\local\request\approved_userlist($this->pubimport->get_context(), 'publication',
+        $userlist = new \core_privacy\local\request\approved_userlist($this->pubimport->get_context(), 'privatestudentfolder',
                 [$this->user1->id]);
         provider::delete_data_for_users($userlist);
-        self::assertEquals(1, $DB->count_records('publication_file', ['publication' => $this->pubimport->get_instance()->id]));
-        self::assertEquals(2, $DB->count_records('publication_file', ['publication' => $this->pubteamimport->get_instance()->id]));
-        self::assertEquals(2, $DB->count_records('publication_file', ['publication' => $this->pubupload->get_instance()->id]));
-        $userlist = new \core_privacy\local\request\approved_userlist($this->pubupload->get_context(), 'publication',
+        self::assertEquals(1, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubimport->get_instance()->id]));
+        self::assertEquals(2, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubteamimport->get_instance()->id]));
+        self::assertEquals(2, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubupload->get_instance()->id]));
+        $userlist = new \core_privacy\local\request\approved_userlist($this->pubupload->get_context(), 'privatestudentfolder',
                 [$this->user1->id]);
         provider::delete_data_for_users($userlist);
-        self::assertEquals(1, $DB->count_records('publication_file', ['publication' => $this->pubimport->get_instance()->id]));
-        self::assertEquals(2, $DB->count_records('publication_file', ['publication' => $this->pubteamimport->get_instance()->id]));
-        self::assertEquals(1, $DB->count_records('publication_file', ['publication' => $this->pubupload->get_instance()->id]));
+        self::assertEquals(1, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubimport->get_instance()->id]));
+        self::assertEquals(2, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubteamimport->get_instance()->id]));
+        self::assertEquals(1, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubupload->get_instance()->id]));
 
-        $userlist = new \core_privacy\local\request\approved_userlist($this->pubteamimport->get_context(), 'publication',
+        $userlist = new \core_privacy\local\request\approved_userlist($this->pubteamimport->get_context(), 'privatestudentfolder',
                 [$this->user1->id, $this->user2->id, $this->user3->id]);
         provider::delete_data_for_users($userlist);
-        $userlist = new \core_privacy\local\request\approved_userlist($this->pubupload->get_context(), 'publication',
+        $userlist = new \core_privacy\local\request\approved_userlist($this->pubupload->get_context(), 'privatestudentfolder',
                 [$this->user1->id, $this->user2->id, $this->user3->id]);
         provider::delete_data_for_users($userlist);
-        $userlist = new \core_privacy\local\request\approved_userlist($this->pubimport->get_context(), 'publication',
+        $userlist = new \core_privacy\local\request\approved_userlist($this->pubimport->get_context(), 'privatestudentfolder',
                 [$this->user1->id, $this->user2->id, $this->user3->id]);
         provider::delete_data_for_users($userlist);
 
-        self::assertEquals(0, $DB->count_records('publication_file', ['publication' => $this->pubimport->get_instance()->id]));
-        self::assertEquals(2, $DB->count_records('publication_file', ['publication' => $this->pubteamimport->get_instance()->id]));
-        self::assertEquals(0, $DB->count_records('publication_file', ['publication' => $this->pubupload->get_instance()->id]));
+        self::assertEquals(0, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubimport->get_instance()->id]));
+        self::assertEquals(2, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubteamimport->get_instance()->id]));
+        self::assertEquals(0, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubupload->get_instance()->id]));
     }
 }

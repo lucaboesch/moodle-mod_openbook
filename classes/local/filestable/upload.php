@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,22 +17,24 @@
 /**
  * Contains class for files table listing files uploaded by oneself (and options for approving them)
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_publication\local\filestable;
+namespace mod_privatestudentfolder\local\filestable;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Table showing my uploaded files
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class upload extends base {
@@ -49,36 +51,36 @@ class upload extends base {
 
         $templatecontext = new \stdClass;
         // Now add the specific data to the table!
-        $teacherapproval = $this->publication->teacher_approval($file);
-        if ($this->publication->get_instance()->obtainteacherapproval) {
+        $teacherapproval = $this->privatestudentfolder->teacher_approval($file);
+        if ($this->privatestudentfolder->get_instance()->obtainteacherapproval) {
             // Teacher has to approve: show all status.
             if (is_null($teacherapproval) || $teacherapproval == 0) {
                 $templatecontext->icon = $this->questionmark;
-                $templatecontext->hint = get_string('hidden', 'publication') . ' (' . get_string('teacher_pending', 'publication') . ')';
+                $templatecontext->hint = get_string('hidden', 'privatestudentfolder') . ' (' . get_string('teacher_pending', 'privatestudentfolder') . ')';
             } else if ($teacherapproval == 1) {
                 $templatecontext->icon = $this->valid;
-                $templatecontext->hint = get_string('visible', 'publication');
+                $templatecontext->hint = get_string('visible', 'privatestudentfolder');
             } else if ($teacherapproval == 3) {
                 $templatecontext->icon = $this->questionmark;
-                $templatecontext->hint = get_string('hidden', 'publication') . ' (' . get_string('teacher_pending', 'publication') . ')';
+                $templatecontext->hint = get_string('hidden', 'privatestudentfolder') . ' (' . get_string('teacher_pending', 'privatestudentfolder') . ')';
             } else {
                 $templatecontext->icon = $this->invalid;
-                $templatecontext->hint = get_string('hidden', 'publication') . ' (' . get_string('teacher_rejected', 'publication') . ')';
+                $templatecontext->hint = get_string('hidden', 'privatestudentfolder') . ' (' . get_string('teacher_rejected', 'privatestudentfolder') . ')';
             }
         } else {
             // Teacher doenst have to approve: only show when rejected.
             if (is_null($teacherapproval) || $teacherapproval == 0) {
                 $templatecontext->icon = $this->valid;
-                $templatecontext->hint = get_string('visible', 'publication');
+                $templatecontext->hint = get_string('visible', 'privatestudentfolder');
             } else if ($teacherapproval == 1) {
                 $templatecontext->icon = $this->valid;
-                $templatecontext->hint = get_string('visible', 'publication');
+                $templatecontext->hint = get_string('visible', 'privatestudentfolder');
             } else {
                 $templatecontext->icon = $this->invalid;
-                $templatecontext->hint = get_string('hidden', 'publication') . ' (' . get_string('teacher_rejected', 'publication') . ')';
+                $templatecontext->hint = get_string('hidden', 'privatestudentfolder') . ' (' . get_string('teacher_rejected', 'privatestudentfolder') . ')';
             }
         }
-        $data[] = $OUTPUT->render_from_template('mod_publication/approval_icon', $templatecontext);
+        $data[] = $OUTPUT->render_from_template('mod_privatestudentfolder/approval_icon', $templatecontext);
 
         return $data;
     }

@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,13 +17,14 @@
 /**
  * Base class with common logic for some unit tests.
  *
- * @package   mod_publication
- * @author    Philipp Hager
- * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_publication\local\tests;
+namespace mod_privatestudentfolder\local\tests;
 
 use advanced_testcase;
 use stdClass;
@@ -37,15 +38,15 @@ if (!defined('MOODLE_INTERNAL')) {
 
 // Make sure the code being tested is accessible.
 global $CFG;
-require_once($CFG->dirroot . '/mod/publication/locallib.php'); // Include the code to test!
+require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php'); // Include the code to test!
 require_once($CFG->dirroot . '/mod/assign/tests/generator.php'); // Include assign's generator helper trait!
 
 /**
  * This base class contains common logic for tests.
  *
- * @package   mod_publication
+ * @package   mod_privatestudentfolder
  * @author    Philipp Hager
- * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright 2025 University of Geneva {@link http://www.unige.ch}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class base extends advanced_testcase {
@@ -153,28 +154,28 @@ abstract class base extends advanced_testcase {
     }
 
     /**
-     * Convenience function to create a testable instance of a publication instance.
+     * Convenience function to create a testable instance of a privatestudentfolder instance.
      *
      * @param array $params Array of parameters to pass to the generator
-     * @return publication Testable wrapper around the publication class.
+     * @return privatestudentfolder Testable wrapper around the privatestudentfolder class.
      */
     protected function create_instance($params = []) {
-        $generator = self::getDataGenerator()->get_plugin_generator('mod_publication');
+        $generator = self::getDataGenerator()->get_plugin_generator('mod_privatestudentfolder');
         if (!isset($params['course'])) {
             $params['course'] = $this->course->id;
         }
         $instance = $generator->create_instance($params);
-        $cm = get_coursemodule_from_instance('publication', $instance->id);
+        $cm = get_coursemodule_from_instance('privatestudentfolder', $instance->id);
         $context = context_module::instance($cm->id);
 
-        return new publication($cm, $this->course, $context);
+        return new privatestudentfolder($cm, $this->course, $context);
     }
 
     /**
      * Simulate a file upload
      *
      * @param int $userid
-     * @param int $publicationid
+     * @param int $privatestudentfolderid
      * @param string $filename
      * @param string $content
      * @return bool|int
@@ -183,17 +184,17 @@ abstract class base extends advanced_testcase {
      * @throws \file_exception
      * @throws \stored_file_creation_exception
      */
-    protected function create_upload($userid, $publicationid, $filename, $content) {
+    protected function create_upload($userid, $privatestudentfolderid, $filename, $content) {
         global $DB;
 
-        $cm = get_coursemodule_from_instance('publication', $publicationid);
+        $cm = get_coursemodule_from_instance('privatestudentfolder', $privatestudentfolderid);
         $context = context_module::instance($cm->id);
         $fs = get_file_storage();
 
         // We gotta create a new one!
         $filerecord = (object)[
             'contextid' => $context->id,
-            'component' => 'mod_publication',
+            'component' => 'mod_privatestudentfolder',
             'filearea' => 'attachment',
             'itemid' => $userid,
             'userid' => $userid,
@@ -203,15 +204,15 @@ abstract class base extends advanced_testcase {
         $file = $fs->create_file_from_string($filerecord, $content);
 
         $dataobject = new stdClass();
-        $dataobject->publication = $publicationid;
+        $dataobject->privatestudentfolder = $privatestudentfolderid;
         $dataobject->userid = $userid;
         $dataobject->timecreated = $file->get_timecreated();
         $dataobject->fileid = $file->get_id();
         $dataobject->studentapproval = 1; // Upload always means user approves.
         $dataobject->filename = $file->get_filename();
-        $dataobject->type = PUBLICATION_MODE_UPLOAD;
+        $dataobject->type = PRIVATESTUDENTFOLDER_MODE_UPLOAD;
 
-        return $DB->insert_record('publication_file', $dataobject);
+        return $DB->insert_record('privatestudentfolder_file', $dataobject);
     }
 }
 

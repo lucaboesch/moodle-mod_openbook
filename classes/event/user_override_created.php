@@ -15,29 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mod_publication user override created event.
+ * The mod_privatestudentfolder user override created event.
  *
- * @package    mod_publication
- * @copyright  2016 Ilya Tregubov
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace mod_publication\event;
+namespace mod_privatestudentfolder\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_publication user override created event class.
+ * The mod_privatestudentfolder user override created event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - int publication: the id of the publication.
+ *      - int privatestudentfolder: the id of the privatestudentfolder.
  * }
  *
- * @package    mod_publication
- * @since      Moodle 3.2
- * @copyright  2016 Ilya Tregubov
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_override_created extends \core\event\base {
 
@@ -45,7 +48,7 @@ class user_override_created extends \core\event\base {
      * Init method.
      */
     protected function init() {
-        $this->data['objecttable'] = 'publication_overrides';
+        $this->data['objecttable'] = 'privatestudentfolder_overrides';
         $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
@@ -56,7 +59,7 @@ class user_override_created extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventoverridecreated', 'mod_publication');
+        return get_string('eventoverridecreated', 'mod_privatestudentfolder');
     }
 
     /**
@@ -65,7 +68,7 @@ class user_override_created extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' created the override with id '$this->objectid' for the publication with " .
+        return "The user with id '$this->userid' created the override with id '$this->objectid' for the privatestudentfolder with " .
             "course module id '$this->contextinstanceid' for the user with id '{$this->relateduserid}'.";
     }
 
@@ -75,7 +78,7 @@ class user_override_created extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/publication/overrides_edit.php', array('id' => $this->objectid));
+        return new \moodle_url('/mod/privatestudentfolder/overrides_edit.php', array('id' => $this->objectid));
     }
 
     /**
@@ -91,8 +94,8 @@ class user_override_created extends \core\event\base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
 
-        if (!isset($this->other['publication'])) {
-            throw new \coding_exception('The \'publication\' value must be set in other.');
+        if (!isset($this->other['privatestudentfolder'])) {
+            throw new \coding_exception('The \'privatestudentfolder\' value must be set in other.');
         }
     }
 
@@ -100,7 +103,7 @@ class user_override_created extends \core\event\base {
      * Get objectid mapping
      */
     public static function get_objectid_mapping() {
-        return array('db' => 'publication_overrides', 'restore' => 'publication_override');
+        return array('db' => 'privatestudentfolder_overrides', 'restore' => 'privatestudentfolder_override');
     }
 
     /**
@@ -108,7 +111,7 @@ class user_override_created extends \core\event\base {
      */
     public static function get_other_mapping() {
         $othermapped = array();
-        $othermapped['publication'] = array('db' => 'publication', 'restore' => 'publication');
+        $othermapped['privatestudentfolder'] = array('db' => 'privatestudentfolder', 'restore' => 'privatestudentfolder');
 
         return $othermapped;
     }

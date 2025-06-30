@@ -16,21 +16,22 @@
 /**
  * Javascript to align rows
  *
- * @module    mod_publication/alignrows
- * @package
- * @author    Hannes Laimer
- * @copyright 2020 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @module        mod_privatestudentfolder/alignrows
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
  /**
-  * @module mod_publication/alignrows
+  * @module mod_privatestudentfolder/alignrows
       */
     define(['jquery'], function($) {
 
     /**
      * @constructor
-     * @alias module:mod_publication/alignrows
+     * @alias module:mod_privatestudentfolder/alignrows
      */
     var Alignrows = function() {
         this.cmid = 0;

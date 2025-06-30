@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 /**
  * Instance settings form.
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,18 +29,18 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
-require_once($CFG->dirroot . '/mod/publication/locallib.php');
+require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php');
 
 /**
- * Form for creating and editing mod_publication instances
+ * Form for creating and editing mod_privatestudentfolder instances
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_publication_mod_form extends moodleform_mod {
+class mod_privatestudentfolder_mod_form extends moodleform_mod {
     private $_teamassigns;
     private $_notteamassigns;
 
@@ -54,7 +54,7 @@ class mod_publication_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Name.
-        $mform->addElement('text', 'name', get_string('name', 'publication'), ['size' => '64']);
+        $mform->addElement('text', 'name', get_string('name', 'privatestudentfolder'), ['size' => '64']);
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {
@@ -66,11 +66,11 @@ class mod_publication_mod_form extends moodleform_mod {
         $this->standard_intro_elements();
 
         // Publication specific elements.
-        $mform->addElement('header', 'submissionsettings', get_string('submissionsettings', 'publication'));
+        $mform->addElement('header', 'submissionsettings', get_string('submissionsettings', 'privatestudentfolder'));
         $mform->setExpanded('submissionsettings');
 
         if (isset($this->current->id) && $this->current->id != "") {
-            $filecount = $DB->count_records('publication_file', ['publication' => $this->current->id]);
+            $filecount = $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->current->id]);
         } else {
             $filecount = 0;
         }
@@ -81,22 +81,22 @@ class mod_publication_mod_form extends moodleform_mod {
         }
 
         $modearray = [];
-        $modearray[] =& $mform->createElement('radio', 'mode', '', get_string('modeupload', 'publication'),
-                PUBLICATION_MODE_UPLOAD, $disabled);
-        $modearray[] =& $mform->createElement('radio', 'mode', '', get_string('modeimport', 'publication'),
-                PUBLICATION_MODE_IMPORT, $disabled);
-        $mform->addGroup($modearray, 'modegrp', get_string('mode', 'publication'), [' '], false);
-        $mform->addHelpButton('modegrp', 'mode', 'publication');
+        $modearray[] =& $mform->createElement('radio', 'mode', '', get_string('modeupload', 'privatestudentfolder'),
+                PRIVATESTUDENTFOLDER_MODE_UPLOAD, $disabled);
+        $modearray[] =& $mform->createElement('radio', 'mode', '', get_string('modeimport', 'privatestudentfolder'),
+                PRIVATESTUDENTFOLDER_MODE_IMPORT, $disabled);
+        $mform->addGroup($modearray, 'modegrp', get_string('mode', 'privatestudentfolder'), [' '], false);
+        $mform->addHelpButton('modegrp', 'mode', 'privatestudentfolder');
         if ($filecount === 0) {
             $mform->addRule('modegrp', null, 'required', null, 'client');
         }
 
         // Publication mode import specific elements.
         $choices = [];
-        $choices[-1] = get_string('choose', 'publication');
+        $choices[-1] = get_string('choose', 'privatestudentfolder');
         $assigninstances = $DB->get_records('assign', ['course' => $COURSE->id], 'name ASC');
         $module = $DB->get_record('modules', ['name' => 'assign']);
-        $select = $mform->createElement('select', 'importfrom', get_string('assignment', 'publication'), $choices, $disabled);
+        $select = $mform->createElement('select', 'importfrom', get_string('assignment', 'privatestudentfolder'), $choices, $disabled);
         $notteamassigns = [-1];
         $teamassigns = [];
         foreach ($assigninstances as $assigninstance) {
@@ -115,45 +115,45 @@ class mod_publication_mod_form extends moodleform_mod {
         $this->_teamassigns = $teamassigns;
         $this->_notteamassigns = $notteamassigns;
         $mform->addElement($select);
-        $mform->addHelpButton('importfrom', 'assignment', 'publication');
-        $mform->hideIf('importfrom', 'mode', 'neq', PUBLICATION_MODE_IMPORT);
+        $mform->addHelpButton('importfrom', 'assignment', 'privatestudentfolder');
+        $mform->hideIf('importfrom', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_IMPORT);
         $mform->addElement('html', '<span id="teamassignids" data-assignids="' . implode(',', $teamassigns) . '"></span>');
 
         // Publication mode upload specific elements.
         $maxfiles = [];
-        for ($i = 1; $i <= 100 || $i <= get_config('publication', 'maxfiles'); $i++) {
+        for ($i = 1; $i <= 100 || $i <= get_config('privatestudentfolder', 'maxfiles'); $i++) {
             $maxfiles[$i] = $i;
         }
 
-        $mform->addElement('select', 'maxfiles', get_string('maxfiles', 'publication'), $maxfiles);
-        $mform->setDefault('maxfiles', get_config('publication', 'maxfiles'));
-        $mform->addHelpButton('maxfiles', 'maxfiles', 'publication');
-        $mform->hideIf('maxfiles', 'mode', 'neq', PUBLICATION_MODE_UPLOAD);
+        $mform->addElement('select', 'maxfiles', get_string('maxfiles', 'privatestudentfolder'), $maxfiles);
+        $mform->setDefault('maxfiles', get_config('privatestudentfolder', 'maxfiles'));
+        $mform->addHelpButton('maxfiles', 'maxfiles', 'privatestudentfolder');
+        $mform->hideIf('maxfiles', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_UPLOAD);
 
         $choices = get_max_upload_sizes($CFG->maxbytes, $COURSE->maxbytes);
-        $choices[0] = get_string('courseuploadlimit', 'publication') . ' (' . display_size($COURSE->maxbytes) . ')';
-        $mform->addElement('select', 'maxbytes', get_string('maxbytes', 'publication'), $choices);
-        $mform->setDefault('maxbytes', get_config('publication', 'maxbytes'));
-        $mform->addHelpButton('maxbytes', 'maxbytes', 'publication');
-        $mform->hideIf('maxbytes', 'mode', 'neq', PUBLICATION_MODE_UPLOAD);
+        $choices[0] = get_string('courseuploadlimit', 'privatestudentfolder') . ' (' . display_size($COURSE->maxbytes) . ')';
+        $mform->addElement('select', 'maxbytes', get_string('maxbytes', 'privatestudentfolder'), $choices);
+        $mform->setDefault('maxbytes', get_config('privatestudentfolder', 'maxbytes'));
+        $mform->addHelpButton('maxbytes', 'maxbytes', 'privatestudentfolder');
+        $mform->hideIf('maxbytes', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_UPLOAD);
 
-        $mform->addElement('filetypes', 'allowedfiletypes', get_string('allowedfiletypes', 'publication'));
-        $mform->addHelpButton('allowedfiletypes', 'allowedfiletypes', 'publication');
-        $mform->hideIf('allowedfiletypes', 'mode', 'neq', PUBLICATION_MODE_UPLOAD);
+        $mform->addElement('filetypes', 'allowedfiletypes', get_string('allowedfiletypes', 'privatestudentfolder'));
+        $mform->addHelpButton('allowedfiletypes', 'allowedfiletypes', 'privatestudentfolder');
+        $mform->hideIf('allowedfiletypes', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_UPLOAD);
 
 
-        $name = get_string('allowsubmissionsfromdate', 'publication');
+        $name = get_string('allowsubmissionsfromdate', 'privatestudentfolder');
         $options = ['optional' => true];
         $mform->addElement('date_time_selector', 'allowsubmissionsfromdate', $name, $options);
-        $mform->addHelpButton('allowsubmissionsfromdate', 'allowsubmissionsfromdate', 'publication');
+        $mform->addHelpButton('allowsubmissionsfromdate', 'allowsubmissionsfromdate', 'privatestudentfolder');
         $mform->setDefault('allowsubmissionsfromdate', time());
-        $mform->hideIf('allowsubmissionsfromdate', 'mode', 'neq', PUBLICATION_MODE_UPLOAD);
+        $mform->hideIf('allowsubmissionsfromdate', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_UPLOAD);
 
-        $name = get_string('duedate', 'publication');
+        $name = get_string('duedate', 'privatestudentfolder');
         $mform->addElement('date_time_selector', 'duedate', $name, ['optional' => true]);
-        $mform->addHelpButton('duedate', 'duedate', 'publication');
+        $mform->addHelpButton('duedate', 'duedate', 'privatestudentfolder');
         $mform->setDefault('duedate', time() + 7 * 24 * 3600);
-        $mform->hideIf('duedate', 'mode', 'neq', PUBLICATION_MODE_UPLOAD);
+        $mform->hideIf('duedate', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_UPLOAD);
 
 
 
@@ -161,61 +161,61 @@ class mod_publication_mod_form extends moodleform_mod {
         $mform->setType('cutoffdate', PARAM_BOOL);
 
         // Approval settings start.
-        $mform->addElement('header', 'approvalsettings', get_string('approvalsettings', 'publication'));
+        $mform->addElement('header', 'approvalsettings', get_string('approvalsettings', 'privatestudentfolder'));
         $mform->setExpanded('approvalsettings', true);
 
 
         // Files are personal
         $attributes = [];
         $options = [
-            '0' => get_string('filesarepersonal_no', 'publication'),
-            '1' => get_string('filesarepersonal_yes', 'publication'),
+            '0' => get_string('filesarepersonal_no', 'privatestudentfolder'),
+            '1' => get_string('filesarepersonal_yes', 'privatestudentfolder'),
         ];
 
         $mform->addElement('select', 'filesarepersonal',
-            get_string('filesarepersonal', 'publication'), $options, $attributes);
-        $mform->setDefault('filesarepersonal', get_config('publication', 'filesarepersonal'));
-        $mform->addHelpButton('filesarepersonal', 'filesarepersonal', 'publication');
+            get_string('filesarepersonal', 'privatestudentfolder'), $options, $attributes);
+        $mform->setDefault('filesarepersonal', get_config('privatestudentfolder', 'filesarepersonal'));
+        $mform->addHelpButton('filesarepersonal', 'filesarepersonal', 'privatestudentfolder');
 
 
         // Teacher approval.
         $attributes = [];
         $options = [
-            '0' => get_string('obtainapproval_automatic', 'publication'),
-            '1' => get_string('obtainapproval_required', 'publication'),
+            '0' => get_string('obtainapproval_automatic', 'privatestudentfolder'),
+            '1' => get_string('obtainapproval_required', 'privatestudentfolder'),
         ];
 
         $mform->addElement('select', 'obtainteacherapproval',
-            get_string('obtainteacherapproval', 'publication'), $options, $attributes);
-        $mform->setDefault('obtainteacherapproval', get_config('publication', 'obtainteacherapproval'));
-        $mform->addHelpButton('obtainteacherapproval', 'obtainteacherapproval', 'publication');
+            get_string('obtainteacherapproval', 'privatestudentfolder'), $options, $attributes);
+        $mform->setDefault('obtainteacherapproval', get_config('privatestudentfolder', 'obtainteacherapproval'));
+        $mform->addHelpButton('obtainteacherapproval', 'obtainteacherapproval', 'privatestudentfolder');
 
 
 
         // Student approval.
         $attributes = [];
         $options = [
-            '0' => get_string('obtainapproval_automatic', 'publication'),
-            '1' => get_string('obtainapproval_required', 'publication'),
+            '0' => get_string('obtainapproval_automatic', 'privatestudentfolder'),
+            '1' => get_string('obtainapproval_required', 'privatestudentfolder'),
         ];
 
-        $mform->addElement('select', 'obtainstudentapproval', get_string('obtainstudentapproval', 'publication'), $options, $attributes);
-        $mform->setDefault('obtainstudentapproval', get_config('publication', 'obtainstudentapproval'));
-        $mform->addHelpButton('obtainstudentapproval', 'obtainstudentapproval', 'publication');
+        $mform->addElement('select', 'obtainstudentapproval', get_string('obtainstudentapproval', 'privatestudentfolder'), $options, $attributes);
+        $mform->setDefault('obtainstudentapproval', get_config('privatestudentfolder', 'obtainstudentapproval'));
+        $mform->addHelpButton('obtainstudentapproval', 'obtainstudentapproval', 'privatestudentfolder');
        // $mform->hideIf('obtainstudentapproval', 'importfrom', 'in', $teamassigns);
 
 
         // Group approval.
         $attributes = [];
         $options = [
-            PUBLICATION_APPROVAL_GROUPAUTOMATIC => get_string('obtainapproval_automatic', 'publication'),
-            PUBLICATION_APPROVAL_SINGLE => get_string('obtaingroupapproval_single', 'publication'),
-            PUBLICATION_APPROVAL_ALL => get_string('obtaingroupapproval_all', 'publication'),
+            PRIVATESTUDENTFOLDER_APPROVAL_GROUPAUTOMATIC => get_string('obtainapproval_automatic', 'privatestudentfolder'),
+            PRIVATESTUDENTFOLDER_APPROVAL_SINGLE => get_string('obtaingroupapproval_single', 'privatestudentfolder'),
+            PRIVATESTUDENTFOLDER_APPROVAL_ALL => get_string('obtaingroupapproval_all', 'privatestudentfolder'),
         ];
 
-        $mform->addElement('select', 'obtaingroupapproval', get_string('obtaingroupapproval', 'publication'), $options, $attributes);
-        $mform->setDefault('obtaingroupapproval',  get_config('publication', 'obtaingroupapproval'));
-        $mform->addHelpButton('obtaingroupapproval', 'obtaingroupapproval', 'publication');
+        $mform->addElement('select', 'obtaingroupapproval', get_string('obtaingroupapproval', 'privatestudentfolder'), $options, $attributes);
+        $mform->setDefault('obtaingroupapproval',  get_config('privatestudentfolder', 'obtaingroupapproval'));
+        $mform->addHelpButton('obtaingroupapproval', 'obtaingroupapproval', 'privatestudentfolder');
        // $mform->hideIf('obtaingroupapproval', 'importfrom', 'in', $notteamassigns);
 
         /*foreach ($notteamassigns as $cur) {
@@ -223,26 +223,26 @@ class mod_publication_mod_form extends moodleform_mod {
         }*/
 
 
-       // $mform->hideIf('obtainstudentapproval', 'mode', 'neq', PUBLICATION_MODE_IMPORT);
+       // $mform->hideIf('obtainstudentapproval', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_IMPORT);
 
 
        /* $radioarray = [];
-        $radioarray[] = $mform->createElement('radio', 'groupapproval', '', get_string('obtaingroupapproval_all', 'publication'),
-            PUBLICATION_APPROVAL_ALL, $attributes);
-        $radioarray[] = $mform->createElement('radio', 'groupapproval', '', get_string('obtaingroupapproval_single', 'publication'),
-            PUBLICATION_APPROVAL_SINGLE, $attributes);
-        $mform->addGroup($radioarray, 'groupapprovalarray', get_string('obtaingroupapproval', 'publication'),
+        $radioarray[] = $mform->createElement('radio', 'groupapproval', '', get_string('obtaingroupapproval_all', 'privatestudentfolder'),
+            PRIVATESTUDENTFOLDER_APPROVAL_ALL, $attributes);
+        $radioarray[] = $mform->createElement('radio', 'groupapproval', '', get_string('obtaingroupapproval_single', 'privatestudentfolder'),
+            PRIVATESTUDENTFOLDER_APPROVAL_SINGLE, $attributes);
+        $mform->addGroup($radioarray, 'groupapprovalarray', get_string('obtaingroupapproval', 'privatestudentfolder'),
             [html_writer::empty_tag('br')], false);
-        $mform->addHelpButton('groupapprovalarray', 'obtaingroupapproval', 'publication');
-        $mform->setDefault('groupapproval', PUBLICATION_APPROVAL_ALL);
-        $mform->hideIf('groupapprovalarray', 'mode', 'neq', PUBLICATION_MODE_IMPORT);
+        $mform->addHelpButton('groupapprovalarray', 'obtaingroupapproval', 'privatestudentfolder');
+        $mform->setDefault('groupapproval', PRIVATESTUDENTFOLDER_APPROVAL_ALL);
+        $mform->hideIf('groupapprovalarray', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_IMPORT);
         $mform->hideIf('groupapprovalarray', 'obtainstudentapproval', 'eq', 0);
         foreach ($notteamassigns as $cur) {
             $mform->hideIf('groupapprovalarray', 'importfrom', 'eq', $cur);
         }
 
 
-      //  $mform->hideIf('obtainteacherapproval', 'mode', 'neq', PUBLICATION_MODE_UPLOAD);
+      //  $mform->hideIf('obtainteacherapproval', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_UPLOAD);
 
      /*   $infostrings = [
             'notice_obtainapproval_import_both',
@@ -252,29 +252,29 @@ class mod_publication_mod_form extends moodleform_mod {
         ];
         foreach ($infostrings as $infostring) {
             $infohtml = html_writer::start_tag('div', ['class' => 'alert alert-info']);
-            $infohtml .= get_string($infostring, 'publication');
+            $infohtml .= get_string($infostring, 'privatestudentfolder');
             $infohtml .= html_writer::end_tag('div');
             $infogroupimport =& $mform->createElement('static', $infostring, '', $infohtml);
             $mform->addGroup([$infogroupimport], $infostring . '_group', '', ' ', false);
         }
-        $mform->hideIf('notice_obtainapproval_import_both_group', 'mode', 'neq', PUBLICATION_MODE_IMPORT);
+        $mform->hideIf('notice_obtainapproval_import_both_group', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_IMPORT);
         $mform->hideIf('notice_obtainapproval_import_both_group', 'obtainstudentapproval', 'neq', '1');
-        $mform->hideIf('notice_obtainapproval_import_studentonly_group', 'mode', 'neq', PUBLICATION_MODE_IMPORT);
+        $mform->hideIf('notice_obtainapproval_import_studentonly_group', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_IMPORT);
         $mform->hideIf('notice_obtainapproval_import_studentonly_group', 'obtainstudentapproval', 'neq', '0');
 
         $mform->hideIf('notice_obtainapproval_upload_teacher_group', 'obtainteacherapproval', 'neq', '0');
-        $mform->hideIf('notice_obtainapproval_upload_teacher_group', 'mode', 'neq', PUBLICATION_MODE_UPLOAD);
+        $mform->hideIf('notice_obtainapproval_upload_teacher_group', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_UPLOAD);
         $mform->hideIf('notice_obtainapproval_upload_automatic_group', 'obtainteacherapproval', 'neq', '1');
-        $mform->hideIf('notice_obtainapproval_upload_automatic_group', 'mode', 'neq', PUBLICATION_MODE_UPLOAD);*/
+        $mform->hideIf('notice_obtainapproval_upload_automatic_group', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_UPLOAD);*/
 
 
 
-        $mform->addElement('date_time_selector', 'approvalfromdate', get_string('approvalfromdate', 'publication'), ['optional' => true]);
-        $mform->addHelpButton('approvalfromdate', 'approvalfromdate', 'publication');
+        $mform->addElement('date_time_selector', 'approvalfromdate', get_string('approvalfromdate', 'privatestudentfolder'), ['optional' => true]);
+        $mform->addHelpButton('approvalfromdate', 'approvalfromdate', 'privatestudentfolder');
         $mform->setDefault('approvalfromdate', time());
 
-        $mform->addElement('date_time_selector', 'approvaltodate', get_string('approvaltodate', 'publication'), ['optional' => true]);
-        $mform->addHelpButton('approvaltodate', 'approvaltodate', 'publication');
+        $mform->addElement('date_time_selector', 'approvaltodate', get_string('approvaltodate', 'privatestudentfolder'), ['optional' => true]);
+        $mform->addHelpButton('approvaltodate', 'approvaltodate', 'privatestudentfolder');
         $mform->setDefault('approvaltodate', time() + 7 * 24 * 3600);
         // Approval code end.
 
@@ -282,46 +282,46 @@ class mod_publication_mod_form extends moodleform_mod {
         $mform->setType('alwaysshowdescription', PARAM_BOOL);
 
         // Apply availability restrictions.
-        $mform->addElement('select', 'availabilityrestriction', get_string('availabilityrestriction', 'publication'),
+        $mform->addElement('select', 'availabilityrestriction', get_string('availabilityrestriction', 'privatestudentfolder'),
                 [get_string('no'), get_string('yes')]);
-        $mform->setDefault('availabilityrestriction', get_config('publication', 'availabilityrestriction'));
-        $mform->addHelpButton('availabilityrestriction', 'availabilityrestriction', 'publication');
+        $mform->setDefault('availabilityrestriction', get_config('privatestudentfolder', 'availabilityrestriction'));
+        $mform->addHelpButton('availabilityrestriction', 'availabilityrestriction', 'privatestudentfolder');
 
-        $mform->addElement('header', 'notifications', get_string('notifications', 'publication'));
+        $mform->addElement('header', 'notifications', get_string('notifications', 'privatestudentfolder'));
 
         $options = [
-            PUBLICATION_NOTIFY_NONE => get_string('notify:setting:0', 'publication'),
-            PUBLICATION_NOTIFY_TEACHER => get_string('notify:setting:1', 'publication'),
-            PUBLICATION_NOTIFY_STUDENT => get_string('notify:setting:2', 'publication'),
-            PUBLICATION_NOTIFY_ALL => get_string('notify:setting:3', 'publication'),
+            PRIVATESTUDENTFOLDER_NOTIFY_NONE => get_string('notify:setting:0', 'privatestudentfolder'),
+            PRIVATESTUDENTFOLDER_NOTIFY_TEACHER => get_string('notify:setting:1', 'privatestudentfolder'),
+            PRIVATESTUDENTFOLDER_NOTIFY_STUDENT => get_string('notify:setting:2', 'privatestudentfolder'),
+            PRIVATESTUDENTFOLDER_NOTIFY_ALL => get_string('notify:setting:3', 'privatestudentfolder'),
         ];
 
-        $mform->addElement('select', 'notifyfilechange', get_string('notify:filechange', 'publication'), $options);
-        $mform->addHelpButton('notifyfilechange', 'notify:filechange', 'publication');
-        $mform->setDefault('notifyfilechange', get_config('publication', 'notifyfilechange'));
+        $mform->addElement('select', 'notifyfilechange', get_string('notify:filechange', 'privatestudentfolder'), $options);
+        $mform->addHelpButton('notifyfilechange', 'notify:filechange', 'privatestudentfolder');
+        $mform->setDefault('notifyfilechange', get_config('privatestudentfolder', 'notifyfilechange'));
 
-        $mform->addElement('select', 'notifystatuschange', get_string('notify:statuschange', 'publication'), $options);
-        $mform->addHelpButton('notifystatuschange', 'notify:statuschange', 'publication');
-        $mform->setDefault('notifystatuschange', get_config('publication', 'notifystatuschange'));
+        $mform->addElement('select', 'notifystatuschange', get_string('notify:statuschange', 'privatestudentfolder'), $options);
+        $mform->addHelpButton('notifystatuschange', 'notify:statuschange', 'privatestudentfolder');
+        $mform->setDefault('notifystatuschange', get_config('privatestudentfolder', 'notifystatuschange'));
 
 
 
 /*
-        $name = get_string('notifyteacher', 'publication');
+        $name = get_string('notifyteacher', 'privatestudentfolder');
         $mform->addElement('selectyesno', 'notifyteacher', $name);
-        $mform->addHelpButton('notifyteacher', 'notifyteacher', 'publication');
+        $mform->addHelpButton('notifyteacher', 'notifyteacher', 'privatestudentfolder');
         $mform->setDefault('notifyteacher', 0);
 
-        $name = get_string('notifystudents', 'publication');
+        $name = get_string('notifystudents', 'privatestudentfolder');
         $mform->addElement('selectyesno', 'notifystudents', $name);
-        $mform->addHelpButton('notifystudents', 'notifystudents', 'publication');
+        $mform->addHelpButton('notifystudents', 'notifystudents', 'privatestudentfolder');
         $mform->setDefault('notifystudents', 0);*/
         // Standard coursemodule elements.
         $this->standard_coursemodule_elements();
 
         // Buttons.
         $this->add_action_buttons();
-        $PAGE->requires->js_call_amd('mod_publication/modform');
+        $PAGE->requires->js_call_amd('mod_privatestudentfolder/modform');
     }
 
 
@@ -336,10 +336,10 @@ class mod_publication_mod_form extends moodleform_mod {
         $suffix = $this->get_suffix();
         $completionuploadlabel = 'completionupload' . $suffix;
 
-        $mform->addElement('advcheckbox', $completionuploadlabel, '', get_string('completionupload', 'publication'));
+        $mform->addElement('advcheckbox', $completionuploadlabel, '', get_string('completionupload', 'privatestudentfolder'));
         // Enable this completion rule by default.
         $mform->setDefault($completionuploadlabel, 1);
-        $mform->hideIf($completionuploadlabel, 'mode', 'neq', PUBLICATION_MODE_UPLOAD);
+        $mform->hideIf($completionuploadlabel, 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_UPLOAD);
         return [$completionuploadlabel];
     }
 
@@ -347,7 +347,7 @@ class mod_publication_mod_form extends moodleform_mod {
     public function completion_rule_enabled($data) {
         $suffix = $this->get_suffix();
         $completionuploadlabel = 'completionupload' . $suffix;
-        if ($data['mode'] == PUBLICATION_MODE_UPLOAD && !empty($data[$completionuploadlabel])) {
+        if ($data['mode'] == PRIVATESTUDENTFOLDER_MODE_UPLOAD && !empty($data[$completionuploadlabel])) {
             return true;
         }
         return false;
@@ -358,15 +358,15 @@ class mod_publication_mod_form extends moodleform_mod {
         parent::data_postprocessing($data);
         $suffix = $this->get_suffix();
         $completionuploadlabel = 'completionupload' . $suffix;
-        if (!isset($data->mode) || $data->mode != PUBLICATION_MODE_UPLOAD) {
+        if (!isset($data->mode) || $data->mode != PRIVATESTUDENTFOLDER_MODE_UPLOAD) {
             $data->{$completionuploadlabel} = 0;
         }
 
         $data->groupapproval = 0;
-        if ($data->mode == PUBLICATION_MODE_IMPORT && $data->importfrom != -1) {
+        if ($data->mode == PRIVATESTUDENTFOLDER_MODE_IMPORT && $data->importfrom != -1) {
             $assigninstance = $DB->get_record('assign', ['id' => $data->importfrom], '*', MUST_EXIST);
             if ($assigninstance->teamsubmission) {
-                if ($data->obtaingroupapproval == PUBLICATION_APPROVAL_GROUPAUTOMATIC) {
+                if ($data->obtaingroupapproval == PRIVATESTUDENTFOLDER_APPROVAL_GROUPAUTOMATIC) {
                     $data->groupapproval = 0;
                     $data->obtainstudentapproval = 0;
                 } else {
@@ -382,11 +382,11 @@ class mod_publication_mod_form extends moodleform_mod {
         global $DB;
         parent::data_preprocessing($default_values); // TODO: Change the autogenerated stub
 
-        if (isset($default_values['mode']) && $default_values['mode'] == PUBLICATION_MODE_IMPORT) {
+        if (isset($default_values['mode']) && $default_values['mode'] == PRIVATESTUDENTFOLDER_MODE_IMPORT) {
             $assign = $DB->get_record('assign', ['id' => $default_values['importfrom']]);
             if ($assign && $assign->teamsubmission) {
                 if ($default_values['obtainstudentapproval'] == 0) {
-                    $default_values['obtaingroupapproval'] = PUBLICATION_APPROVAL_GROUPAUTOMATIC;
+                    $default_values['obtaingroupapproval'] = PRIVATESTUDENTFOLDER_APPROVAL_GROUPAUTOMATIC;
                 } else {
                     $default_values['obtaingroupapproval'] = $default_values['groupapproval'];
                 }
@@ -406,33 +406,33 @@ class mod_publication_mod_form extends moodleform_mod {
 
         if ($data['allowsubmissionsfromdate'] && $data['duedate']) {
             if ($data['allowsubmissionsfromdate'] > $data['duedate']) {
-                $errors['duedate'] = get_string('duedatevalidation', 'publication');
+                $errors['duedate'] = get_string('duedatevalidation', 'privatestudentfolder');
             }
         }
         if ($data['duedate'] && $data['cutoffdate']) {
             if ($data['duedate'] > $data['cutoffdate']) {
-                $errors['cutoffdate'] = get_string('cutoffdatevalidation', 'publication');
+                $errors['cutoffdate'] = get_string('cutoffdatevalidation', 'privatestudentfolder');
             }
         }
         if ($data['allowsubmissionsfromdate'] && $data['cutoffdate']) {
             if ($data['allowsubmissionsfromdate'] > $data['cutoffdate']) {
-                $errors['cutoffdate'] = get_string('cutoffdatefromdatevalidation', 'publication');
+                $errors['cutoffdate'] = get_string('cutoffdatefromdatevalidation', 'privatestudentfolder');
             }
         }
 
         if ($data['approvalfromdate'] && $data['approvaltodate']) {
             $studentapprovalrequired = $data['obtainstudentapproval'] == 1;
-            if ($data['mode'] == PUBLICATION_MODE_IMPORT && in_array($data['importfrom'], $this->_teamassigns)) {
+            if ($data['mode'] == PRIVATESTUDENTFOLDER_MODE_IMPORT && in_array($data['importfrom'], $this->_teamassigns)) {
                 $studentapprovalrequired = $data['obtaingroupapproval'] != -1;
             }
             if ($studentapprovalrequired && $data['approvalfromdate'] > $data['approvaltodate']) {
-                $errors['approvaltodate'] = get_string('approvaltodatevalidation', 'publication');
+                $errors['approvaltodate'] = get_string('approvaltodatevalidation', 'privatestudentfolder');
             }
         }
 
-        if ($data['mode'] == PUBLICATION_MODE_IMPORT) {
+        if ($data['mode'] == PRIVATESTUDENTFOLDER_MODE_IMPORT) {
             if ($data['importfrom'] == '0' || $data['importfrom'] == '-1') {
-                $errors['importfrom'] = get_string('importfrom_err', 'publication');
+                $errors['importfrom'] = get_string('importfrom_err', 'privatestudentfolder');
             }
         }
 

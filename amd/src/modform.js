@@ -16,11 +16,12 @@
 /**
  * Mod form supplement.
  *
- * @module    mod_publication/modform
- * @package
- * @author    Simeon Naydenov (moninaydenov@gmail.com)
- * @copyright 2024 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @module        mod_privatestudentfolder/modform
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['jquery'], function($) {
     const FITEM_APPROVALFROM = '#fitem_id_approvalfromdate';

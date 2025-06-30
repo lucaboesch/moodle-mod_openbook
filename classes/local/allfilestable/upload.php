@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,22 +17,24 @@
 /**
  * Contains class for files table listing all files in upload mode
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_publication\local\allfilestable;
+namespace mod_privatestudentfolder\local\allfilestable;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Table showing all uploaded files
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class upload extends base {
@@ -44,25 +46,25 @@ class upload extends base {
     public function get_columns() {
         list($columns, $headers, $helpicons) = parent::get_columns();
 
-        if (has_capability('mod/publication:approve', $this->context) && $this->allfilespage) {
+        if (has_capability('mod/privatestudentfolder:approve', $this->context) && $this->allfilespage) {
             /*
             $columns[] = 'teacherapproval';
-            $headers[] = get_string('teacherapproval', 'publication');
-            $helpicons[] = new \help_icon('teacherapproval', 'publication');
+            $headers[] = get_string('teacherapproval', 'privatestudentfolder');
+            $helpicons[] = new \help_icon('teacherapproval', 'privatestudentfolder');
 
             $columns[] = 'visibleforstudents';
-            $headers[] = get_string('visibleforstudents', 'publication');
+            $headers[] = get_string('visibleforstudents', 'privatestudentfolder');
             $helpicons[] = null;*/
 
             if ($this->obtainstudentapproval) {
                 $columns[] = 'studentapproval';
-                $headers[] = get_string('studentapproval', 'publication');
-                $helpicons[] = new \help_icon('studentapproval', 'publication');
+                $headers[] = get_string('studentapproval', 'privatestudentfolder');
+                $helpicons[] = new \help_icon('studentapproval', 'privatestudentfolder');
             }
 
-            $columns[] = 'publicationstatus';
-            $headers[] = get_string('publicationstatus', 'publication');
-            $helpicons[] = new \help_icon('publicationstatus', 'publication');
+            $columns[] = 'privatestudentfolderstatus';
+            $headers[] = get_string('privatestudentfolderstatus', 'privatestudentfolder');
+            $helpicons[] = new \help_icon('privatestudentfolderstatus', 'privatestudentfolder');
         }
 
         return [$columns, $headers, $helpicons];

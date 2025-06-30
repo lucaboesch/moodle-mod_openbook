@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,27 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * backup/moodle2/restore_publication_stepslib.php
+ * backup/moodle2/restore_privatestudentfolder_stepslib.php
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class performing all restore structure steps for mod_publication
+ * Class performing all restore structure steps for mod_privatestudentfolder
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_publication_activity_structure_step extends restore_activity_structure_step {
+class restore_privatestudentfolder_activity_structure_step extends restore_activity_structure_step {
 
     /**
      * Define the structure of the restore workflow.
@@ -49,19 +49,19 @@ class restore_publication_activity_structure_step extends restore_activity_struc
         $userinfo = $this->get_setting_value('userinfo');
 
         // Define each element separated.
-        $paths[] = new restore_path_element('publication', '/activity/publication');
+        $paths[] = new restore_path_element('privatestudentfolder', '/activity/privatestudentfolder');
         if ($userinfo) {
-            $files = new restore_path_element('publication_file',
-                    '/activity/publication/files/file');
+            $files = new restore_path_element('privatestudentfolder_file',
+                    '/activity/privatestudentfolder/files/file');
             $paths[] = $files;
 
-            $extduedates = new restore_path_element('publication_extduedates',
-                    '/activity/publication/extduedates/extduedate');
+            $extduedates = new restore_path_element('privatestudentfolder_extduedates',
+                    '/activity/privatestudentfolder/extduedates/extduedate');
 
             $paths[] = $extduedates;
 
-            $overrides = new restore_path_element('publication_overrides',
-                    '/activity/publication/overrides/override');
+            $overrides = new restore_path_element('privatestudentfolder_overrides',
+                    '/activity/privatestudentfolder/overrides/override');
             $paths[] = $overrides;
         }
 
@@ -74,7 +74,7 @@ class restore_publication_activity_structure_step extends restore_activity_struc
      * @param object $data The data in object form
      * @return void
      */
-    protected function process_publication($data) {
+    protected function process_privatestudentfolder($data) {
         global $DB;
 
         $data = (object)$data;
@@ -100,7 +100,7 @@ class restore_publication_activity_structure_step extends restore_activity_struc
         // Delete importfrom after restore.
         $data->importfrom = -1;
 
-        $newitemid = $DB->insert_record('publication', $data);
+        $newitemid = $DB->insert_record('privatestudentfolder', $data);
 
         $this->apply_activity_instance($newitemid);
     }
@@ -111,19 +111,19 @@ class restore_publication_activity_structure_step extends restore_activity_struc
      * @param object $data The data in object form
      * @return void
      */
-    protected function process_publication_file($data) {
+    protected function process_privatestudentfolder_file($data) {
         global $DB;
 
         $data = (object)$data;
 
-        $data->publication = $this->get_new_parentid('publication');
+        $data->privatestudentfolder = $this->get_new_parentid('privatestudentfolder');
 
         $data->timecreated = $this->apply_date_offset($data->timecreated);
         if ($data->userid > 0) {
             $data->userid = $this->get_mappingid('user', $data->userid);
         }
 
-        $DB->insert_record('publication_file', $data);
+        $DB->insert_record('privatestudentfolder_file', $data);
 
         // Note - the old contextid is required in order to be able to restore files stored in
         // sub plugin file areas attached to the submissionid.
@@ -135,12 +135,12 @@ class restore_publication_activity_structure_step extends restore_activity_struc
      * @param object $data The data in object form
      * @return void
      */
-    protected function process_publication_extduedates($data) {
+    protected function process_privatestudentfolder_extduedates($data) {
         global $DB;
 
         $data = (object)$data;
 
-        $data->publication = $this->get_new_parentid('publication');
+        $data->privatestudentfolder = $this->get_new_parentid('privatestudentfolder');
 
         $data->userid = $this->get_mappingid('user', $data->userid);
         if (!empty($data->extensionduedate)) {
@@ -150,7 +150,7 @@ class restore_publication_activity_structure_step extends restore_activity_struc
         }
         // Flags mailed and locked need no translation on restore.
 
-        $DB->insert_record('publication_extduedates', $data);
+        $DB->insert_record('privatestudentfolder_extduedates', $data);
     }
 
     /**
@@ -159,12 +159,12 @@ class restore_publication_activity_structure_step extends restore_activity_struc
      * @param object $data The data in object form
      * @return void
      */
-    protected function process_publication_overrides($data) {
+    protected function process_privatestudentfolder_overrides($data) {
         global $DB;
 
         $data = (object)$data;
 
-        $data->publication = $this->get_new_parentid('publication');
+        $data->privatestudentfolder = $this->get_new_parentid('privatestudentfolder');
 
         if ($data->userid != 0) {
             $data->userid = $this->get_mappingid('user', $data->userid);
@@ -186,7 +186,7 @@ class restore_publication_activity_structure_step extends restore_activity_struc
         }
         // Flags mailed and locked need no translation on restore.
 
-        $DB->insert_record('publication_overrides', $data);
+        $DB->insert_record('privatestudentfolder_overrides', $data);
     }
 
     /**
@@ -195,7 +195,7 @@ class restore_publication_activity_structure_step extends restore_activity_struc
      * @return void
      */
     protected function after_execute() {
-        $this->add_related_files('mod_publication', 'attachment', null);
+        $this->add_related_files('mod_privatestudentfolder', 'attachment', null);
     }
 
     /**
@@ -207,29 +207,29 @@ class restore_publication_activity_structure_step extends restore_activity_struc
 
         // Get set new fileids after restoring.
 
-        $pubid = $this->get_new_parentid('publication');
+        $pubid = $this->get_new_parentid('privatestudentfolder');
 
-        $coursemodule = get_coursemodule_from_instance('publication', $pubid);
+        $coursemodule = get_coursemodule_from_instance('privatestudentfolder', $pubid);
 
         $context = context_module::instance($coursemodule->id);
 
         $contextid = $context->id;
 
         $fs = get_file_storage();
-        $files = $fs->get_area_files($contextid, 'mod_publication', 'attachment');
+        $files = $fs->get_area_files($contextid, 'mod_privatestudentfolder', 'attachment');
 
         foreach ($files as $file) {
             $contingencies = [
-                    'publication' => $pubid,
+                    'privatestudentfolder' => $pubid,
                     // We need to look for the new user ID if there is one!
                     'userid' => $this->get_mappingid('user', $file->get_itemid(), $file->get_itemid()),
                     'filename' => $file->get_filename(),
             ];
-            $DB->set_field('publication_file', 'fileid', $file->get_id(), $contingencies);
+            $DB->set_field('privatestudentfolder_file', 'fileid', $file->get_id(), $contingencies);
         }
 
         // Now we correct the itemids of the files!
-        $rs = $DB->get_recordset('publication_file', ['publication' => $pubid]);
+        $rs = $DB->get_recordset('privatestudentfolder_file', ['privatestudentfolder' => $pubid]);
         foreach ($rs as $record) {
             $file = $fs->get_file_by_id($record->fileid);
             if ($file->get_itemid() != $record->userid) {
@@ -240,7 +240,7 @@ class restore_publication_activity_structure_step extends restore_activity_struc
         $rs->close();
 
         // And we correct the directories!
-        $rs = $DB->get_recordset('files', ['contextid' => $contextid, 'component' => 'mod_publication', 'filename' => '.']);
+        $rs = $DB->get_recordset('files', ['contextid' => $contextid, 'component' => 'mod_privatestudentfolder', 'filename' => '.']);
         foreach ($rs as $record) {
             $record->itemid = $this->get_mappingid('user', $record->itemid, $record->itemid); // We may need to update user ID!
             $DB->update_record('files', $record);

@@ -3,11 +3,11 @@ Private Student Folder
 
 This file is part of the mod_privatestudentfolder plugin for Moodle - <http://moodle.org/>
 
-*Author:*     André Camacho, Benjamin Abraham
+*Author:*     University of Geneva, E-Learning Team
 *Copyright:*  [University of Geneva](https://www.unige.ch)
 *License:*    [GNU GPL v3 or later](https://www.gnu.org/copyleft/gpl.html)
 
-This plugin has started as a fork of the mod_publication plugin for Moodle
+This plugin has started as a fork of the mod_privatestudentfolder plugin for Moodle
 
 *Author:*    Hannes Laimer, Philipp Hager, Andreas Windbichler, Simeon Naydenov
 *Copyright:* [Academic Moodle Cooperation](https://www.academic-moodle-cooperation.org)

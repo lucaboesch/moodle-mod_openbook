@@ -17,10 +17,11 @@
 /**
  * db/messages.php
  *
- * @package   mod_publication
- * @author    Hannes Laimer
- * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
@@ -32,5 +33,5 @@ defined('MOODLE_INTERNAL') || die;
  */
 
 $messageproviders = array (
-    'publication_updates' => [],
+    'privatestudentfolder_updates' => [],
 );

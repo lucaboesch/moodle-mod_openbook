@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,17 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Displays a list of all mod_publication instances in course
+ * Displays a list of all mod_privatestudentfolder instances in course
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once('../../config.php');
-require_once($CFG->dirroot . '/mod/publication/locallib.php');
+require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php');
 
 $id = required_param('id', PARAM_INT);   // We need a course!
 
@@ -36,26 +36,26 @@ if (!$course = $DB->get_record('course', ['id' => $id])) {
 require_course_login($course);
 $PAGE->set_pagelayout('incourse');
 
-$event = \mod_publication\event\course_module_instance_list_viewed::create([
+$event = \mod_privatestudentfolder\event\course_module_instance_list_viewed::create([
         'context' => context_course::instance($course->id),
 ]);
 $event->trigger();
 
-$strmodulenameplural = get_string('modulenameplural', 'publication');
-$strmodulname = get_string('modulename', 'publication');
+$strmodulenameplural = get_string('modulenameplural', 'privatestudentfolder');
+$strmodulname = get_string('modulename', 'privatestudentfolder');
 $strsectionname = get_string('sectionname', 'format_' . $course->format);
 $strname = get_string('name');
 $strdesc = get_string('description');
 
-$PAGE->set_url('/mod/publication/index.php', ['id' => $course->id]);
+$PAGE->set_url('/mod/privatestudentfolder/index.php', ['id' => $course->id]);
 $PAGE->navbar->add($strmodulenameplural);
 $PAGE->set_title($strmodulenameplural);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strmodulname);
 
-if (!$cms = get_coursemodules_in_course('publication', $course->id, 'cm.idnumber')) {
-    notice(get_string('nopublicationsincourse', 'publication'), '../../course/view.php?id=' . $course->id);
+if (!$cms = get_coursemodules_in_course('privatestudentfolder', $course->id, 'cm.idnumber')) {
+    notice(get_string('noprivatestudentfoldersincourse', 'privatestudentfolder'), '../../course/view.php?id=' . $course->id);
     die;
 }
 
@@ -79,7 +79,7 @@ if ($usesections) {
 $currentsection = '';
 
 $modinfo = get_fast_modinfo($course);
-foreach ($modinfo->instances['publication'] as $cm) {
+foreach ($modinfo->instances['privatestudentfolder'] as $cm) {
     if (!$cm->uservisible) {
         continue;
     }
@@ -102,8 +102,8 @@ foreach ($modinfo->instances['publication'] as $cm) {
         }
     }
 
-    $publication = new publication($cm, $course);
-    $desc = $publication->get_instance()->intro;
+    $privatestudentfolder = new privatestudentfolder($cm, $course);
+    $desc = $privatestudentfolder->get_instance()->intro;
 
     if ($usesections) {
         $table->data[] = [$printsection, $link, $desc];

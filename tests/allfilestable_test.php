@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,14 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for mod_publication's allfilestable classes.
+ * Unit tests for mod_privatestudentfolder's allfilestable classes.
  *
- * @package   mod_publication
- * @author    Philipp Hager
- * @copyright 2017 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace mod_publication\local\tests;
+namespace mod_privatestudentfolder\local\tests;
 
 use Exception;
 use mod_assign_generator;
@@ -34,12 +35,12 @@ if (!defined('MOODLE_INTERNAL')) {
 
 // Make sure the code being tested is accessible.
 global $CFG;
-require_once($CFG->dirroot . '/mod/publication/locallib.php'); // Include the code to test!
+require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php'); // Include the code to test!
 
 /**
  * This class contains the test cases for the formular validation.
  *
- * @package   mod_publication
+ * @package   mod_privatestudentfolder
  * @author    Philipp Hager
  * @copyright 2017 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -50,7 +51,7 @@ class allfilestable_testcase extends base {
      */
 
     /**
-     * Tests the basic creation of a publication instance with standardized settings!
+     * Tests the basic creation of a privatestudentfolder instance with standardized settings!
      */
     public function test_create_instance() {
         self::assertNotEmpty($this->create_instance());
@@ -63,19 +64,19 @@ class allfilestable_testcase extends base {
      */
     public function test_allfilestable_upload() {
         // Setup fixture!
-        $publication = $this->create_instance([
-            'mode' => PUBLICATION_MODE_UPLOAD,
+        $privatestudentfolder = $this->create_instance([
+            'mode' => PRIVATESTUDENTFOLDER_MODE_UPLOAD,
             'filesarepersonal' => 1,
             'obtainteacherapproval' => 0,
             'obtainstudentapproval' => 0,
         ]);
 
         // Exercise SUT!
-        $output = $publication->display_allfilesform();
+        $output = $privatestudentfolder->display_allfilesform();
         self::assertFalse(strpos($output, "Nothing to display"));
 
         // Teardown fixture!
-        $publication = null;
+        $privatestudentfolder = null;
     }
 
     /**
@@ -89,8 +90,8 @@ class allfilestable_testcase extends base {
         $generator = self::getDataGenerator()->get_plugin_generator('mod_assign');
         $params['course'] = $this->course->id;
         $assign = $generator->create_instance($params);
-        $publication = $this->create_instance([
-            'mode' => PUBLICATION_MODE_IMPORT,
+        $privatestudentfolder = $this->create_instance([
+            'mode' => PRIVATESTUDENTFOLDER_MODE_IMPORT,
             'importfrom' => $assign->id,
             'filesarepersonal' => 1,
             'obtainteacherapproval' => 0,
@@ -98,11 +99,11 @@ class allfilestable_testcase extends base {
         ]);
 
         // Exercise SUT!
-        $output = $publication->display_allfilesform();
+        $output = $privatestudentfolder->display_allfilesform();
         self::assertFalse(strpos($output, "Nothing to display"));
 
         // Teardown fixture!
-        $publication = null;
+        $privatestudentfolder = null;
     }
 
     /**
@@ -175,8 +176,8 @@ class allfilestable_testcase extends base {
 
 
         $this->setAdminUser();
-        $publication = $this->create_instance([
-            'mode' => PUBLICATION_MODE_IMPORT,
+        $privatestudentfolder = $this->create_instance([
+            'mode' => PRIVATESTUDENTFOLDER_MODE_IMPORT,
             'importfrom' => $assign->id,
             'obtainteacherapproval' => 0,
             'obtainstudentapproval' => 0,
@@ -186,9 +187,9 @@ class allfilestable_testcase extends base {
         ]);
 
 
-        $publication->importfiles();
-        $publication->set_allfilespage(true);
-        $allfilestable = $publication->get_allfilestable(PUBLICATION_FILTER_NOFILTER);
+        $privatestudentfolder->importfiles();
+        $privatestudentfolder->set_allfilespage(true);
+        $allfilestable = $privatestudentfolder->get_allfilestable(PRIVATESTUDENTFOLDER_FILTER_NOFILTER);
         ob_start();
         $allfilestable->out(10, true); // Print the whole table.
         $tableoutput = ob_get_contents();
@@ -199,6 +200,6 @@ class allfilestable_testcase extends base {
         self::assertFalse($nofilesfound);
 
         // Teardown fixture!
-        $publication = null;
+        $privatestudentfolder = null;
     }
 }

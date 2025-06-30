@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * By mod_publication observed events
+ * By mod_privatestudentfolder observed events
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -28,22 +28,22 @@ defined('MOODLE_INTERNAL') || die();
 $observers = [
         [
                 'eventname' => 'mod_assign\event\assessable_submitted',
-                'callback' => 'mod_publication\observer::import_assessable',
-                'includefile' => '/mod/publication/classes/observer.php',
+                'callback' => 'mod_privatestudentfolder\observer::import_assessable',
+                'includefile' => '/mod/privatestudentfolder/classes/observer.php',
                 'priority' => 0,
                 'internal' => true,
         ],
         [
                 'eventname' => 'mod_assign\event\submission_removed',
-                'callback' => 'mod_publication\observer::import_assessable',
-                'includefile' => '/mod/publication/classes/observer.php',
+                'callback' => 'mod_privatestudentfolder\observer::import_assessable',
+                'includefile' => '/mod/privatestudentfolder/classes/observer.php',
                 'priority' => 0,
                 'internal' => true,
         ],
         [
                 'eventname' => 'core\event\course_module_created',
-                'callback' => 'mod_publication\observer::course_module_created',
-                'includefile' => '/mod/publication/classes/observer.php',
+                'callback' => 'mod_privatestudentfolder\observer::course_module_created',
+                'includefile' => '/mod/privatestudentfolder/classes/observer.php',
                 'priority' => 0,
                 'internal' => true,
         ],

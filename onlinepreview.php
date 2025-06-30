@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,24 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Displays a single mod_publication instance
+ * Displays a single mod_privatestudentfolder instance
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once('../../config.php');
-require_once($CFG->dirroot . '/mod/publication/locallib.php');
+require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php');
 
 $id = required_param('id', PARAM_INT); // Course Module ID.
 $itemid = required_param('itemid', PARAM_INT); // Item-ID (group- or user-ID).
 $itemname = optional_param('itemname', false, PARAM_TEXT); // Item-Name to save DB access!
 
-$url = new moodle_url('/mod/publication/onlinetextpreview.php', ['id' => $id, 'itemid' => $itemid]);
-$cm = get_coursemodule_from_id('publication', $id, 0, false, MUST_EXIST);
+$url = new moodle_url('/mod/privatestudentfolder/onlinetextpreview.php', ['id' => $id, 'itemid' => $itemid]);
+$cm = get_coursemodule_from_id('privatestudentfolder', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
 require_login($course, true, $cm);
@@ -40,13 +40,13 @@ $PAGE->set_url($url);
 
 $context = context_module::instance($cm->id);
 
-require_capability('mod/publication:view', $context);
+require_capability('mod/privatestudentfolder:view', $context);
 
 echo $OUTPUT->header();
 
 echo $OUTPUT->heading(get_string('preview') . ' ' . get_string('onlinetextfilename', 'assignsubmission_onlinetext') .
         ($itemname ? ' ' . strtolower(get_string('from')) . ' ' . $itemname : ''));
 
-echo publication::export_onlinetext_for_preview($itemid, $cm->instance, $context->id);
+echo privatestudentfolder::export_onlinetext_for_preview($itemid, $cm->instance, $context->id);
 
 echo $OUTPUT->footer();

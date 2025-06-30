@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_publication for Moodle - http://moodle.org/
+// This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * backup/moodle2/backup_publication_activity_task.class.php
+ * backup/moodle2/backup_privatestudentfolder_activity_task.class.php
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,18 +28,18 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->dirroot . '/mod/publication/backup/moodle2/backup_publication_stepslib.php');
+require_once($CFG->dirroot . '/mod/privatestudentfolder/backup/moodle2/backup_privatestudentfolder_stepslib.php');
 
 /**
  * Class contains backup steps definition
  *
- * @package       mod_publication
- * @author        Philipp Hager
- * @author        Andreas Windbichler
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @package       mod_privatestudentfolder
+ * @author        University of Geneva, E-Learning Team
+ * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_publication_activity_task extends backup_activity_task {
+class backup_privatestudentfolder_activity_task extends backup_activity_task {
 
     /**
      * Define (add) particular settings this activity can have
@@ -52,7 +52,7 @@ class backup_publication_activity_task extends backup_activity_task {
      * Define (add) particular steps this activity can have
      */
     protected function define_my_steps() {
-        $this->add_step(new backup_publication_activity_structure_step('publication_structure', 'publication.xml'));
+        $this->add_step(new backup_privatestudentfolder_activity_structure_step('privatestudentfolder_structure', 'privatestudentfolder.xml'));
     }
 
     /**
@@ -67,11 +67,11 @@ class backup_publication_activity_task extends backup_activity_task {
 
         $base = preg_quote($CFG->wwwroot, "/");
 
-        $search = "/(" . $base . "\/mod\/publication\/index.php\?id\=)([0-9]+)/";
-        $content = preg_replace($search, '$@PUBLICATIONINDEX*$2@$', $content);
+        $search = "/(" . $base . "\/mod\/privatestudentfolder\/index.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@PRIVATESTUDENTFOLDERINDEX*$2@$', $content);
 
-        $search = "/(" . $base . "\/mod\/publication\/view.php\?id\=)([0-9]+)/";
-        $content = preg_replace($search, '$@PUBLICATIONVIEWBYID*$2@$', $content);
+        $search = "/(" . $base . "\/mod\/privatestudentfolder\/view.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@PRIVATESTUDENTFOLDERVIEWBYID*$2@$', $content);
 
         return $content;
     }
