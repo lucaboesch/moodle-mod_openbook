@@ -79,14 +79,19 @@ class base extends \table_sql {
     protected $options = [];
     /** @var int[] $users */
     protected $users = [];
+    /** @var $filter */
     protected $filter = PRIVATESTUDENTFOLDER_FILTER_NOFILTER;
+    /** @var bool $allfilespage */
     protected $allfilespage = false;
-
+    /** @var int $obtainteacherapproval */
     protected $obtainteacherapproval;
+    /** @var int $obtainstudentapproval */
     protected $obtainstudentapproval;
+    /** @var int $filesarepersonal */
     protected $filesarepersonal;
-
+    /** @var int $totalfilescount */
     protected $totalfilescount = 0;
+
     /**
      * constructor
      *
@@ -105,11 +110,16 @@ class base extends \table_sql {
         $this->privatestudentfolder = $privatestudentfolder;
         $instance = $privatestudentfolder->get_instance();
 
-        // $this->filesarepersonal = $instance->filesarepersonal;
+        // TASK : Use $this->filesarepersonal = $instance->filesarepersonal !
         $this->obtainteacherapproval = $instance->obtainteacherapproval;
         $this->obtainstudentapproval = $instance->obtainstudentapproval;
 
-        $this->cm = get_coursemodule_from_instance('privatestudentfolder', $privatestudentfolder->get_instance()->id, 0, false, MUST_EXIST);
+        $this->cm = get_coursemodule_from_instance('privatestudentfolder',
+                                                    $privatestudentfolder->get_instance()->id,
+                                                    0,
+                                                    false,
+                                                    MUST_EXIST
+        );
         $this->context = \context_module::instance($this->cm->id);
         $this->groupmode = groups_get_activity_groupmode($this->cm);
         $this->currentgroup = groups_get_activity_group($this->cm, true);
@@ -225,6 +235,9 @@ class base extends \table_sql {
         $this->users = $users;
     }
 
+    /**
+     * Get count
+     */
     public function get_count() {
         global $DB;
         $grandtotal = $DB->count_records_sql($this->countsql, $this->countparams);
@@ -255,7 +268,7 @@ class base extends \table_sql {
         list($sqluserids, $userparams) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED, 'user');
         $params = $params + $userparams + ['privatestudentfolder' => $this->cm->instance];
 
-        /* TODO: Add filter for filesarepersonal ?? */
+        /* TODO: Add filter for filesarepersonal ? */
 
         $having = '';
         if ($this->filter == PRIVATESTUDENTFOLDER_FILTER_NOFILTER) {
@@ -450,6 +463,9 @@ FROM
         }
     }
 
+    /**
+     * Returns the count of files displayed in this table!
+     */
     public function get_totalfilescount() {
         return $this->totalfilescount;
     }
@@ -662,6 +678,9 @@ FROM
         return $lastmodified;
     }
 
+    /**
+     * This function is called for generating HTML table with files
+     */
     public function col_files($values) {
         list(, $files, ) = $this->get_files($values->id);
         global $OUTPUT;
@@ -795,6 +814,9 @@ FROM
         }
     }
 
+    /**
+     * This function is used for generating an HTML table with files
+     */
     public function col_privatestudentfolderstatus($values) {
 
         list(, $files, ) = $this->get_files($values->id);
@@ -890,6 +912,14 @@ FROM
         return $values->$colname;
     }
 
+    /**
+     * This function is called for each data row to allow processing of
+     * columns which do not have a *_cols function.
+     *
+     * @param string $fontawesomeicon
+     * @param string $bootsrapcolor
+     * @param string $title
+     */
     public static function approval_icon($fontawesomeicon, $bootsrapcolor, $title) {
         global $OUTPUT;
         $templatecontext = [
@@ -900,6 +930,9 @@ FROM
         return $OUTPUT->render_from_template('mod_privatestudentfolder/approval_icon_fontawesome', $templatecontext);
     }
 
+    /**
+     * Gets a table uniqueid
+     */
     public static function get_table_uniqueid($instanceid) {
         return 'mod-privatestudentfolder-allfiles-' . $instanceid;
     }

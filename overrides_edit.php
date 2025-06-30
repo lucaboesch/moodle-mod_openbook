@@ -40,13 +40,11 @@ $PAGE->set_url($url);
 
 $context = context_module::instance($cm->id);
 
-
 $backurl = new moodle_url('/mod/privatestudentfolder/overrides.php', ['id' => $id]);
 require_capability('mod/privatestudentfolder:manageoverrides', $context);
 
 $privatestudentfolder = new privatestudentfolder($cm, $course, $context);
 $overridesform = new privatestudentfolder_overrides_form($PAGE->url, ['privatestudentfolder' => $privatestudentfolder]);
-
 
 $eventparams = [
     'context' => $context,

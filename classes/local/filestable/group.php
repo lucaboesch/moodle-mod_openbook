@@ -41,6 +41,9 @@ class group extends base {
     /** @var int $groupingid saves the team-assignments submission grouping id */
     protected $groupingid = 0;
 
+    /**
+     * Returns a string with file approval status
+     */
     public function get_approval_status_for_file($file) {
         global $OUTPUT, $DB, $USER;
 
@@ -89,7 +92,7 @@ class group extends base {
                 }
             } else if ($studentapproval == 2 || !empty($rejectedstudents)) {
                 $studentdenied = true;
-               // $hint = get_string('student_rejected', 'privatestudentfolder');
+                // $hint = get_string('student_rejected', 'privatestudentfolder');
                 $hint = $rejected;
             } else {
                 $hint = $pending;
@@ -113,8 +116,6 @@ class group extends base {
                     }
                 }
             }
-
-
 
         } else {
             $studentapproved = true;
@@ -143,7 +144,6 @@ class group extends base {
             $hint .= get_string('teacher_approved_automatically', 'privatestudentfolder');
         }
 
-
         if ($studentapproved && $teacherapproved) {
             $templatecontext->icon = $this->valid;
         } else if ($studentdenied || $teacherdenied) {
@@ -161,7 +161,7 @@ class group extends base {
      * @param \stored_file $file Stored file instance
      * @return string[] Array of table cell contents
      */
-/*
+    /*
     public function add_file2(\stored_file $file) {
         global $USER, $DB, $OUTPUT;
 
@@ -246,7 +246,7 @@ class group extends base {
 
         return $data;
     }
-*/
+    */
     /**
      * Get all files, in which the current user's groups are involved
      *

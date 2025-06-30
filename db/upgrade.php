@@ -263,14 +263,12 @@ function xmldb_privatestudentfolder_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-
         $field = new xmldb_field('approvaltodate', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'approvalfromdate');
 
         // Conditionally launch add field approvaltodate.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-
 
         // Private Student Folder savepoint reached.
         upgrade_mod_savepoint(true, 2024061900, 'privatestudentfolder');
@@ -318,7 +316,6 @@ function xmldb_privatestudentfolder_upgrade($oldversion) {
             $DB->update_record('privatestudentfolder', $privatestudentfolder, true);
         }
         $rs->close();
-
 
         $rs = $DB->get_recordset('privatestudentfolder_file');
         foreach ($rs as $file) {

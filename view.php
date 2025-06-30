@@ -240,7 +240,6 @@ if ($privatestudentfoldermode == PRIVATESTUDENTFOLDER_MODE_FILEUPLOAD) {
     }
 }
 
-
 if ($privatestudentfolderinstance->duedate > 0) {
     $timeremainingdiff = $privatestudentfolderinstance->duedate - time();
     if ($timeremainingdiff > 0) {

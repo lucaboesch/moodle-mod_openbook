@@ -64,7 +64,6 @@ if ($ADMIN->fulltree) {
         get_string('obtaingroupapproval_admin_desc', 'privatestudentfolder'), 0, $options));
 
 
-
     $options = [
         PRIVATESTUDENTFOLDER_NOTIFY_NONE => get_string('notify:setting:0', 'privatestudentfolder'),
         PRIVATESTUDENTFOLDER_NOTIFY_TEACHER => get_string('notify:setting:1', 'privatestudentfolder'),
@@ -72,13 +71,11 @@ if ($ADMIN->fulltree) {
         PRIVATESTUDENTFOLDER_NOTIFY_ALL => get_string('notify:setting:3', 'privatestudentfolder'),
     ];
 
-
     $settings->add(new admin_setting_configselect('privatestudentfolder/notifyfilechange', get_string('notify:filechange_admin', 'privatestudentfolder'),
         get_string('notify:filechange_help', 'privatestudentfolder'), PRIVATESTUDENTFOLDER_NOTIFY_STUDENT, $options));
 
     $settings->add(new admin_setting_configselect('privatestudentfolder/notifystatuschange', get_string('notify:statuschange_admin', 'privatestudentfolder'),
         get_string('notify:statuschange_help', 'privatestudentfolder'), PRIVATESTUDENTFOLDER_NOTIFY_ALL, $options));
-
 
     if (isset($CFG->maxbytes)) {
         $settings->add(new admin_setting_configselect('privatestudentfolder/maxbytes', get_string('maxbytes', 'privatestudentfolder'),

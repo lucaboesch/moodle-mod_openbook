@@ -70,11 +70,11 @@ $string['notify:filechange_admin'] = 'Default notification setting for file chan
 $string['email:statuschange:header'] = 'The privatestudentfolder status of the following file(s) for <b>\'{$a->privatestudentfolder}\'</b> was changed on {$a->dayupdated} at {$a->timeupdated} by <b>{$a->username}</b>:<br /><ul>';
 $string['email:statuschange:filename'] = '<li>\'{$a->filename}\' to \'<b>{$a->apstatus}</b>\'</li>';
 $string['email:statuschange:footer'] = '</ul>';
-$string['email:statuschange:subject'] ='Private Student Folder status changed';
+$string['email:statuschange:subject'] = 'Private Student Folder status changed';
 $string['email:filechange_upload:header'] = '<b>{$a->username}</b> has uploaded the following file(s) to <b>\'{$a->privatestudentfolder}\'</b> on {$a->dayupdated} at {$a->timeupdated}:<br /><ul>';
-$string['email:filechange_upload:subject'] ='File(s) uploaded';
+$string['email:filechange_upload:subject'] = 'File(s) uploaded';
 $string['email:filechange_import:header'] = 'The following file(s) from Assignment <b>\'{$a->assign}\'</b> was/were imported into <b>\'{$a->privatestudentfolder}\'</b> on {$a->dayupdated} at {$a->timeupdated}:<br /><ul>';
-$string['email:filechange_import:subject'] ='File(s) imported';
+$string['email:filechange_import:subject'] = 'File(s) imported';
 $string['email:filechange:footer'] = '</ul><br />Please check if your permission for privatestudentfolder is required.';
 
 $string['uploaded'] = 'Uploaded';

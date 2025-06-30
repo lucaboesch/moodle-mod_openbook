@@ -141,7 +141,6 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
         $mform->addHelpButton('allowedfiletypes', 'allowedfiletypes', 'privatestudentfolder');
         $mform->hideIf('allowedfiletypes', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_UPLOAD);
 
-
         $name = get_string('allowsubmissionsfromdate', 'privatestudentfolder');
         $options = ['optional' => true];
         $mform->addElement('date_time_selector', 'allowsubmissionsfromdate', $name, $options);
@@ -156,14 +155,12 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
         $mform->hideIf('duedate', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_UPLOAD);
 
 
-
         $mform->addElement('hidden', 'cutoffdate', false);
         $mform->setType('cutoffdate', PARAM_BOOL);
 
         // Approval settings start.
         $mform->addElement('header', 'approvalsettings', get_string('approvalsettings', 'privatestudentfolder'));
         $mform->setExpanded('approvalsettings', true);
-
 
         // Files are personal
         $attributes = [];
@@ -176,7 +173,6 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
             get_string('filesarepersonal', 'privatestudentfolder'), $options, $attributes);
         $mform->setDefault('filesarepersonal', get_config('privatestudentfolder', 'filesarepersonal'));
         $mform->addHelpButton('filesarepersonal', 'filesarepersonal', 'privatestudentfolder');
-
 
         // Teacher approval.
         $attributes = [];
@@ -191,7 +187,6 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
         $mform->addHelpButton('obtainteacherapproval', 'obtainteacherapproval', 'privatestudentfolder');
 
 
-
         // Student approval.
         $attributes = [];
         $options = [
@@ -203,7 +198,6 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
         $mform->setDefault('obtainstudentapproval', get_config('privatestudentfolder', 'obtainstudentapproval'));
         $mform->addHelpButton('obtainstudentapproval', 'obtainstudentapproval', 'privatestudentfolder');
        // $mform->hideIf('obtainstudentapproval', 'importfrom', 'in', $teamassigns);
-
 
         // Group approval.
         $attributes = [];
@@ -222,9 +216,7 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
             $mform->hideIf('obtaingroupapproval', 'importfrom', 'eq', $cur);
         }*/
 
-
        // $mform->hideIf('obtainstudentapproval', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_IMPORT);
-
 
        /* $radioarray = [];
         $radioarray[] = $mform->createElement('radio', 'groupapproval', '', get_string('obtaingroupapproval_all', 'privatestudentfolder'),
@@ -240,7 +232,6 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
         foreach ($notteamassigns as $cur) {
             $mform->hideIf('groupapprovalarray', 'importfrom', 'eq', $cur);
         }
-
 
       //  $mform->hideIf('obtainteacherapproval', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_UPLOAD);
 
@@ -266,7 +257,6 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
         $mform->hideIf('notice_obtainapproval_upload_teacher_group', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_UPLOAD);
         $mform->hideIf('notice_obtainapproval_upload_automatic_group', 'obtainteacherapproval', 'neq', '1');
         $mform->hideIf('notice_obtainapproval_upload_automatic_group', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_UPLOAD);*/
-
 
 
         $mform->addElement('date_time_selector', 'approvalfromdate', get_string('approvalfromdate', 'privatestudentfolder'), ['optional' => true]);
@@ -305,7 +295,6 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
         $mform->setDefault('notifystatuschange', get_config('privatestudentfolder', 'notifystatuschange'));
 
 
-
 /*
         $name = get_string('notifyteacher', 'privatestudentfolder');
         $mform->addElement('selectyesno', 'notifyteacher', $name);
@@ -324,7 +313,6 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
         $PAGE->requires->js_call_amd('mod_privatestudentfolder/modform');
     }
 
-
     /**
      * Add any custom completion rules to the form.
      *
@@ -342,7 +330,6 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
         $mform->hideIf($completionuploadlabel, 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_UPLOAD);
         return [$completionuploadlabel];
     }
-
 
     public function completion_rule_enabled($data) {
         $suffix = $this->get_suffix();

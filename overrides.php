@@ -67,5 +67,4 @@ $mode = $privatestudentfolder->get_mode();
 
 echo $OUTPUT->render_from_template('mod_privatestudentfolder/overrides', $templatecontext);
 
-
 echo $OUTPUT->footer();

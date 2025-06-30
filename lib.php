@@ -255,7 +255,6 @@ function privatestudentfolder_reset_userdata($data) {
 
 }
 
-
 /**
  * extend an assigment navigation settings
  *
@@ -300,7 +299,6 @@ function privatestudentfolder_extend_settings_navigation(settings_navigation $se
         $navref->add_node($node, $beforekey);
     }
 
-
     if (has_capability('mod/privatestudentfolder:manageoverrides', $settings->get_page()->cm->context)) {
         $privatestudentfolder = new privatestudentfolder($cm, $course, $context);
         $mode = $privatestudentfolder->get_mode();
@@ -313,7 +311,6 @@ function privatestudentfolder_extend_settings_navigation(settings_navigation $se
             $navref->add_node($node, $beforekey);
         }
     }
-
 
 }
 
@@ -390,7 +387,6 @@ function mod_privatestudentfolder_core_calendar_provide_event_action(calendar_ev
         );
     }
 }
-
 
 /**
  * Callback which returns human-readable strings describing the active completion custom rules for the module instance.

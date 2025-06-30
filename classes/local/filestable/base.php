@@ -56,9 +56,13 @@ class base extends \html_table {
     protected $changepossible = false;
     /** @var string[] select options */
     protected $options = [];
+    /** @var string valid icon string */
     protected $valid = '';
+    /** @var string questionmark icon string */
     protected $questionmark = '';
+    /** @var string invalid icon string */
     protected $invalid = '';
+    /** @var int timestamp with modification time */
     public $lastmodified = 0;
 
     /**
@@ -115,6 +119,9 @@ class base extends \html_table {
         return count($this->data);
     }
 
+    /**
+     * Returns a boolean with file approve status
+     */
     public function is_file_approved($file) {
         global $OUTPUT;
         $templatecontext = new \stdClass;
@@ -142,6 +149,9 @@ class base extends \html_table {
 
     }
 
+    /**
+     * Returns a string with file approval status
+     */
     public function get_approval_status_for_file($file) {
         global $OUTPUT;
         $templatecontext = new \stdClass;
@@ -198,7 +208,6 @@ class base extends \html_table {
             $hint .= get_string('teacher_approved_automatically', 'privatestudentfolder');
         }
 
-
         if ($studentapproved && $teacherapproved) {
             $templatecontext->icon = $this->valid;
         } else if ($studentdenied || $teacherdenied) {
@@ -208,7 +217,7 @@ class base extends \html_table {
         }
         $templatecontext->hint = $hint;
         return $OUTPUT->render_from_template('mod_privatestudentfolder/approval_icon', $templatecontext);
-        
+
         /*
             if ($teacherapproval && $this->privatestudentfolder->get_instance()->obtainstudentapproval) {
                 $studentapproval = $this->privatestudentfolder->student_approval($file);

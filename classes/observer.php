@@ -20,6 +20,7 @@
  * @package       mod_privatestudentfolder
  * @author        University of Geneva, E-Learning Team
  * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_privatestudentfolder;
@@ -34,13 +35,12 @@ defined('MOODLE_INTERNAL') || die;
 
 /**
  * mod_grouptool\observer handles events due to changes in moodle core which affect grouptool
- *
- * @package       mod_privatestudentfolder
- * @author        University of Geneva, E-Learning Team
- * @author        Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class observer {
+
+    /**
+     * Event triggered when a course module is created
+     */
     public static function course_module_created(\core\event\base $event) {
         global $DB;
         $eventdata = $event->get_data();
@@ -103,7 +103,7 @@ class observer {
         }
 
         privatestudentfolder::send_all_pending_notifications();
-/*
+        /*
         $subfilerecords = $DB->get_records('assignsubmission_file', [
                 'assignment' => $assignid,
                 'submission' => $submission->id,

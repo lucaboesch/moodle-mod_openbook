@@ -151,7 +151,6 @@ class mod_privatestudentfolder_files_form extends moodleform {
             $approvaltodate = $privatestudentfolderinstance->approvaltodate > 0 ? userdate($privatestudentfolderinstance->approvaltodate) : false;
         }
 
-
         if ($privatestudentfolderinstance->duedate > 0 || ($override && $override->submissionoverride && $override->duedate > 0)) {
             if ($override && $override->submissionoverride && $override->duedate > 0) {
                 $timeremainingdiff = $override->duedate - time();
@@ -202,7 +201,6 @@ class mod_privatestudentfolder_files_form extends moodleform {
                 $mform->addElement('static', 'approvaltimeover', '', get_string('approval_timeover', 'privatestudentfolder'));
             }
         }
-
 
         if ($privatestudentfolder->get_instance()->mode == PRIVATESTUDENTFOLDER_MODE_UPLOAD
             && has_capability('mod/privatestudentfolder:upload', $privatestudentfolder->get_context())) {
