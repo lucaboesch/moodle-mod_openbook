@@ -65,7 +65,7 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
         // Adding the standard "intro" and "introformat" fields!
         $this->standard_intro_elements();
 
-        // Publication specific elements.
+        // Private Student Folder specific elements.
         $mform->addElement('header', 'submissionsettings', get_string('submissionsettings', 'privatestudentfolder'));
         $mform->setExpanded('submissionsettings');
 
@@ -91,7 +91,7 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
             $mform->addRule('modegrp', null, 'required', null, 'client');
         }
 
-        // Publication mode import specific elements.
+        // Private Student Folder mode import specific elements.
         $choices = [];
         $choices[-1] = get_string('choose', 'privatestudentfolder');
         $assigninstances = $DB->get_records('assign', ['course' => $COURSE->id], 'name ASC');
@@ -119,7 +119,7 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
         $mform->hideIf('importfrom', 'mode', 'neq', PRIVATESTUDENTFOLDER_MODE_IMPORT);
         $mform->addElement('html', '<span id="teamassignids" data-assignids="' . implode(',', $teamassigns) . '"></span>');
 
-        // Publication mode upload specific elements.
+        // Private Student Folder mode upload specific elements.
         $maxfiles = [];
         for ($i = 1; $i <= 100 || $i <= get_config('privatestudentfolder', 'maxfiles'); $i++) {
             $maxfiles[$i] = $i;

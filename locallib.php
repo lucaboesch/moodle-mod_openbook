@@ -1638,8 +1638,8 @@ class privatestudentfolder {
      *
      * @param stdClass $assigncm Assign's coursemodule object
      * @param stdClass $assigncontext Assign's context object
-     * @param int $privatestudentfolderid Publication's instance ID
-     * @param int $contextid Publication's context ID
+     * @param int $privatestudentfolderid Private Student Folder's instance ID
+     * @param int $contextid Private Student Folder's context ID
      * @param int $submissionid (optional) If set, only process this submission, else process all submissions
      */
     public static function update_assign_onlinetext($assigncm, $assigncontext, $privatestudentfolderid, $contextid, $submissionid = 0) {
@@ -2028,8 +2028,8 @@ class privatestudentfolder {
      * Format file content of imported onlinetexts to be rendered as preview.
      *
      * @param int $itemid User's or group's ID
-     * @param int $privatestudentfolderid Publication instance's database ID
-     * @param int $contextid Publication instance's context ID
+     * @param int $privatestudentfolderid Private Student Folder instance's database ID
+     * @param int $contextid Private Student Folder instance's context ID
      * @return string formatted HTML snippet ready to be output
      */
     public static function export_onlinetext_for_preview($itemid, $privatestudentfolderid, $contextid) {

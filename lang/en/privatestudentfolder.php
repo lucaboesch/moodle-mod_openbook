@@ -31,11 +31,11 @@ $string['modulename'] = 'Student folder';
 $string['pluginname'] = 'Student folder';
 $string['modulename_help'] = 'The student folder offers the following features:<br><ul><li>Students can upload files or import them from an assignment activity.</li><li>The files will be published (will be made visible to everyone) automatically or after students and/ or teachers approval for publishing.</li><li>Students and/or teachers will receive a notification when students upload or change a file or when a file is imported or updated from an assignment activity. Furthermore students and/ or teachers will receive a notification about any changes of the privatestudentfolder status.</li></ul>';
 
-$string['eventprivatestudentfolderfiledeleted'] = 'Publication file delete';
-$string['eventprivatestudentfolderfileuploaded'] = 'Publication file upload';
-$string['eventprivatestudentfolderfileimported'] = 'Publication file import';
-$string['eventprivatestudentfolderduedateextended'] = 'Publication due-date extended';
-$string['eventprivatestudentfolderapprovalchanged'] = 'Publication file approval changed';
+$string['eventprivatestudentfolderfiledeleted'] = 'Private Student Folder file delete';
+$string['eventprivatestudentfolderfileuploaded'] = 'Private Student Folder file upload';
+$string['eventprivatestudentfolderfileimported'] = 'Private Student Folder file import';
+$string['eventprivatestudentfolderduedateextended'] = 'Private Student Folder due-date extended';
+$string['eventprivatestudentfolderapprovalchanged'] = 'Private Student Folder file approval changed';
 
 $string['modulenameplural'] = 'Student folders';
 $string['pluginadministration'] = 'Student folder administration';
@@ -48,7 +48,7 @@ $string['privatestudentfolder:manageoverrides'] = 'Manage overrides';
 $string['privatestudentfolder:receiveteachernotification'] = 'Receive notifications for teachers';
 $string['search:activity'] = 'Student folder - activity information';
 
-$string['messageprovider:privatestudentfolder_updates'] = 'Publication notifications';
+$string['messageprovider:privatestudentfolder_updates'] = 'Private Student Folder notifications';
 
 $string['notifications'] = 'Notifications';
 $string['notifyteacher'] = 'Notify teachers about submitted files';
@@ -70,7 +70,7 @@ $string['notify:filechange_admin'] = 'Default notification setting for file chan
 $string['email:statuschange:header'] = 'The privatestudentfolder status of the following file(s) for <b>\'{$a->privatestudentfolder}\'</b> was changed on {$a->dayupdated} at {$a->timeupdated} by <b>{$a->username}</b>:<br /><ul>';
 $string['email:statuschange:filename'] = '<li>\'{$a->filename}\' to \'<b>{$a->apstatus}</b>\'</li>';
 $string['email:statuschange:footer'] = '</ul>';
-$string['email:statuschange:subject'] ='Publication status changed';
+$string['email:statuschange:subject'] ='Private Student Folder status changed';
 $string['email:filechange_upload:header'] = '<b>{$a->username}</b> has uploaded the following file(s) to <b>\'{$a->privatestudentfolder}\'</b> on {$a->dayupdated} at {$a->timeupdated}:<br /><ul>';
 $string['email:filechange_upload:subject'] ='File(s) uploaded';
 $string['email:filechange_import:header'] = 'The following file(s) from Assignment <b>\'{$a->assign}\'</b> was/were imported into <b>\'{$a->privatestudentfolder}\'</b> on {$a->dayupdated} at {$a->timeupdated}:<br /><ul>';
@@ -78,9 +78,9 @@ $string['email:filechange_import:subject'] ='File(s) imported';
 $string['email:filechange:footer'] = '</ul><br />Please check if your permission for privatestudentfolder is required.';
 
 $string['uploaded'] = 'Uploaded';
-$string['approvalchange'] = 'Publication status changed';
+$string['approvalchange'] = 'Private Student Folder status changed';
 
-$string['approvalsettings'] = 'Publication settings';
+$string['approvalsettings'] = 'Private Student Folder settings';
 $string['name'] = 'Name';
 $string['obtainstudentapproval'] = 'Student approval';
 $string['obtainstudentapproval_admin'] = 'Default student approval setting';
@@ -293,7 +293,7 @@ $string['reset'] = 'Revert';
 
 // Strings from the file upload.php
 $string['filesofthesetypes'] = 'Files of these types may be added:';
-$string['guideline'] = 'Publication of file submissions';
+$string['guideline'] = 'Private Student Folder of file submissions';
 $string['published_immediately'] = 'Approve automatically';
 $string['published_aftercheck'] = 'Approval from teachers required';
 $string['save_changes'] = 'Save changes';
@@ -337,9 +337,9 @@ $string['filter:approvalrequired'] = 'Decision pending';
 $string['filter:nofiles'] = 'No file submission';
 
 // Strings for overrides
-$string['eventoverridecreated'] = 'Publication override created';
-$string['eventoverridedeleted'] = 'Publication override deleted';
-$string['eventoverrideupdated'] = 'Publication override updated';
+$string['eventoverridecreated'] = 'Private Student Folder override created';
+$string['eventoverridedeleted'] = 'Private Student Folder override deleted';
+$string['eventoverrideupdated'] = 'Private Student Folder override updated';
 $string['override:add:group'] = 'Add group override';
 $string['override:add:user'] = 'Add user override';
 $string['overrides:empty'] = 'No overrides';

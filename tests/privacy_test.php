@@ -127,7 +127,7 @@ class privacy_testcase extends base {
         self::getDataGenerator()->create_group_member((object)['userid' => $this->user2->id, 'groupid' => $this->group22->id]);
 
         // Create multiple privatestudentfolder instances.
-        // Publication with uploads.
+        // Private Student Folder with uploads.
         $this->pubupload = $this->create_instance([
                 'name' => 'Pub Upload 1',
                 'course' => $this->course1,
@@ -143,7 +143,7 @@ class privacy_testcase extends base {
         $this->assign2 = $this->create_assign($this->course1, ['submissiondrafts' => false,
                                                                'assignsubmission_onlinetext_enabled' => true, ]);
 
-        // Publication with imports.
+        // Private Student Folder with imports.
         $this->pubimport = $this->create_instance([
                 'name' => 'Pub Import 1',
                 'course' => $this->course1,
@@ -151,7 +151,7 @@ class privacy_testcase extends base {
                 'importfrom' => $this->assign->get_instance()->id,
         ]);
 
-        // Publication with import from teamsubmission.
+        // Private Student Folder with import from teamsubmission.
         $this->teamassign = $this->create_assign($this->course1, [
                 'name' => 'Teamassign 1',
                 'teamsubmission' => true,

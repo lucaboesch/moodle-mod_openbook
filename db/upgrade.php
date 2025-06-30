@@ -126,7 +126,7 @@ function xmldb_privatestudentfolder_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Publication savepoint reached.
+        // Private Student Folder savepoint reached.
         upgrade_mod_savepoint(true, 2016062201, 'privatestudentfolder');
     }
 
@@ -164,7 +164,7 @@ function xmldb_privatestudentfolder_upgrade($oldversion) {
         echo "</pre>";
         $rs->close();
 
-        // Publication savepoint reached.
+        // Private Student Folder savepoint reached.
         upgrade_mod_savepoint(true, 2017071200, 'privatestudentfolder');
     }
 
@@ -183,7 +183,7 @@ function xmldb_privatestudentfolder_upgrade($oldversion) {
             $dbman->add_field($table, $field2);
         }
 
-        // Publication savepoint reached.
+        // Private Student Folder savepoint reached.
         upgrade_mod_savepoint(true, 2019052100, 'privatestudentfolder');
     }
 
@@ -198,7 +198,7 @@ function xmldb_privatestudentfolder_upgrade($oldversion) {
         // Launch change of default for field teacherapproval.
         $dbman->change_field_default($table, $field);
 
-        // Publication savepoint reached.
+        // Private Student Folder savepoint reached.
         upgrade_mod_savepoint(true, 2020010500, 'privatestudentfolder');
     }
 
@@ -220,7 +220,7 @@ function xmldb_privatestudentfolder_upgrade($oldversion) {
             $dbman->add_index($table, $index);
         }
 
-        // Publication savepoint reached.
+        // Private Student Folder savepoint reached.
         upgrade_mod_savepoint(true, 2021052500, 'privatestudentfolder');
     }
 
@@ -233,7 +233,7 @@ function xmldb_privatestudentfolder_upgrade($oldversion) {
         $dbman->change_field_default($table, $field);
         $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, true, null, '0', 'timecreated');
         $dbman->change_field_default($table, $field);
-        // Publication savepoint reached.
+        // Private Student Folder savepoint reached.
         upgrade_mod_savepoint(true, 2021052501, 'privatestudentfolder');
     }
 
@@ -248,7 +248,7 @@ function xmldb_privatestudentfolder_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Publication savepoint reached.
+        // Private Student Folder savepoint reached.
         upgrade_mod_savepoint(true, 2023081000, 'privatestudentfolder');
     }
 
@@ -272,7 +272,7 @@ function xmldb_privatestudentfolder_upgrade($oldversion) {
         }
 
 
-        // Publication savepoint reached.
+        // Private Student Folder savepoint reached.
         upgrade_mod_savepoint(true, 2024061900, 'privatestudentfolder');
     }
 
@@ -295,7 +295,7 @@ function xmldb_privatestudentfolder_upgrade($oldversion) {
         // Launch change of default for field notifyfilechange.
         $dbman->change_field_default($table, $field);
 
-        // Publication savepoint reached.
+        // Private Student Folder savepoint reached.
         upgrade_mod_savepoint(true, 2024071900, 'privatestudentfolder');
     }
 
@@ -360,7 +360,7 @@ function xmldb_privatestudentfolder_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
-        // Publication savepoint reached.
+        // Private Student Folder savepoint reached.
         upgrade_mod_savepoint(true, 2024100400, 'privatestudentfolder');
     }
 
@@ -396,7 +396,7 @@ function xmldb_privatestudentfolder_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Publication savepoint reached.
+        // Private Student Folder savepoint reached.
         upgrade_mod_savepoint(true, 2025042203, 'privatestudentfolder');
     }
 
