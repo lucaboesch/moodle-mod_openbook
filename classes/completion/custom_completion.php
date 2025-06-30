@@ -24,8 +24,7 @@ use core_completion\activity_custom_completion;
  * Class for defining mod_assign's custom completion rules and fetching the completion statuses
  * of the custom completion rules for a given assign instance and a user.
  *
- * @package mod_assign
- * @copyright Simey Lameze <simey@moodle.com>
+ * @package   mod_privatestudentfolder
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class custom_completion extends activity_custom_completion {
