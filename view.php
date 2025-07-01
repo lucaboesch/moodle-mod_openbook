@@ -177,7 +177,9 @@ if ($data = $filesform->get_data()) {
                 continue;
             }
             $dataforlog = new stdClass();
-            $dataforlog->approval = $approval == 1 ? 'approved' : 'rejected';
+            $dataforlog->approval = $approval == 1
+                ? get_string('approved', 'privatestudentfolder')
+                : get_string('rejected', 'privatestudentfolder');
             $stats = null;
 
             if ($privatestudentfolder->get_mode() == PRIVATESTUDENTFOLDER_MODE_ASSIGN_TEAMSUBMISSION) {
@@ -188,9 +190,11 @@ if ($data = $filesform->get_data()) {
                 $DB->set_field('privatestudentfolder_file', 'studentapproval', $approval, $conditions);
             }
             if (is_array($stats)) {
-                // TODO: This needs to be a language string.
-                $dataforlog->approval = '(Students ' . $stats['approving']
-                    . ' out of ' . $stats['needed'] . ') ' . $dataforlog->approval;
+                $dataforlog->approval = get_string('datalogapprovalstudent', 'privatestudentfolder', [
+                    'approving' => $stats['approving'],
+                    'needed' => $stats['needed'],
+                    'approval' => $dataforlog->approval
+                ]);
             }
             $dataforlog->privatestudentfolder = $conditions['privatestudentfolder'];
             $dataforlog->userid = $USER->id;
