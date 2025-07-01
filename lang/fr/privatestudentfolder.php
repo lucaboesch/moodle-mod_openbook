@@ -204,22 +204,22 @@ $string['nothing_to_show_users'] = 'Rien à afficher - aucun étudiant disponibl
 $string['nothing_to_show_groups'] = 'Rien à afficher - aucun groupe disponible';
 $string['notice'] = '<strong>Note : </strong>';
 
-$string['notice_upload_filesarepersonal_teacherrequired'] = 'Tous les fichiers que vous téléversez ici seront personnels et visibles uniquement par vous <strong>après l\'approbation des enseignants.</strong> Les enseignants se réservent le droit de rejeter le Private Student Folder de vos fichiers à tout moment.';
+$string['notice_upload_filesarepersonal_teacherrequired'] = 'Tous les fichiers que vous téléversez ici seront personnels et visibles uniquement par vous <strong>après l\'approbation des enseignants.</strong> Les enseignants se réservent le droit de rejeter la publication de vos fichiers à tout moment.';
 $string['notice_upload_filesarepersonal_teachernotrequired'] = 'Tous les fichiers que vous téléversez ici seront personnels et visibles automatiquement par vous <strong>automatiquement.</strong>';
 
-$string['notice_upload_studentrequired_teacherrequired'] = 'Tous les fichiers que vous téléversez ici seront publiés (visibles par tous) <strong>après votre approbation et celle des enseignants.</strong> Les enseignants se réservent le droit de rejeter le Private Student Folder de vos fichiers à tout moment.';
+$string['notice_upload_studentrequired_teacherrequired'] = 'Tous les fichiers que vous téléversez ici seront publiés (visibles par tous) <strong>après votre approbation et celle des enseignants.</strong> Les enseignants se réservent le droit de rejeter la publication de vos fichiers à tout moment.';
 $string['notice_upload_studentrequired_teachernotrequired'] = 'Tous les fichiers que vous téléversez ici seront publiés (visibles par tous) <strong>après votre approbation.</strong>';
-$string['notice_upload_studentnotrequired_teacherrequired'] = 'Tous les fichiers que vous téléversez ici seront publiés (visibles par tous) uniquement <strong>après l\'approbation des enseignants.</strong> Les enseignants se réservent le droit de rejeter le Private Student Folder de vos fichiers à tout moment.';
+$string['notice_upload_studentnotrequired_teacherrequired'] = 'Tous les fichiers que vous téléversez ici seront publiés (visibles par tous) uniquement <strong>après l\'approbation des enseignants.</strong> Les enseignants se réservent le droit de rejeter la publication de vos fichiers à tout moment.';
 $string['notice_upload_studentnotrequired_teachernotrequired'] = 'Tous les fichiers que vous téléversez ici seront publiés (visibles par tous) <strong>automatiquement.</strong>';
 
-$string['notice_import_studentrequired_teacherrequired'] = 'Les fichiers seront publiés (visibles par tous) après <strong>votre approbation et celle des enseignants.</strong> Les enseignants se réservent le droit de rejeter le Private Student Folder de vos fichiers à tout moment.';
+$string['notice_import_studentrequired_teacherrequired'] = 'Les fichiers seront publiés (visibles par tous) après <strong>votre approbation et celle des enseignants.</strong> Les enseignants se réservent le droit de rejeter la publication de vos fichiers à tout moment.';
 $string['notice_import_studentrequired_teachernotrequired'] = 'Les fichiers seront publiés (visibles par tous) après <strong>votre approbation.</strong>';
-$string['notice_import_studentnotrequired_teacherrequired'] = 'Les fichiers seront publiés (visibles par tous) uniquement <strong>après l\'approbation des enseignants.</strong> Les enseignants se réservent le droit de rejeter le Private Student Folder de vos fichiers à tout moment.';
+$string['notice_import_studentnotrequired_teacherrequired'] = 'Les fichiers seront publiés (visibles par tous) uniquement <strong>après l\'approbation des enseignants.</strong> Les enseignants se réservent le droit de rejeter la publication de vos fichiers à tout moment.';
 $string['notice_import_studentnotrequired_teachernotrequired'] = 'Les fichiers seront publiés (visibles par tous) <strong>automatiquement.</strong>';
 
-$string['notice_group_all_teacherrequired'] = 'Les fichiers ne seront publiés pour tous les étudiants qu\'avec l\'approbation de <strong>TOUS les membres du groupe et de l\'enseignant.</strong> Les enseignants se réservent le droit de rejeter le Private Student Folder de vos fichiers à tout moment.';
+$string['notice_group_all_teacherrequired'] = 'Les fichiers ne seront publiés pour tous les étudiants qu\'avec l\'approbation de <strong>TOUS les membres du groupe et de l\'enseignant.</strong> Les enseignants se réservent le droit de rejeter la publication de vos fichiers à tout moment.';
 $string['notice_group_all_teachernotrequired'] = 'Les fichiers ne seront publiés pour tous les étudiants qu\'avec l\'approbation de <strong>TOUS les membres du groupe.</strong>';
-$string['notice_group_one_teacherrequired'] = 'Les fichiers ne seront publiés pour tous les étudiants qu\'avec l\'approbation d\'<strong>AU MOINS UN membre du groupe et de l\'enseignant.</strong> Les enseignants se réservent le droit de rejeter le Private Student Folder de vos fichiers à tout moment.';
+$string['notice_group_one_teacherrequired'] = 'Les fichiers ne seront publiés pour tous les étudiants qu\'avec l\'approbation d\'<strong>AU MOINS UN membre du groupe et de l\'enseignant.</strong> Les enseignants se réservent le droit de rejeter la publication de vos fichiers à tout moment.';
 $string['notice_group_one_teachernotrequired'] = 'Les fichiers ne seront publiés pour tous les étudiants qu\'avec l\'approbation d\'<strong>AU MOINS UN membre du groupe.</strong>';
 
 $string['notice_files_imported'] = 'Les fichiers affichés sont importés depuis une activité de devoir.';
