@@ -197,30 +197,34 @@ class base extends \html_table {
 
         $hint .= ' ';
 
-        /* Add teacher approval to hint string. */
+        /* Add student approval to hint string. */
 
         $studentapproved = false;
         $studentdenied = false;
         $studentpending = false;
 
-        if ($obtainstudentapproval == 1) {
-            if ($studentapproval == 1) {
-                $studentapproved = true;
-                $hint .= get_string('student_approved', 'privatestudentfolder');
-            } else if ($studentapproval == 2) {
-                $studentdenied = true;
-                $hint .= get_string('student_rejected', 'privatestudentfolder');
-            } else {
-                if ($this->privatestudentfolder->is_approval_open()) {
-                    $this->changepossible = true;
-                    return \html_writer::select($this->options, 'studentapproval[' . $file->get_id() . ']', $studentapproval);
+        if ( $this->privatestudentfolder->get_filesarepersonal_status() == "0" ) {
+
+            if ($obtainstudentapproval == 1) {
+                if ($studentapproval == 1) {
+                    $studentapproved = true;
+                    $hint .= get_string('student_approved', 'privatestudentfolder');
+                } else if ($studentapproval == 2) {
+                    $studentdenied = true;
+                    $hint .= get_string('student_rejected', 'privatestudentfolder');
+                } else {
+                    if ($this->privatestudentfolder->is_approval_open()) {
+                        $this->changepossible = true;
+                        return \html_writer::select($this->options, 'studentapproval[' . $file->get_id() . ']', $studentapproval);
+                    }
+                    $studentpending = true;
+                    $hint .= get_string('student_pending', 'privatestudentfolder');
                 }
-                $studentpending = true;
-                $hint .= get_string('student_pending', 'privatestudentfolder');
+            } else {
+                $studentapproved = true;
+                $hint .= get_string('student_approved_automatically', 'privatestudentfolder');
             }
-        } else {
-            $studentapproved = true;
-            $hint .= get_string('student_approved_automatically', 'privatestudentfolder');
+
         }
 
         /* Use $hint string in context */
@@ -234,7 +238,7 @@ class base extends \html_table {
         } else if (!$teacherapproved) {
             $templatecontext->icon = $this->invalid;
         } else {
-            if ($studentapproved) {
+            if ($studentapproved && $this->privatestudentfolder->get_filesarepersonal_status() == "0") {
                 $templatecontext->icon = $this->share;
             } else {
                 $templatecontext->icon = $this->valid;
