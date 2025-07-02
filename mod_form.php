@@ -212,6 +212,10 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
         $mform->setDefault('obtainstudentapproval', get_config('privatestudentfolder', 'obtainstudentapproval'));
         $mform->addHelpButton('obtainstudentapproval', 'obtainstudentapproval', 'privatestudentfolder');
 
+        $mform->hideIf('obtainstudentapproval', 'filesarepersonal', 'eq', '1');
+        $mform->hideIf('approvalfromdate', 'filesarepersonal', 'eq', '1');
+        $mform->hideIf('approvaltodate', 'filesarepersonal', 'eq', '1');
+
         // Group approval.
         $attributes = [];
         $options = [
