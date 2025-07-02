@@ -1,8 +1,7 @@
 @mod @mod_privatestudentfolder @mod_resource @_file_upload
 Feature: Create privatestudentfolder instance
 
-  @javascript
-  Scenario: Create privatestudentfolder instance in course1
+  Background:
     Given the following "users" exist:
         | username | firstname | lastname | email |
         | teacher1 | Teacher | 1 | teacher1@asd.com |
@@ -15,6 +14,8 @@ Feature: Create privatestudentfolder instance
         | teacher1 | C1 | editingteacher |
         | teacher1 | C2 | editingteacher |
 
+  @javascript
+  Scenario: Create privatestudentfolder instance in course1
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I turn editing mode on
