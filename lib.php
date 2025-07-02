@@ -108,6 +108,10 @@ function privatestudentfolder_supports($feature) {
 function privatestudentfolder_update_instance($privatestudentfolder) {
     global $DB;
 
+    if ( $privatestudentfolder->filesarepersonal == 1 ) {
+        $privatestudentfolder->obtainstudentapproval = "0";
+    }
+
     $privatestudentfolder->id = $privatestudentfolder->instance;
 
     $privatestudentfolder->timemodified = time();
