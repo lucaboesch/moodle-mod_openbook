@@ -25,19 +25,19 @@
 
 /**
  * @module mod_privatestudentfolder/alignrows
-*/
+ */
 define(['jquery'], function($) {
 
     /**
      * @constructor
      * @alias module:mod_privatestudentfolder/alignrows
      */
-    var Alignrows = function() {
+    var Alignrows = function(){
         this.cmid = 0;
     };
 
     var instance = new Alignrows();
-    instance.initializer = function() {
+    instance.initializer = function(){
         $("#attempts").ready(function (){
             var alltds = $("#attempts > tbody > tr > td > table > tbody > tr > td");
             var maxHeight = Math.max.apply(null, alltds.map(function (){
