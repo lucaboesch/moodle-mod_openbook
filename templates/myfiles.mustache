@@ -1,3 +1,6 @@
+{{!
+    @template mod_privatestudentfolder/myfiles
+}}
 {{#assign}}
     {{{.}}}
 {{/assign}}
@@ -33,17 +36,9 @@
 {{/hasmyfiles}}
 <tr>
     <th>{{myfilestitle}}</th>
-    <td>
-        {{#hasmyfiles}}
-            <table id="myfilestable">
-                {{#myfiles}}
-                    <tr>
-                        {{#.}}
-                            <td>
-                                {{{.}}}
-                            </td>
-                        {{/.}}
-                    </tr>
+    <td>{{#hasmyfiles}}
+            <table id="myfilestable">{{#myfiles}}
+                    <tr>{{#.}}<td>{{{.}}}</td>{{/.}}</tr>
                 {{/myfiles}}
             </table>
         {{/hasmyfiles}}
