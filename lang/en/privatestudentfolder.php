@@ -38,12 +38,6 @@ $string['eventprivatestudentfolderfileimported'] = 'Private Student Folder file 
 $string['eventprivatestudentfolderduedateextended'] = 'Private Student Folder due-date extended';
 $string['eventprivatestudentfolderapprovalchanged'] = 'Private Student Folder file approval changed';
 
-$string['eventprivatestudentfolderfiledeleted'] = 'Suppression de fichier dans Private Student Folder';
-$string['eventprivatestudentfolderfileuploaded'] = 'Téléversement de fichier dans Private Student Folder';
-$string['eventprivatestudentfolderfileimported'] = 'Importation de fichier dans Private Student Folder';
-$string['eventprivatestudentfolderduedateextended'] = 'Date d\'échéance prolongée dans Private Student Folder';
-$string['eventprivatestudentfolderapprovalchanged'] = 'Changement d\'approbation de fichier dans Private Student Folder';
-
 $string['modulenameplural'] = 'Private Student Folders';
 $string['pluginadministration'] = 'Student folder administration';
 $string['privatestudentfolder:addinstance'] = 'Add a new student folder';

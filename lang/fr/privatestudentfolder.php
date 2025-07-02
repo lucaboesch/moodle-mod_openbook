@@ -24,19 +24,19 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- $string['availabilityrestriction'] = 'Appliquer des restrictions de disponibilité à la liste des utilisateurs';
- $string['availabilityrestriction_admin'] = 'Paramètre par défaut pour les restrictions de disponibilité sur la liste des utilisateurs';
- $string['availabilityrestriction_help'] = 'Les utilisateurs qui ne peuvent pas accéder à l\'activité en raison de restrictions de disponibilité seront retirés de la liste.<br> Cela inclut uniquement les conditions marquées comme appliquées aux listes d\'utilisateurs. Par exemple, les conditions de groupe sont incluses, mais les conditions de date ne le sont pas.';
- $string['availabilityrestriction_admin_desc'] = 'Les utilisateurs qui ne peuvent pas accéder à l\'activité en raison de restrictions de disponibilité seront retirés de la liste.<br> Cela inclut uniquement les conditions marquées comme appliquées aux listes d\'utilisateurs. Par exemple, les conditions de groupe sont incluses, mais les conditions de date ne le sont pas.';
- $string['modulename'] = 'Private Student Folder';
- $string['pluginname'] = 'Private Student Folder';
- $string['modulename_help'] = 'Le Private Student Folder offre les fonctionnalités suivantes :<br><ul><li>Les étudiants peuvent téléverser des fichiers.</li><li>Les fichiers seront disponibles pour l\'étudiant lui-même (ou également pour les autres étudiants, si le partage est autorisé) automatiquement ou après approbation des enseignants.</li><li>Les étudiants et/ou les enseignants recevront une notification lorsque des fichiers sont téléversés ou modifiés par les étudiants ou lorsqu\'un fichier est importé ou mis à jour depuis une activité de devoir. De plus, les étudiants et/ou les enseignants recevront une notification concernant tout changement de statut du Private Student Folder.</li></ul>';
+$string['availabilityrestriction'] = 'Appliquer des restrictions de disponibilité à la liste des utilisateurs';
+$string['availabilityrestriction_admin'] = 'Paramètre par défaut pour les restrictions de disponibilité sur la liste des utilisateurs';
+$string['availabilityrestriction_help'] = 'Les utilisateurs qui ne peuvent pas accéder à l\'activité en raison de restrictions de disponibilité seront retirés de la liste.<br> Cela inclut uniquement les conditions marquées comme appliquées aux listes d\'utilisateurs. Par exemple, les conditions de groupe sont incluses, mais les conditions de date ne le sont pas.';
+$string['availabilityrestriction_admin_desc'] = 'Les utilisateurs qui ne peuvent pas accéder à l\'activité en raison de restrictions de disponibilité seront retirés de la liste.<br> Cela inclut uniquement les conditions marquées comme appliquées aux listes d\'utilisateurs. Par exemple, les conditions de groupe sont incluses, mais les conditions de date ne le sont pas.';
+$string['modulename'] = 'Private Student Folder';
+$string['pluginname'] = 'Private Student Folder';
+$string['modulename_help'] = 'Le Private Student Folder offre les fonctionnalités suivantes :<br><ul><li>Les étudiants peuvent téléverser des fichiers.</li><li>Les fichiers seront disponibles pour l\'étudiant lui-même (ou également pour les autres étudiants, si le partage est autorisé) automatiquement ou après approbation des enseignants.</li><li>Les étudiants et/ou les enseignants recevront une notification lorsque des fichiers sont téléversés ou modifiés par les étudiants ou lorsqu\'un fichier est importé ou mis à jour depuis une activité de devoir. De plus, les étudiants et/ou les enseignants recevront une notification concernant tout changement de statut du Private Student Folder.</li></ul>';
 
-$string['eventprivatestudentfolderfiledeleted'] = 'Private Student Folder file delete';
-$string['eventprivatestudentfolderfileuploaded'] = 'Private Student Folder file upload';
-$string['eventprivatestudentfolderfileimported'] = 'Private Student Folder file import';
-$string['eventprivatestudentfolderduedateextended'] = 'Private Student Folder due-date extended';
-$string['eventprivatestudentfolderapprovalchanged'] = 'Private Student Folder file approval changed';
+$string['eventprivatestudentfolderfiledeleted'] = 'Suppression de fichier dans Private Student Folder';
+$string['eventprivatestudentfolderfileuploaded'] = 'Téléversement de fichier dans Private Student Folder';
+$string['eventprivatestudentfolderfileimported'] = 'Importation de fichier dans Private Student Folder';
+$string['eventprivatestudentfolderduedateextended'] = 'Date d\'échéance prolongée dans Private Student Folder';
+$string['eventprivatestudentfolderapprovalchanged'] = 'Changement d\'approbation de fichier dans Private Student Folder';
 
 $string['modulenameplural'] = 'Private Student Folders';
 $string['pluginadministration'] = 'Administration du Private Student Folder';
