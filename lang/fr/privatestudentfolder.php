@@ -294,7 +294,7 @@ $string['reset'] = 'Annuler';
 
 // Strings from the file upload.php
 $string['filesofthesetypes'] = 'Les fichiers de ces types peuvent être ajoutés :';
-$string['guideline'] = 'Dossier privé étudiant des fichiers soumis';
+$string['guideline'] = 'Publication des fichiers soumise';
 $string['published_immediately'] = 'Approbation automatique';
 $string['published_aftercheck'] = 'Approbation requise des enseignants';
 $string['save_changes'] = 'Enregistrer les modifications';
@@ -338,9 +338,9 @@ $string['filter:approvalrequired'] = 'Décision en attente';
 $string['filter:nofiles'] = 'Aucune soumission de fichier';
 
 // Strings for overrides
-$string['eventoverridecreated'] = 'Prolongation du dossier étudiant personnel créée';
-$string['eventoverridedeleted'] = 'Prolongation du dossier étudiant personnel supprimée';
-$string['eventoverrideupdated'] = 'Prolongation du dossier étudiant personnel mise à jour';
+$string['eventoverridecreated'] = 'Prolongation du Private Student Folder créée';
+$string['eventoverridedeleted'] = 'Prolongation du Private Student Folder supprimée';
+$string['eventoverrideupdated'] = 'Prolongation du Private Student Folder mise à jour';
 $string['override:add:group'] = 'Ajouter une prolongation de groupe';
 $string['override:add:user'] = 'Ajouter une prolongation utilisateur';
 $string['overrides:empty'] = 'Aucune prolongation';

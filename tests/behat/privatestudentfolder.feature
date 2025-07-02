@@ -18,7 +18,7 @@ Feature: Create privatestudentfolder instance
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I turn editing mode on
-    And I add a "Student folder" to section "1" and I fill the form with:
+    And I add a privatestudentfolder to section "1" and I fill the form with:
       | Student folder name | Test studentfolder name |
       | Description         | Test description        |
       | ID number           | Test studentfolder name |

@@ -40,9 +40,9 @@ $string['eventprivatestudentfolderapprovalchanged'] = 'Private Student Folder fi
 
 $string['modulenameplural'] = 'Private Student Folders';
 $string['pluginadministration'] = 'Student folder administration';
-$string['privatestudentfolder:addinstance'] = 'Add a new student folder';
-$string['privatestudentfolder:view'] = 'View student folder';
-$string['privatestudentfolder:upload'] = 'Upload files to a student folder';
+$string['privatestudentfolder:addinstance'] = 'Add a new Private Student Folder';
+$string['privatestudentfolder:view'] = 'View Private Student Folder';
+$string['privatestudentfolder:upload'] = 'Upload files to a Private Student Folder';
 $string['privatestudentfolder:approve'] = 'Decide if files should be published (visible for all participants)';
 $string['privatestudentfolder:grantextension'] = 'Grant extension';
 $string['privatestudentfolder:manageoverrides'] = 'Manage overrides';
