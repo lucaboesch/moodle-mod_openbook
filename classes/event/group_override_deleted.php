@@ -25,8 +25,6 @@
  */
 namespace mod_privatestudentfolder\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The mod_privatestudentfolder group override deleted event class.
  *

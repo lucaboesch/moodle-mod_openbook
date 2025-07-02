@@ -25,7 +25,6 @@
  */
 
 namespace mod_privatestudentfolder\event;
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * A file was deleted for this event

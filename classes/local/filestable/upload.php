@@ -26,8 +26,6 @@
 
 namespace mod_privatestudentfolder\local\filestable;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Table showing my uploaded files
  *

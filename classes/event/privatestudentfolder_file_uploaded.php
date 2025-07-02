@@ -27,8 +27,6 @@
 namespace mod_privatestudentfolder\event;
 use phpDocumentor\Reflection\Types\Object_;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * A file was uploaded for this event
  *

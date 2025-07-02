@@ -200,7 +200,16 @@ class mod_privatestudentfolder_files_form extends moodleform {
 
                 $mform->addGroup($buttonarray, 'submitgrp', '', [' '], false);
             } else {
-                $mform->addElement('static', 'approvaltimeover', '', get_string('approval_timeover', 'privatestudentfolder'));
+
+                $noticehtml = html_writer::start_tag('div', ['class' => 'alert alert-secondary']);
+                $noticehtml .= get_string('approval_timeover', 'privatestudentfolder');
+                $noticehtml .= html_writer::end_tag('div');
+
+                $mform->addElement('html', $noticehtml);
+
+                // $mform->addElement('static', 'approvaltimeover', get_string('approval_timeover', 'privatestudentfolder'));
+                // $mform->addElement('html', '<div class="qheader">'  . get_string('approval_timeover', 'privatestudentfolder') . '</div>');
+
             }
         }
 

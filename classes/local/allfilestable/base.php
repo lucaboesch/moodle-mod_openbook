@@ -111,7 +111,6 @@ class base extends \table_sql {
         $this->privatestudentfolder = $privatestudentfolder;
         $instance = $privatestudentfolder->get_instance();
 
-        // TASK : Use $this->filesarepersonal = $instance->filesarepersonal !
         $this->obtainteacherapproval = $instance->obtainteacherapproval;
         $this->obtainstudentapproval = $instance->obtainstudentapproval;
 
@@ -269,8 +268,6 @@ class base extends \table_sql {
         list($sqluserids, $userparams) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED, 'user');
         $params = $params + $userparams + ['privatestudentfolder' => $this->cm->instance];
 
-        /* TODO: Add filter for filesarepersonal ? */
-
         $having = '';
         if ($this->filter == PRIVATESTUDENTFOLDER_FILTER_NOFILTER) {
             $from = '{user} u ' .
@@ -322,13 +319,13 @@ FROM
      * Set the sql to query the db. Query will be : SELECT $fields FROM $from WHERE $where
      * Of course you can use sub-queries, JOINS etc. by putting them in the appropriate clause of the query.
      *
-     * @param string $fields
-     * @param string $from
-     * @param string $where
-     * @param array|null $params (optional)
-     * @param string $groupby (optional)
+     * @param string $fields Fields
+     * @param string $from From
+     * @param string $where Where
+     * @param array $params (optional) Parameters
+     * @param string $groupby (optional) GroupBy
      */
-    public function set_sql($fields, $from, $where, ?array $params = null, ?$groupby = '') {
+    public function set_sql($fields, $from, $where, ?array $params = null, string $groupby = '') {
         parent::set_sql($fields, $from, $where, $params);
         $this->sql->groupby = $groupby;
     }

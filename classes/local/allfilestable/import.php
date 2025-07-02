@@ -26,8 +26,6 @@
 
 namespace mod_privatestudentfolder\local\allfilestable;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Table showing all imported files
  *

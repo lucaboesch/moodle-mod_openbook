@@ -25,7 +25,6 @@
  */
 
 namespace mod_privatestudentfolder\event;
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Duedate was extended for this event
