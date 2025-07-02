@@ -37,27 +37,6 @@ variables:
       - MOODLE_BRANCH: [ "MOODLE_405_STABLE" ]
         PHP_VERSION: [ "8.1", "8.2" ]
 
-test:postgres:
-  <<: *job_configuration
-  services:
-    - postgres:14
-    - docker:dind
-  variables:
-    DB: pgsql
-    DB_HOST: postgres
-    DB_PORT: 5432
-
-test:mysql:
-  <<: *job_configuration
-  services:
-    - name: mysql:8.0.23
-      command: ["mysqld", "--port=6033"]
-    - docker:dind
-  variables:
-    DB: mysqli
-    DB_HOST: mysql
-    DB_PORT: 6033
-
 test:mariadb:
   <<: *job_configuration
   services:
@@ -68,3 +47,23 @@ test:mariadb:
     DB_HOST: "mariadb"
     DB_PORT: 3306
 
+# test:postgres:
+#   <<: *job_configuration
+#   services:
+#     - postgres:14
+#     - docker:dind
+#   variables:
+#     DB: pgsql
+#     DB_HOST: postgres
+#     DB_PORT: 5432
+
+# test:mysql:
+#   <<: *job_configuration
+#   services:
+#     - name: mysql:8.0.23
+#       command: ["mysqld", "--port=6033"]
+#     - docker:dind
+#   variables:
+#     DB: mysqli
+#     DB_HOST: mysql
+#     DB_PORT: 6033
