@@ -171,31 +171,9 @@ class base extends \html_table {
         $obtainteacherapproval = $this->privatestudentfolder->get_instance()->obtainteacherapproval;
         $obtainstudentapproval = $this->privatestudentfolder->get_instance()->obtainstudentapproval;
 
-        $studentapproved = false;
-        $studentdenied = false;
-        $studentpending = false;
         $hint = '';
-        if ($obtainstudentapproval == 1) {
-            if ($studentapproval == 1) {
-                $studentapproved = true;
-                $hint = get_string('student_approved', 'privatestudentfolder');
-            } else if ($studentapproval == 2) {
-                $studentdenied = true;
-                $hint = get_string('student_rejected', 'privatestudentfolder');
-            } else {
-                if ($this->privatestudentfolder->is_approval_open()) {
-                    $this->changepossible = true;
-                    return \html_writer::select($this->options, 'studentapproval[' . $file->get_id() . ']', $studentapproval);
-                }
-                $studentpending = true;
-                $hint = get_string('student_pending', 'privatestudentfolder');
-            }
-        } else {
-            $studentapproved = true;
-            $hint = get_string('student_approved_automatically', 'privatestudentfolder');
-        }
 
-        $hint .= ' ';
+        /* Add teacher approval to hint string. */
 
         $teacherapproved = false;
         $teacherdenied = false;
@@ -217,6 +195,40 @@ class base extends \html_table {
             $hint .= get_string('teacher_approved_automatically', 'privatestudentfolder');
         }
 
+        $hint .= ' ';
+
+        /* Add teacher approval to hint string. */
+
+        $studentapproved = false;
+        $studentdenied = false;
+        $studentpending = false;
+
+        if ($obtainstudentapproval == 1) {
+            if ($studentapproval == 1) {
+                $studentapproved = true;
+                $hint .= get_string('student_approved', 'privatestudentfolder');
+            } else if ($studentapproval == 2) {
+                $studentdenied = true;
+                $hint .= get_string('student_rejected', 'privatestudentfolder');
+            } else {
+                if ($this->privatestudentfolder->is_approval_open()) {
+                    $this->changepossible = true;
+                    return \html_writer::select($this->options, 'studentapproval[' . $file->get_id() . ']', $studentapproval);
+                }
+                $studentpending = true;
+                $hint .= get_string('student_pending', 'privatestudentfolder');
+            }
+        } else {
+            $studentapproved = true;
+            $hint .= get_string('student_approved_automatically', 'privatestudentfolder');
+        }
+
+        /* Use $hint string in context */
+
+        $templatecontext->hint = $hint;
+
+        /* Set approval icons */
+
         if ($teacherpending) {
             $templatecontext->icon = $this->questionmark;
         } else if (!$teacherapproved) {
@@ -229,52 +241,7 @@ class base extends \html_table {
             }
         }
 
-        $templatecontext->hint = $hint;
         return $OUTPUT->render_from_template('mod_privatestudentfolder/approval_icon', $templatecontext);
-
-        /*
-            if ($teacherapproval && $this->privatestudentfolder->get_instance()->obtainstudentapproval) {
-                $studentapproval = $this->privatestudentfolder->student_approval($file);
-                if ($this->privatestudentfolder->is_open() && $studentapproval == 0) {
-                    $this->changepossible = true;
-                    $data[] = \html_writer::select($this->options, 'studentapproval[' . $file->get_id() . ']', $studentapproval);
-                    $templatecontext = false;
-                } else {
-                    switch ($studentapproval) {
-                        case 2:
-                            $templatecontext->icon = $this->valid;
-                            $templatecontext->hint = get_string('student_approved', 'privatestudentfolder');
-                            break;
-                        case 1:
-                            $templatecontext->icon = $this->invalid;
-                            $templatecontext->hint = get_string('student_rejected', 'privatestudentfolder');
-                            break;
-                        default:
-                            $templatecontext->icon = $this->questionmark;
-                            $templatecontext->hint = get_string('student_pending', 'privatestudentfolder');
-                    }
-                }
-            } else {
-                switch ($teacherapproval) {
-                    case 1:
-                        $templatecontext->icon = $this->valid;
-                        $templatecontext->hint = get_string('teacher_approved', 'privatestudentfolder');
-                        break;
-                    case 3:
-                        $templatecontext->icon = $this->questionmark;
-                        $templatecontext->hint = get_string('hidden', 'privatestudentfolder') . ' (' . get_string('teacher_pending', 'privatestudentfolder') . ')';
-                        break;
-                    default:
-                        $templatecontext->icon = $this->questionmark;
-                        $templatecontext->hint = get_string('student_pending', 'privatestudentfolder');
-                }
-            }
-
-            if ($templatecontext) {
-                return $OUTPUT->render_from_template('mod_privatestudentfolder/approval_icon', $templatecontext);
-            }
-            return '';
-        */
 
     }
 

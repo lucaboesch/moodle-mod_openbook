@@ -198,19 +198,19 @@ $string['mygroupfiles'] = 'Fichiers de mon groupe';
 $string['add_uploads'] = 'Ajouter des fichiers';
 $string['edit_uploads'] = 'Modifier/téléverser des fichiers';
 $string['edit_timeover'] = 'Les fichiers ne peuvent être modifiés que pendant la période d\'édition.';
-$string['approval_timeover'] = 'Vous ne pouvez modifier votre consentement que pendant la période d\'édition.';
+$string['approval_timeover'] = 'Vous ne pouvez modifier votre consentement au partage de fichiers que pendant la période d\'édition.';
 $string['noentries'] = 'Aucune entrée';
 $string['nofiles'] = 'Aucun fichier disponible';
 $string['nothing_to_show_users'] = 'Rien à afficher - aucun étudiant disponible';
 $string['nothing_to_show_groups'] = 'Rien à afficher - aucun groupe disponible';
 $string['notice'] = '<strong>Note : </strong>';
 
-$string['notice_upload_filesarepersonal_teacherrequired'] = 'Tous les fichiers que vous téléversez ici seront personnels et visibles uniquement par vous <strong>après l\'approbation des enseignants.</strong> Les enseignants se réservent le droit de rejeter la publication de vos fichiers à tout moment.';
+$string['notice_upload_filesarepersonal_teacherrequired'] = 'Tous les fichiers que vous téléversez ici seront personnels et visibles uniquement par vous <strong>après l\'approbation des enseignants.</strong>';
 $string['notice_upload_filesarepersonal_teachernotrequired'] = 'Tous les fichiers que vous téléversez ici seront personnels et visibles automatiquement par vous <strong>automatiquement.</strong>';
 
-$string['notice_upload_studentrequired_teacherrequired'] = 'Tous les fichiers que vous téléversez ici seront publiés (visibles par tous) <strong>après votre approbation et celle des enseignants.</strong> Les enseignants se réservent le droit de rejeter la publication de vos fichiers à tout moment.';
-$string['notice_upload_studentrequired_teachernotrequired'] = 'Tous les fichiers que vous téléversez ici seront publiés (visibles par tous) <strong>après votre approbation.</strong>';
-$string['notice_upload_studentnotrequired_teacherrequired'] = 'Tous les fichiers que vous téléversez ici seront publiés (visibles par tous) uniquement <strong>après l\'approbation des enseignants.</strong> Les enseignants se réservent le droit de rejeter la publication de vos fichiers à tout moment.';
+$string['notice_upload_studentrequired_teacherrequired'] = 'Tous les fichiers que vous téléversez ici vous seront visibles et accessibles, <strong>après approbation de l\'enseignant</strong>. Il ne seront partagés (visibles par les autres étudiants) qu\'<strong>après votre approbation.</strong>';
+$string['notice_upload_studentrequired_teachernotrequired'] = 'Tous les fichiers que vous téléversez ici vous seront visibles et accessibles. Il ne seront partagés (visibles par les autres étudiants) qu\'<strong>après votre approbation.</strong>';
+$string['notice_upload_studentnotrequired_teacherrequired'] = 'Tous les fichiers que vous téléversez ici seront visibles et accessibles par tous les étudiants, mais qu\'<strong>après approbation de l\'enseignant</strong>.';
 $string['notice_upload_studentnotrequired_teachernotrequired'] = 'Tous les fichiers que vous téléversez ici seront publiés (visibles par tous) <strong>automatiquement.</strong>';
 
 $string['notice_import_studentrequired_teacherrequired'] = 'Les fichiers seront publiés (visibles par tous) après <strong>votre approbation et celle des enseignants.</strong> Les enseignants se réservent le droit de rejeter la publication de vos fichiers à tout moment.';
@@ -238,7 +238,7 @@ $string['notice_obtainapproval_upload_automatic'] = 'Dans l\'esprit de la légis
 $string['teacher_pending'] = 'Décision de l\'enseignant en attente.';
 $string['teacher_approved'] = 'Approuvé par l\'enseignant.';
 $string['teacher_approved_automatically'] = 'Approuvé automatiquement par l\'enseignant.';
-$string['teacher_rejected'] = 'Non publié (rejeté).';
+$string['teacher_rejected'] = 'Rejeté par l\'enseignant.';
 $string['teacher_approve'] = 'Approuver';
 $string['teacher_reject'] = 'Rejeter';
 $string['approved'] = 'Approuvé';
@@ -264,7 +264,7 @@ $string['privatestudentfolderstatus'] = 'Publication';
 $string['privatestudentfolderstatus_help'] = 'Le statut de publication représente l\'approbation de l\'enseignant et le statut final de la publication : <ul><li><i class="fa fa-check text-success fa-fw"></i> Le fichier est publié et donc visible pour son auteur et éventuellement pour d\'autres participants</li><li><i class="fa fa-times text-danger fa-fw"></i> Le fichier n\'est pas publié (approbation non encore donnée ou rejetée) et donc non visible</li></ul>';
 
 $string['allfiles'] = 'Soumissions de fichiers';
-$string['publicfiles'] = 'Fichiers publiés';
+$string['publicfiles'] = 'Fichiers partagés';
 $string['downloadall'] = 'Télécharger toutes les soumissions de fichiers';
 $string['optionalsettings'] = 'Options';
 $string['entiresperpage'] = 'Participants affichés par page';
