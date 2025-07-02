@@ -2721,4 +2721,11 @@ class privatestudentfolder {
         }
         return null;
     }
+
+    /**
+     * Get current status of filesarepersonal
+     */
+    public function get_filesarepersonal_status() {
+        return $this->instance->filesarepersonal;
+    }
 }
