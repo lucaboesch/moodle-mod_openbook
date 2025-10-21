@@ -39,9 +39,17 @@ if ($ADMIN->fulltree) {
         '1' => get_string('filesarepersonal_yes', 'privatestudentfolder'),
         '0' => get_string('filesarepersonal_no', 'privatestudentfolder'),
     ];
-
+    
     $settings->add(new admin_setting_configselect('privatestudentfolder/filesarepersonal', get_string('filesarepersonal_admin', 'privatestudentfolder'),
     get_string('filesarepersonal_admin_desc', 'privatestudentfolder'), 1, $options));
+    
+    $options = [
+        '1' => get_string('openpdffilesinpdfjs_yes', 'privatestudentfolder'),
+        '0' => get_string('openpdffilesinpdfjs_no', 'privatestudentfolder'),
+    ];
+    
+    $settings->add(new admin_setting_configselect('privatestudentfolder/openpdffilesinpdfjs', get_string('openpdffilesinpdfjs_admin', 'privatestudentfolder'),
+    get_string('openpdffilesinpdfjs_admin_desc', 'privatestudentfolder'), 1, $options));
 
     $options = [
         '0' => get_string('obtainapproval_automatic', 'privatestudentfolder'),

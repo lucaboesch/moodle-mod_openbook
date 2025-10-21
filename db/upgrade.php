@@ -396,6 +396,27 @@ function xmldb_privatestudentfolder_upgrade($oldversion) {
         // Private Student Folder savepoint reached.
         upgrade_mod_savepoint(true, 2025042203, 'privatestudentfolder');
     }
+    
+    if ($oldversion < 2025102101) {
+    
+        // Define table privatestudentfolder_overrides to be created.
+        $table = new xmldb_table('privatestudentfolder');
+    
+        // Conditionally launch create table for privatestudentfolder_overrides.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+    
+        $field = new xmldb_field('openpdffilesinpdfjs', XMLDB_TYPE_INTEGER, '2', null, null, null, '1', 'type');
+    
+        // Conditionally launch add field filesarepersonal.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+    
+        // Private Student Folder savepoint reached.
+        upgrade_mod_savepoint(true, 2025102101, 'privatestudentfolder');
+    }
 
     return true;
 }

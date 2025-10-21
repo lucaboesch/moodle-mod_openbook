@@ -182,6 +182,18 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
             get_string('filesarepersonal', 'privatestudentfolder'), $options, $attributes);
         $mform->setDefault('filesarepersonal', get_config('privatestudentfolder', 'filesarepersonal'));
         $mform->addHelpButton('filesarepersonal', 'filesarepersonal', 'privatestudentfolder');
+        
+        // Open PDF files in PDF.js
+        $attributes = [];
+        $options = [
+            '0' => get_string('openpdffilesinpdfjs_no', 'privatestudentfolder'),
+            '1' => get_string('openpdffilesinpdfjs_yes', 'privatestudentfolder'),
+        ];
+        
+        $mform->addElement('select', 'openpdffilesinpdfjs',
+            get_string('openpdffilesinpdfjs', 'privatestudentfolder'), $options, $attributes);
+        $mform->setDefault('openpdffilesinpdfjs', get_config('privatestudentfolder', 'openpdffilesinpdfjs'));
+        $mform->addHelpButton('openpdffilesinpdfjs', 'openpdffilesinpdfjs', 'privatestudentfolder');
 
         // Teacher approval.
         $attributes = [];

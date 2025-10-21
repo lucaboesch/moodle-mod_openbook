@@ -70,6 +70,7 @@ class mod_privatestudentfolder_generator extends testing_module_generator {
                 'maxbytes' => 2,
                 'allowedfiletypes' => '',
                 'filesarepersonal' => 1,
+                'openpdffilesinpdfjs' => 1,
                 'obtainteacherapproval' => 1,
                 'groupmode' => SEPARATEGROUPS,
         ];

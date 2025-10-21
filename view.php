@@ -39,6 +39,9 @@ $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 require_login($course, true, $cm);
 $PAGE->set_url($url);
 
+// Charger le CSS du plugin
+$PAGE->requires->css(new \moodle_url($CFG->wwwroot . '/mod/privatestudentfolder/styles.css'));
+
 $context = context_module::instance($cm->id);
 
 require_capability('mod/privatestudentfolder:view', $context);
@@ -296,9 +299,6 @@ if (has_capability('mod/privatestudentfolder:approve', $context)) {
 
 /* Set mode for "filesarepersonal" */
 
-$templatecontext->filesarepersonals = $privatestudentfolderinstance->filesarepersonal == 1
-                                        ? true
-                                        : false;
 $templatecontext->filesarepersonal = $privatestudentfolderinstance->filesarepersonal == 1
                                                 ? get_string('filesarepersonal_yes', 'privatestudentfolder')
                                                 : get_string('filesarepersonal_no', 'privatestudentfolder');

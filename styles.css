@@ -258,3 +258,14 @@
     display: none;
 }
 
+/* disabled links */
+
+.disabled-link {
+    color: #999 !important;               /* texte grisé */
+    cursor: not-allowed;                    /* montre que ce n’est pas cliquable */
+    text-decoration: line-through;          /* barre le texte */
+}
+
+.disabled-link:hover {
+    text-decoration: line-through;          /* barre le texte */
+}

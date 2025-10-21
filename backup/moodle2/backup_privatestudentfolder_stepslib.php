@@ -66,6 +66,7 @@ class backup_privatestudentfolder_activity_structure_step extends backup_activit
                 'allowedfiletypes',
                 'obtainteacherapproval',
                 'filesarepersonal',
+                'openpdffilesinpdfjs_no',
                 'autoimport',
                 'groupapproval',
                 'notifystatuschange',

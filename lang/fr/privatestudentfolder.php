@@ -95,6 +95,13 @@ $string['filesarepersonal_admin'] = 'Les fichiers sont privés/personels';
 $string['filesarepersonal_admin_desc'] = 'Ce paramètre détermine le paramètre par défaut de visibilité pour les fichiers des étudiants.';
 $string['filesarepersonal_help'] = 'Cette option détermine si les fichiers soumis restent privés pour leur propriétaire :<br><ul><li><strong>Oui</strong> - les fichiers sont privés et personnels.</li><li><strong>Non</strong> - les fichiers peuvent être partagés entre étudiants, s\'ils sont approuvés par les parties concernées si nécessaire.</li></ul>';
 
+$string['openpdffilesinpdfjs'] = 'Activer PDF.js';
+$string['openpdffilesinpdfjs_yes'] = 'Oui';
+$string['openpdffilesinpdfjs_no'] = 'Non';
+$string['openpdffilesinpdfjs_admin'] = 'Les fichiers PDF sont affichés avec PDF.js';
+$string['openpdffilesinpdfjs_admin_desc'] = 'Ce paramètre détermine le paramètre par défaut concernant la manière d\'afficher les documents PDF.';
+$string['openpdffilesinpdfjs_help'] = 'Cette option détermine si les fichiers PDF soumis doivent être affichés à l\'aide de la librairie PDF.js.';
+
 $string['myownfiles'] = 'Mes fichiers';
 
 $string['obtainteacherapproval'] = 'Approbation de l\'enseignant';

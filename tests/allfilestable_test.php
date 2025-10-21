@@ -67,6 +67,7 @@ class allfilestable_test extends base {
         $privatestudentfolder = $this->create_instance([
             'mode' => PRIVATESTUDENTFOLDER_MODE_UPLOAD,
             'filesarepersonal' => 1,
+            'openpdffilesinpdfjs' => 1,
             'obtainteacherapproval' => 0,
             'obtainstudentapproval' => 0,
         ]);
@@ -94,6 +95,7 @@ class allfilestable_test extends base {
             'mode' => PRIVATESTUDENTFOLDER_MODE_IMPORT,
             'importfrom' => $assign->id,
             'filesarepersonal' => 1,
+            'openpdffilesinpdfjs' => 1,
             'obtainteacherapproval' => 0,
             'obtainstudentapproval' => 0,
         ]);

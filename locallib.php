@@ -2727,6 +2727,13 @@ class privatestudentfolder {
     }
 
     /**
+     * Get current status of openpdffilesinpdfjs
+     */
+    public function get_openpdffilesinpdfjs_status() {
+        return $this->instance->openpdffilesinpdfjs;
+    }
+    
+    /**
      * Get current status of filesarepersonal
      */
     public function get_filesarepersonal_status() {
