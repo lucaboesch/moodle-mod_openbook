@@ -691,7 +691,48 @@ FROM
                 $filerow = [];
                 $filerow[] = $OUTPUT->pix_icon(file_file_icon($file), get_mimetype_description($file));
 
-                $url = new \moodle_url('/mod/privatestudentfolder/view.php', ['id' => $this->cm->id, 'download' => $file->get_id()]);
+                /* Create a plugin.php file url */
+                /* Generate file URL using plugin's mechanics */
+
+                // var_dump($file);
+
+                $mycmid = $this->cm->id;
+                // var_dump($mycmid);
+                $mydownload = $file->get_id();
+                // var_dump($mydownload);
+
+                $url = new \moodle_url('/mod/privatestudentfolder/view.php', ['id' => $mycmid, 'download' => $file->get_id()]);
+
+                // var_dump($file->get_id());
+                // var_dump($file->get_contextid());
+                // var_dump($file->get_component());
+                // var_dump($file->get_filearea());
+                // var_dump($file->get_itemid());
+                // var_dump($file->get_filepath());
+                // var_dump($file->get_filename());
+
+                /* Generate file URL using pluginfile.php mechanics */
+                $plugin_url = \moodle_url::make_pluginfile_url(
+                    $file->get_contextid(),
+                    $file->get_component(),
+                    $file->get_filearea(),
+                    $file->get_itemid(),
+                    $file->get_filepath(),
+                    $file->get_filename(),
+                    false
+                );
+
+                // var_dump($plugin_url);
+
+                /* TODO: Move link to other place */
+                $url = $plugin_url->out();
+
+                echo '<br /><a href="https://moodle.appbox.camacho.pt/mod/pdfjsfolder/pdfjs-5.1.91-dist/web/viewer.html?file=' . $url . '">viewer link</a>';
+
+                // echo '<iframe src="' . $url . '" width="800" height="600">';
+
+                // var_dump($plugin_url->out());
+
                 $filerow[] = \html_writer::link($url, $file->get_filename()) .
                     $this->add_onlinetext_preview($values->id, $file->get_id());
 

@@ -661,6 +661,8 @@ class privatestudentfolder {
         $output .= html_writer::start_div('fcontainer clearfix mb-3');
 
         $f = groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/privatestudentfolder/view.php?id=' . $cm->id, true);
+
+        /* Download all file submissions button */
         $mf = new mod_privatestudentfolder_allfiles_form(null, array('form' => $f));
         $output .= $mf->render();
 
@@ -674,6 +676,7 @@ class privatestudentfolder {
         $norowsfound = $table->get_count() == 0;
         $nofilesfound = $table->get_totalfilescount() == 0;
 
+        /* Download all file submissions button */
         $link = html_writer::link(new moodle_url('/mod/privatestudentfolder/view.php', [
                 'id' => $this->coursemodule->id,
                 'action' => 'zip',
@@ -682,6 +685,7 @@ class privatestudentfolder {
             get_string('downloadall', 'privatestudentfolder'),
             ['class' => 'btn btn-secondary mb-2 btn-sm']
         );
+
         if (!$norowsfound && !$nofilesfound) {
             $output .= html_writer::tag('div', $link, ['class' => 'mod-privatestudentfolder-download-link']);
         }
@@ -2783,4 +2787,95 @@ class privatestudentfolder {
 
         return true;
     }
+
+    /**
+     * Serve the files from the myplugin file areas.
+     *
+     * @param stdClass $course the course object
+     * @param stdClass $cm the course module object
+     * @param stdClass $context the context
+     * @param string $filearea the name of the file area
+     * @param array $args extra arguments (itemid, path)
+     * @param bool $forcedownload whether or not force download
+     * @param array $options additional options affecting the file serving
+     * @return bool false if the file not found, just send the file otherwise and do not return anything
+     */
+    function mod_privatestudentfolder_pluginfile(
+        $course,
+        $cm,
+        $context,
+        string $filearea,
+        array $args,
+        bool $forcedownload,
+        array $options = []
+    ): bool {
+        global $DB;
+
+        // Check the contextlevel is as expected - if your plugin is a block, this becomes CONTEXT_BLOCK, etc.
+        if ($context->contextlevel != CONTEXT_MODULE) {
+            return false;
+        }
+
+        // Make sure the filearea is one of those used by the plugin.
+        if ($filearea !== 'expectedfilearea' && $filearea !== 'anotherexpectedfilearea') {
+            return false;
+        }
+
+        // Make sure the user is logged in and has access to the module (plugins that are not course modules should leave out the 'cm' part).
+        require_login($course, true, $cm);
+
+        // Check the relevant capabilities - these may vary depending on the filearea being accessed.
+        if (!has_capability('mod/myplugin:view', $context)) {
+            return false;
+        }
+
+        // The args is an array containing [itemid, path].
+        // Fetch the itemid from the path.
+        $itemid = array_shift($args);
+
+        // The itemid can be used to check access to a record, and ensure that the
+        // record belongs to the specifeid context. For example:
+        if ($filearea === 'expectedfilearea') {
+            $post = $DB->get_record('myplugin_posts', ['id' => $itemid]);
+            if ($post->myplugin !== $context->instanceid) {
+                // This post does not belong to the requested context.
+                return false;
+            }
+
+            // You may want to perform additional checks here, for example:
+            // - ensure that if the record relates to a grouped activity, that this
+            //   user has access to it
+            // - check whether the record is hidden
+            // - check whether the user is allowed to see the record for some other
+            //   reason.
+
+            // If, for any reason, the user does not hve access, you can return
+            // false here.
+        }
+
+        // For a plugin which does not specify the itemid, you may want to use the following to keep your code consistent:
+        // $itemid = null;
+
+        // Extract the filename / filepath from the $args array.
+        $filename = array_pop($args); // The last item in the $args array.
+        if (empty($args)) {
+            // $args is empty => the path is '/'.
+            $filepath = '/';
+        } else {
+            // $args contains the remaining elements of the filepath.
+            $filepath = '/' . implode('/', $args) . '/';
+        }
+
+        // Retrieve the file from the Files API.
+        $fs = get_file_storage();
+        $file = $fs->get_file($context->id, 'mod_myplugin', $filearea, $itemid, $filepath, $filename);
+        if (!$file) {
+            // The file does not exist.
+            return false;
+        }
+
+        // We can now send the file back to the browser - in this case with a cache lifetime of 1 day and no filtering.
+        send_stored_file($file, DAY_SECS, 0, $forcedownload, $options);
+    }
+
 }

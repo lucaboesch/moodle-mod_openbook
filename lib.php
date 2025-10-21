@@ -356,7 +356,9 @@ function mod_privatestudentfolder_pluginfile($course, $cm, context $context, $fi
 
     $fullpath = "/{$context->id}/mod_privatestudentfolder/$filearea/$itemid/$relativepath";
     $fs = get_file_storage();
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) || $file->is_directory()) {
+    $file = $fs->get_file_by_hash(sha1($fullpath));
+
+    if (!$file || $file->is_directory()) {
         return false;
     }
 

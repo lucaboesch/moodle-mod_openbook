@@ -305,12 +305,36 @@ class base extends \html_table {
         $data = [];
         $data[] = $OUTPUT->pix_icon(file_file_icon($file), get_mimetype_description($file));
 
+        /* TODO : Traditional view.php link that allows access to file */
+
+        // if ( $this->is_file_approved($file) ) {
+        //     $dlurl = new \moodle_url('/mod/privatestudentfolder/view.php', [
+        //             'id' => $this->privatestudentfolder->get_coursemodule()->id,
+        //             'download' => $file->get_id(),
+        //     ]);
+        //     $data[] = \html_writer::link($dlurl, $file->get_filename());
+        // } else {
+        //     /* TODO : Make it better, show that link cannot be clicked */
+        //     $data[] = $file->get_filename();
+        // }
+
+        /* TODO : PDF.js viewer that allows online view of PDF files */
+
         if ( $this->is_file_approved($file) ) {
-            $dlurl = new \moodle_url('/mod/privatestudentfolder/view.php', [
-                    'id' => $this->privatestudentfolder->get_coursemodule()->id,
-                    'download' => $file->get_id(),
-            ]);
-            $data[] = \html_writer::link($dlurl, $file->get_filename());
+
+            $plugin_url = \moodle_url::make_pluginfile_url(
+                $file->get_contextid(),
+                $file->get_component(),
+                $file->get_filearea(),
+                $file->get_itemid(),
+                $file->get_filepath(),
+                $file->get_filename(),
+                false
+            );
+            $url = $plugin_url->out();
+            $url = 'https://moodle.appbox.camacho.pt/mod/privatestudentfolder/pdfjs-5.4.296-dist/web/viewer.html?file=' . $url;
+
+            $data[] = \html_writer::link($url, $file->get_filename());
         } else {
             /* TODO : Make it better, show that link cannot be clicked */
             $data[] = $file->get_filename();

@@ -317,6 +317,7 @@ $filestable->init();
 $templatecontext->myfiles = $filestable->data;
 $templatecontext->hasmyfiles = count($templatecontext->myfiles) > 0;
 $templatecontext->myfilesform = $filesform->render();
+
 if (!$allfilespage) {
     echo $OUTPUT->render_from_template('mod_privatestudentfolder/overview', $templatecontext);
 }
