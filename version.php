@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2025102102;
+$plugin->version  = 2025102103;
 $plugin->requires = 2024100700;
 $plugin->component = 'mod_privatestudentfolder';
 $plugin->maturity = MATURITY_STABLE;
