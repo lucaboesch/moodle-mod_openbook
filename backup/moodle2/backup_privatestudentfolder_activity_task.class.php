@@ -40,7 +40,6 @@ require_once($CFG->dirroot . '/mod/privatestudentfolder/backup/moodle2/backup_pr
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_privatestudentfolder_activity_task extends backup_activity_task {
-
     /**
      * Define (add) particular settings this activity can have
      */
@@ -53,9 +52,9 @@ class backup_privatestudentfolder_activity_task extends backup_activity_task {
      */
     protected function define_my_steps() {
         $this->add_step(new backup_privatestudentfolder_activity_structure_step(
-                            'privatestudentfolder_structure',
-                            'privatestudentfolder.xml'
-                        ));
+            'privatestudentfolder_structure',
+            'privatestudentfolder.xml'
+        ));
     }
 
     /**
@@ -78,6 +77,4 @@ class backup_privatestudentfolder_activity_task extends backup_activity_task {
 
         return $content;
     }
-
 }
-

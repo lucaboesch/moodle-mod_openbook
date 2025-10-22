@@ -55,12 +55,12 @@ class privatestudentfolder_approval_changed extends \core\event\base {
      */
     public static function approval_changed(\stdClass $cm, $do) {
         // Trigger overview event.
-        $event = self::create(array(
+        $event = self::create([
             'objectid'      => $do->privatestudentfolder,
             'context'       => \context_module::instance($cm->id),
             'relateduserid' => $do->reluser,
-            'other'         => (Array)$do,
-        ));
+            'other'         => (array)$do,
+        ]);
         return $event;
     }
     // You might need to override get_url() and get_legacy_log_data() if view mode needs to be stored as well.
@@ -70,10 +70,10 @@ class privatestudentfolder_approval_changed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "Approval for file with id '".$this->data['other']['fileid']
-            ."' in privatestudentfolder with id '" .$this->data['other']['privatestudentfolder']
-            ."' has been changed to '".$this->data['other']['approval']
-            ."' by the user with id '" .$this->data['other']['userid']."'.";
+        return "Approval for file with id '" . $this->data['other']['fileid']
+            . "' in privatestudentfolder with id '" . $this->data['other']['privatestudentfolder']
+            . "' has been changed to '" . $this->data['other']['approval']
+            . "' by the user with id '" . $this->data['other']['userid'] . "'.";
     }
 
     /**
@@ -92,7 +92,7 @@ class privatestudentfolder_approval_changed extends \core\event\base {
      */
     public function get_url() {
         $moduleid = get_coursemodule_from_instance('privatestudentfolder', $this->data['other']['privatestudentfolder'])->id;
-        return new \moodle_url("/mod/privatestudentfolder/view.php", array('id'  => $moduleid));
+        return new \moodle_url("/mod/privatestudentfolder/view.php", ['id'  => $moduleid]);
     }
 
     /**

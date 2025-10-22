@@ -37,7 +37,6 @@ defined('MOODLE_INTERNAL') || die;
  * mod_grouptool\observer handles events due to changes in moodle core which affect grouptool
  */
 class observer {
-
     /**
      * Event triggered when a course module is created
      *
@@ -226,5 +225,4 @@ class observer {
         }*/
         return true;
     }
-
 }

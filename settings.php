@@ -29,38 +29,62 @@ defined('MOODLE_INTERNAL') || die;
 global $CFG;
 
 if ($ADMIN->fulltree) {
-
     require_once(__DIR__ . '/locallib.php');
 
-    $settings->add(new admin_setting_configtext('privatestudentfolder/maxfiles', get_string('maxfiles', 'privatestudentfolder'),
-            get_string('configmaxfiles', 'privatestudentfolder'), 5, PARAM_INT));
+    $settings->add(new admin_setting_configtext(
+        'privatestudentfolder/maxfiles',
+        get_string('maxfiles', 'privatestudentfolder'),
+        get_string('configmaxfiles', 'privatestudentfolder'),
+        5,
+        PARAM_INT
+    ));
 
     $options = [
         '1' => get_string('filesarepersonal_yes', 'privatestudentfolder'),
         '0' => get_string('filesarepersonal_no', 'privatestudentfolder'),
     ];
-    
-    $settings->add(new admin_setting_configselect('privatestudentfolder/filesarepersonal', get_string('filesarepersonal_admin', 'privatestudentfolder'),
-    get_string('filesarepersonal_admin_desc', 'privatestudentfolder'), 1, $options));
-    
+
+    $settings->add(new admin_setting_configselect(
+        'privatestudentfolder/filesarepersonal',
+        get_string('filesarepersonal_admin', 'privatestudentfolder'),
+        get_string('filesarepersonal_admin_desc', 'privatestudentfolder'),
+        1,
+        $options
+    ));
+
     $options = [
         '1' => get_string('openpdffilesinpdfjs_yes', 'privatestudentfolder'),
         '0' => get_string('openpdffilesinpdfjs_no', 'privatestudentfolder'),
     ];
-    
-    $settings->add(new admin_setting_configselect('privatestudentfolder/openpdffilesinpdfjs', get_string('openpdffilesinpdfjs_admin', 'privatestudentfolder'),
-    get_string('openpdffilesinpdfjs_admin_desc', 'privatestudentfolder'), 1, $options));
+
+    $settings->add(new admin_setting_configselect(
+        'privatestudentfolder/openpdffilesinpdfjs',
+        get_string('openpdffilesinpdfjs_admin', 'privatestudentfolder'),
+        get_string('openpdffilesinpdfjs_admin_desc', 'privatestudentfolder'),
+        1,
+        $options
+    ));
 
     $options = [
         '0' => get_string('obtainapproval_automatic', 'privatestudentfolder'),
         '1' => get_string('obtainapproval_required', 'privatestudentfolder'),
     ];
 
-    $settings->add(new admin_setting_configselect('privatestudentfolder/obtainteacherapproval', get_string('obtainteacherapproval_admin', 'privatestudentfolder'),
-            get_string('obtainteacherapproval_admin_desc', 'privatestudentfolder'), 0, $options));
+    $settings->add(new admin_setting_configselect(
+        'privatestudentfolder/obtainteacherapproval',
+        get_string('obtainteacherapproval_admin', 'privatestudentfolder'),
+        get_string('obtainteacherapproval_admin_desc', 'privatestudentfolder'),
+        0,
+        $options
+    ));
 
-    $settings->add(new admin_setting_configselect('privatestudentfolder/obtainstudentapproval', get_string('obtainstudentapproval_admin', 'privatestudentfolder'),
-            get_string('obtainstudentapproval_admin_desc', 'privatestudentfolder'), 0, $options));
+    $settings->add(new admin_setting_configselect(
+        'privatestudentfolder/obtainstudentapproval',
+        get_string('obtainstudentapproval_admin', 'privatestudentfolder'),
+        get_string('obtainstudentapproval_admin_desc', 'privatestudentfolder'),
+        0,
+        $options
+    ));
 
     $options = [
         PRIVATESTUDENTFOLDER_APPROVAL_GROUPAUTOMATIC => get_string('obtainapproval_automatic', 'privatestudentfolder'),
@@ -68,8 +92,13 @@ if ($ADMIN->fulltree) {
         PRIVATESTUDENTFOLDER_APPROVAL_ALL => get_string('obtaingroupapproval_all', 'privatestudentfolder'),
     ];
 
-    $settings->add(new admin_setting_configselect('privatestudentfolder/obtaingroupapproval', get_string('obtaingroupapproval_admin', 'privatestudentfolder'),
-        get_string('obtaingroupapproval_admin_desc', 'privatestudentfolder'), 0, $options));
+    $settings->add(new admin_setting_configselect(
+        'privatestudentfolder/obtaingroupapproval',
+        get_string('obtaingroupapproval_admin', 'privatestudentfolder'),
+        get_string('obtaingroupapproval_admin_desc', 'privatestudentfolder'),
+        0,
+        $options
+    ));
 
 
     $options = [
@@ -79,17 +108,37 @@ if ($ADMIN->fulltree) {
         PRIVATESTUDENTFOLDER_NOTIFY_ALL => get_string('notify:setting:3', 'privatestudentfolder'),
     ];
 
-    $settings->add(new admin_setting_configselect('privatestudentfolder/notifyfilechange', get_string('notify:filechange_admin', 'privatestudentfolder'),
-        get_string('notify:filechange_help', 'privatestudentfolder'), PRIVATESTUDENTFOLDER_NOTIFY_STUDENT, $options));
+    $settings->add(new admin_setting_configselect(
+        'privatestudentfolder/notifyfilechange',
+        get_string('notify:filechange_admin', 'privatestudentfolder'),
+        get_string('notify:filechange_help', 'privatestudentfolder'),
+        PRIVATESTUDENTFOLDER_NOTIFY_STUDENT,
+        $options
+    ));
 
-    $settings->add(new admin_setting_configselect('privatestudentfolder/notifystatuschange', get_string('notify:statuschange_admin', 'privatestudentfolder'),
-        get_string('notify:statuschange_help', 'privatestudentfolder'), PRIVATESTUDENTFOLDER_NOTIFY_ALL, $options));
+    $settings->add(new admin_setting_configselect(
+        'privatestudentfolder/notifystatuschange',
+        get_string('notify:statuschange_admin', 'privatestudentfolder'),
+        get_string('notify:statuschange_help', 'privatestudentfolder'),
+        PRIVATESTUDENTFOLDER_NOTIFY_ALL,
+        $options
+    ));
 
     if (isset($CFG->maxbytes)) {
-        $settings->add(new admin_setting_configselect('privatestudentfolder/maxbytes', get_string('maxbytes', 'privatestudentfolder'),
-                get_string('configmaxbytes', 'privatestudentfolder'), 5242880, get_max_upload_sizes($CFG->maxbytes)));
+        $settings->add(new admin_setting_configselect(
+            'privatestudentfolder/maxbytes',
+            get_string('maxbytes', 'privatestudentfolder'),
+            get_string('configmaxbytes', 'privatestudentfolder'),
+            5242880,
+            get_max_upload_sizes($CFG->maxbytes)
+        ));
     }
 
-    $settings->add(new admin_setting_configselect('privatestudentfolder/availabilityrestriction', get_string('availabilityrestriction_admin', 'privatestudentfolder'),
-            get_string('availabilityrestriction_admin_desc', 'privatestudentfolder'), 1, [get_string('no'), get_string('yes')]));
+    $settings->add(new admin_setting_configselect(
+        'privatestudentfolder/availabilityrestriction',
+        get_string('availabilityrestriction_admin', 'privatestudentfolder'),
+        get_string('availabilityrestriction_admin_desc', 'privatestudentfolder'),
+        1,
+        [get_string('no'), get_string('yes')]
+    ));
 }

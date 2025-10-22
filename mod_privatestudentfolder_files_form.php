@@ -67,7 +67,6 @@ class mod_privatestudentfolder_files_form extends moodleform {
 
         /* Check if files are personal */
         if ($privatestudentfolderinstance->filesarepersonal) {
-
             if ($privatestudentfolderinstance->obtainteacherapproval) {
                 $noticeteacherid = 'teacherrequired';
             } else {
@@ -75,9 +74,7 @@ class mod_privatestudentfolder_files_form extends moodleform {
             }
 
             $noticestudentstringid = 'filesarepersonal';
-
         } else {
-
             if ($privatestudentfolderinstance->obtainstudentapproval) {
                 if ($mode == PRIVATESTUDENTFOLDER_MODE_ASSIGN_TEAMSUBMISSION) {
                     if ($privatestudentfolderinstance->groupapproval == PRIVATESTUDENTFOLDER_APPROVAL_ALL) {
@@ -98,7 +95,6 @@ class mod_privatestudentfolder_files_form extends moodleform {
             } else {
                 $noticeteacherid = 'teachernotrequired';
             }
-
         }
 
         $stringid = 'notice_' . $noticemode . '_' . $noticestudentstringid . '_' . $noticeteacherid;
@@ -194,14 +190,21 @@ class mod_privatestudentfolder_files_form extends moodleform {
 
                 $onclick = 'return confirm("' . get_string('savestudentapprovalwarning', 'privatestudentfolder') . '")';
 
-                $buttonarray[] = &$mform->createElement('submit', 'submitbutton',
-                    get_string('savechanges'), ['onClick' => $onclick]);
-                $buttonarray[] = &$mform->createElement('reset', 'resetbutton', get_string('revert'),
-                    ['class' => 'btn btn-secondary']);
+                $buttonarray[] = &$mform->createElement(
+                    'submit',
+                    'submitbutton',
+                    get_string('savechanges'),
+                    ['onClick' => $onclick]
+                );
+                $buttonarray[] = &$mform->createElement(
+                    'reset',
+                    'resetbutton',
+                    get_string('revert'),
+                    ['class' => 'btn btn-secondary']
+                );
 
                 $mform->addGroup($buttonarray, 'submitgrp', '', [' '], false);
             } else {
-
                 $noticehtml = html_writer::start_tag('div', ['class' => 'alert alert-secondary']);
                 $noticehtml .= get_string('approval_timeover', 'privatestudentfolder');
                 $noticehtml .= html_writer::end_tag('div');
@@ -210,12 +213,13 @@ class mod_privatestudentfolder_files_form extends moodleform {
 
                 // $mform->addElement('static', 'approvaltimeover', get_string('approval_timeover', 'privatestudentfolder'));
                 // $mform->addElement('html', '<div class="qheader">'  . get_string('approval_timeover', 'privatestudentfolder') . '</div>');
-
             }
         }
 
-        if ($privatestudentfolder->get_instance()->mode == PRIVATESTUDENTFOLDER_MODE_UPLOAD
-            && has_capability('mod/privatestudentfolder:upload', $privatestudentfolder->get_context())) {
+        if (
+            $privatestudentfolder->get_instance()->mode == PRIVATESTUDENTFOLDER_MODE_UPLOAD
+            && has_capability('mod/privatestudentfolder:upload', $privatestudentfolder->get_context())
+        ) {
             if ($privatestudentfolder->is_open()) {
                 $buttonarray = [];
 

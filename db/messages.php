@@ -32,6 +32,6 @@ defined('MOODLE_INTERNAL') || die;
  *
  */
 
-$messageproviders = array (
+$messageproviders = [
     'privatestudentfolder_updates' => [],
-);
+];

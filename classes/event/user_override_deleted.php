@@ -41,7 +41,6 @@ namespace mod_privatestudentfolder\event;
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_override_deleted extends \core\event\base {
-
     /**
      * Init method.
      */
@@ -76,7 +75,7 @@ class user_override_deleted extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/privatestudentfolder/overrides.php', array('id' => $this->contextinstanceid));
+        return new \moodle_url('/mod/privatestudentfolder/overrides.php', ['id' => $this->contextinstanceid]);
     }
 
     /**
@@ -101,15 +100,15 @@ class user_override_deleted extends \core\event\base {
      * Get objectid mapping
      */
     public static function get_objectid_mapping() {
-        return array('db' => 'privatestudentfolder_overrides', 'restore' => 'privatestudentfolder_override');
+        return ['db' => 'privatestudentfolder_overrides', 'restore' => 'privatestudentfolder_override'];
     }
 
     /**
      * Get other mapping
      */
     public static function get_other_mapping() {
-        $othermapped = array();
-        $othermapped['privatestudentfolder'] = array('db' => 'privatestudentfolder', 'restore' => 'privatestudentfolder');
+        $othermapped = [];
+        $othermapped['privatestudentfolder'] = ['db' => 'privatestudentfolder', 'restore' => 'privatestudentfolder'];
 
         return $othermapped;
     }

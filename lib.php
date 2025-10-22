@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__.'/locallib.php');
+require_once(__DIR__ . '/locallib.php');
 
 /**
  * Adds a new privatestudentfolder instance
@@ -108,7 +108,7 @@ function privatestudentfolder_supports($feature) {
 function privatestudentfolder_update_instance($privatestudentfolder) {
     global $DB;
 
-    if ( $privatestudentfolder->filesarepersonal == 1 ) {
+    if ($privatestudentfolder->filesarepersonal == 1) {
         $privatestudentfolder->obtainstudentapproval = "0";
     }
 
@@ -235,11 +235,9 @@ function privatestudentfolder_reset_userdata($data) {
     $status = [];
 
     if (isset($data->reset_privatestudentfolder_userdata)) {
-
         $privatestudentfolders = $DB->get_records('privatestudentfolder', ['course' => $data->courseid]);
 
         foreach ($privatestudentfolders as $privatestudentfolder) {
-
             $DB->delete_records('privatestudentfolder_extduedates', ['privatestudentfolder' => $privatestudentfolder->id]);
 
             $filerecords = $DB->get_records('privatestudentfolder_file', ['privatestudentfolder' => $privatestudentfolder->id]);
@@ -262,7 +260,6 @@ function privatestudentfolder_reset_userdata($data) {
     }
 
     return $status;
-
 }
 
 /**
@@ -303,9 +300,13 @@ function privatestudentfolder_extend_settings_navigation(settings_navigation $se
     if (has_capability('mod/privatestudentfolder:addinstance', $settings->get_page()->cm->context)) {
         $url = new moodle_url('/mod/privatestudentfolder/view.php', ['id' => $settings->get_page()->cm->id, 'allfilespage' => '1']);
 
-        $node = navigation_node::create(get_string('allfiles', 'privatestudentfolder'),
+        $node = navigation_node::create(
+            get_string('allfiles', 'privatestudentfolder'),
             $url,
-            navigation_node::TYPE_SETTING, null, 'mod_privatestudentfolder_allfiles');
+            navigation_node::TYPE_SETTING,
+            null,
+            'mod_privatestudentfolder_allfiles'
+        );
         $navref->add_node($node, $beforekey);
     }
 
@@ -315,13 +316,16 @@ function privatestudentfolder_extend_settings_navigation(settings_navigation $se
         if ($mode != PRIVATESTUDENTFOLDER_MODE_ASSIGN_TEAMSUBMISSION || true) {
             $url = new moodle_url('/mod/privatestudentfolder/overrides.php', ['id' => $settings->get_page()->cm->id]);
 
-            $node = navigation_node::create(get_string('overrides', 'assign'),
+            $node = navigation_node::create(
+                get_string('overrides', 'assign'),
                 $url,
-                navigation_node::TYPE_SETTING, null, 'mod_privatestudentfolder_useroverrides');
+                navigation_node::TYPE_SETTING,
+                null,
+                'mod_privatestudentfolder_useroverrides'
+            );
             $navref->add_node($node, $beforekey);
         }
     }
-
 }
 
 /**
@@ -408,8 +412,10 @@ function mod_privatestudentfolder_core_calendar_provide_event_action(calendar_ev
  */
 function mod_privatestudentfolder_get_completion_active_rule_descriptions($cm) {
     // Values will be present in cm_info, and we assume these are up to date.
-    if (empty($cm->customdata['customcompletionrules'])
-        || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
+    if (
+        empty($cm->customdata['customcompletionrules'])
+        || $cm->completion != COMPLETION_TRACKING_AUTOMATIC
+    ) {
         return [];
     }
 
@@ -427,4 +433,3 @@ function mod_privatestudentfolder_get_completion_active_rule_descriptions($cm) {
     }
     return $descriptions;
 }
-

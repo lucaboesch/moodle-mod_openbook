@@ -84,7 +84,6 @@ if ($savevisibility) {
     $privatestudentfolder->update_files_teacherapproval($files);
     privatestudentfolder::send_all_pending_notifications();
     redirect($url);
-
 } else if ($action == 'zip') {
     $privatestudentfolder->download_zip(true);
 } else if ($action == 'zipusers') {
@@ -96,7 +95,6 @@ if ($savevisibility) {
     }
     $users = array_keys($users);
     $privatestudentfolder->download_zip($users);
-
 } else if ($action == 'import') {
     require_capability('mod/privatestudentfolder:approve', $context);
     require_sesskey();
@@ -148,15 +146,19 @@ if ($savevisibility) {
 
 $submissionid = $USER->id;
 
-$filesform = new mod_privatestudentfolder_files_form(null,
-    ['privatestudentfolder' => $privatestudentfolder, 'sid' => $submissionid, 'filearea' => 'attachment']);
+$filesform = new mod_privatestudentfolder_files_form(
+    null,
+    ['privatestudentfolder' => $privatestudentfolder, 'sid' => $submissionid, 'filearea' => 'attachment']
+);
 
 if ($data = $filesform->get_data()) {
     $datasubmitted = $filesform->get_submitted_data();
 
     if (isset($datasubmitted->gotoupload)) {
-        redirect(new moodle_url('/mod/privatestudentfolder/upload.php',
-            ['id' => $privatestudentfolder->get_instance()->id, 'cmid' => $cm->id]));
+        redirect(new moodle_url(
+            '/mod/privatestudentfolder/upload.php',
+            ['id' => $privatestudentfolder->get_instance()->id, 'cmid' => $cm->id]
+        ));
     }
     if ($privatestudentfolder->is_approval_open()) {
         $studentapproval = optional_param_array('studentapproval', [], PARAM_INT);
@@ -170,7 +172,9 @@ if ($data = $filesform->get_data()) {
             [
                 'privatestudentfolder' => $privatestudentfolder->get_instance()->id,
             ],
-            'id ASC', 'fileid, id');
+            'id ASC',
+            'fileid, id'
+        );
 
         // Update records.
         foreach ($studentapproval as $idx => $approval) {
@@ -223,8 +227,10 @@ if ($data = $filesform->get_data()) {
     }
 }
 
-$filesform = new mod_privatestudentfolder_files_form(null,
-    ['privatestudentfolder' => $privatestudentfolder, 'sid' => $submissionid, 'filearea' => 'attachment']);
+$filesform = new mod_privatestudentfolder_files_form(
+    null,
+    ['privatestudentfolder' => $privatestudentfolder, 'sid' => $submissionid, 'filearea' => 'attachment']
+);
 
 // Print the page header.
 $PAGE->set_title($pagetitle);
@@ -240,7 +246,7 @@ $allfilesform = $privatestudentfolder->display_allfilesform();
 
 $privatestudentfolderinstance = $privatestudentfolder->get_instance();
 $privatestudentfoldermode = $privatestudentfolder->get_mode();
-$templatecontext = new stdClass;
+$templatecontext = new stdClass();
 $templatecontext->obtainstudentapprovaltitle = get_string('obtainstudentapproval', 'privatestudentfolder');
 $templatecontext->obtainteacherapproval = $privatestudentfolderinstance->obtainteacherapproval == 1
     ? get_string('obtainteacherapproval_yes', 'privatestudentfolder')
@@ -284,13 +290,17 @@ if (has_capability('mod/privatestudentfolder:approve', $context)) {
     $templatecontext->studentcount = count($privatestudentfolder->get_users([], true));
     $allfilestable = $privatestudentfolder->get_allfilestable(PRIVATESTUDENTFOLDER_FILTER_ALLFILES, true);
     $templatecontext->allfilescount = $allfilestable->get_count();
-    $templatecontext->allfiles_url = (new moodle_url('/mod/privatestudentfolder/view.php',
-        ['id' => $cm->id, 'filter' => PRIVATESTUDENTFOLDER_FILTER_ALLFILES, 'allfilespage' => 1]))->out(false);
+    $templatecontext->allfiles_url = (new moodle_url(
+        '/mod/privatestudentfolder/view.php',
+        ['id' => $cm->id, 'filter' => PRIVATESTUDENTFOLDER_FILTER_ALLFILES, 'allfilespage' => 1]
+    ))->out(false);
     $templatecontext->allfiles_empty = $templatecontext->allfilescount == 0;
     $templatecontext->assign = $privatestudentfolder->get_importlink();
     if ($privatestudentfolderinstance->obtainteacherapproval == 1) {
-        $templatecontext->viewall_approvalneeded_url = (new moodle_url('/mod/privatestudentfolder/view.php',
-            ['id' => $cm->id, 'filter' => PRIVATESTUDENTFOLDER_FILTER_APPROVALREQUIRED, 'allfilespage' => 1]))->out(false);
+        $templatecontext->viewall_approvalneeded_url = (new moodle_url(
+            '/mod/privatestudentfolder/view.php',
+            ['id' => $cm->id, 'filter' => PRIVATESTUDENTFOLDER_FILTER_APPROVALREQUIRED, 'allfilespage' => 1]
+        ))->out(false);
         $templatecontext->showapprovalrequired = true;
         $notapprovedtable = $privatestudentfolder->get_allfilestable(PRIVATESTUDENTFOLDER_FILTER_APPROVALREQUIRED, true);
         $templatecontext->approvalrequiredcount = $notapprovedtable->get_count();
@@ -322,7 +332,7 @@ if (!$allfilespage) {
     echo $OUTPUT->render_from_template('mod_privatestudentfolder/overview', $templatecontext);
 }
 
-if ( has_capability('mod/privatestudentfolder:approve', $context) || $privatestudentfolderinstance->filesarepersonal == 0 ) {
+if (has_capability('mod/privatestudentfolder:approve', $context) || $privatestudentfolderinstance->filesarepersonal == 0) {
     echo $allfilesform;
 } else {
     /* TODO: Make sure all files are not avalaible, no just hidden */

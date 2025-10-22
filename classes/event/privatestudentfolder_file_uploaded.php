@@ -55,12 +55,12 @@ class privatestudentfolder_file_uploaded extends \core\event\base {
      */
     public static function create_from_object(\stdClass $cm, $dobj) {
         // Trigger overview event.
-        $event = self::create(array(
+        $event = self::create([
             'objectid'      => $dobj->id,
             'context'       => \context_module::instance($cm->id),
             'relateduserid' => $dobj->userid,
-            'other'         => (Array)$dobj,
-        ));
+            'other'         => (array)$dobj,
+        ]);
         return $event;
     }
     // You might need to override get_url() and get_legacy_log_data() if view mode needs to be stored as well.
@@ -70,8 +70,8 @@ class privatestudentfolder_file_uploaded extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '".$this->data['other']['userid']."' uploaded a new file with id '".$this->data['other']['id'].
-            "' to privatestudentfolder with id '".$this->data['other']['privatestudentfolder']."'";
+        return "The user with id '" . $this->data['other']['userid'] . "' uploaded a new file with id '" . $this->data['other']['id'] .
+            "' to privatestudentfolder with id '" . $this->data['other']['privatestudentfolder'] . "'";
     }
 
     /**
@@ -90,6 +90,6 @@ class privatestudentfolder_file_uploaded extends \core\event\base {
      */
     public function get_url() {
         $moduleid = get_coursemodule_from_instance('privatestudentfolder', $this->data['other']['privatestudentfolder'])->id;
-        return new \moodle_url("/mod/privatestudentfolder/view.php", array('id'  => $moduleid));
+        return new \moodle_url("/mod/privatestudentfolder/view.php", ['id'  => $moduleid]);
     }
 }
