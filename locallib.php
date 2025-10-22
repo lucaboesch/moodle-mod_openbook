@@ -2844,6 +2844,7 @@ class privatestudentfolder {
         return true;
     }
 
+    // phpcs:ignore Squiz.Scope.MethodScope.Missing
     /**
      * Serve the files from the myplugin file areas.
      *
