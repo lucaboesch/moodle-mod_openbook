@@ -33,7 +33,6 @@ require_once($CFG->libdir . '/formslib.php'); // Putting this is as a safety as 
  * Form to upload files for mod_privatestudentfolder
  */
 class mod_privatestudentfolder_upload_form extends moodleform {
-
     /**
      * Definition of file upload format
      */
