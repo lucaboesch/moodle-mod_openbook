@@ -1,5 +1,18 @@
 {{!
     @template mod_privatestudentfolder/partial_assignlink
+    @phpcs:disable moodle.Mustache.HTMLFormat
+
+    Template partial for displaying the assignment link in a table row.
+
+    Example context (json):
+    {
+        "notset": false,
+        "notfound": false,
+        "assign": {
+            "url": "https://example.com/mod/assign/view.php?id=123",
+            "name": "Assignment 1"
+        }
+    }
 }}
 <tr>
     <th>{{#str}}assignment,privatestudentfolder{{/str}}</th>
