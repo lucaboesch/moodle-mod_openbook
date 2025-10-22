@@ -39,12 +39,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mod_privatestudentfolder_generator extends testing_module_generator {
     /**
-     * Generator method creating a mod_privatestudentfolder instance.
-     *
-     * @param array|stdClass $record (optional) Named array containing instance settings
-     * @param array $options (optional) general options for course module. Can be merged into $record
-     * @return stdClass record from module-defined table with additional field cmid (corresponding id in course_modules table)
-     */
+    * Generator method creating a mod_privatestudentfolder instance.
+    *
+    * @param stdClass|array|null $record Optional named array or stdClass containing instance settings.
+    * @param array|null $options Optional general options for course module. Can be merged into $record.
+    * @return stdClass Record from module-defined table with additional field cmid (corresponding id in course_modules table).
+    */
     public function create_instance($record = null, ?array $options = null) {
         $record = (object)(array)$record;
 

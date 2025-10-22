@@ -323,8 +323,8 @@ FROM
      * @param string $fields Fields
      * @param string $from From
      * @param string $where Where
-     * @param array $params (optional) Parameters
-     * @param string $groupby (optional) GroupBy
+     * @param array|null $params Optional Parameters
+     * @param string $groupby Optional GroupBy
      */
     public function set_sql($fields, $from, $where, ?array $params = null, string $groupby = '') {
         parent::set_sql($fields, $from, $where, $params);
