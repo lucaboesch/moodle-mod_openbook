@@ -1,5 +1,15 @@
 {{!
+    This file is part of mod_privatestudentfolder for Moodle - http://moodle.org/
+
     @template mod_privatestudentfolder/approval_icon
+    
+    Example context (json):
+    {
+        "hint": "This icon shows that the student’s approval is pending",
+        "icon": "<i class='fa fa-clock text-warning' aria-hidden='true'></i>"
+    }
+
+    This template displays an icon (e.g. FontAwesome) with a hover hint.
 }}
 <span class="" title="{{hint}}">
     {{{icon}}}
