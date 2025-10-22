@@ -17,15 +17,35 @@
 {{!
     @template mod_privatestudentfolder/overview
 
-    Private Student Folder's overview template.
+    Private Student Folder's overrides template.
+
+    The purpose of this template is to the contents of the overrides.
     
     Example context (json):
     {
-        "isteacher": true,
-        "showapprovalrequired": true
+        "newoverrideurl": "https://example.com/mod/privatestudentfolder/overrides_edit.php?add=1",
+        "addoverridetitle": "Add new override",
+        "usergroupcoltitle": "User / Group",
+        "overridesempty": false,
+        "overrides": [
+            {
+                "userurl": "https://example.com/user/view.php?id=2",
+                "fullname": "Alice Dupont",
+                "submissionoverride": "Submission deadline extended by 3 days",
+                "approvaloverride": "Requires approval from supervisor",
+                "editurl": "https://example.com/mod/privatestudentfolder/overrides_edit.php?id=12",
+                "deleteurl": "https://example.com/mod/privatestudentfolder/overrides_delete.php?id=12"
+            },
+            {
+                "userurl": "https://example.com/group/view.php?id=5",
+                "fullname": "Group A",
+                "submissionoverride": "Extended deadline",
+                "approvaloverride": "Auto-approved",
+                "editurl": "https://example.com/mod/privatestudentfolder/overrides_edit.php?id=13",
+                "deleteurl": "https://example.com/mod/privatestudentfolder/overrides_delete.php?id=13"
+            }
+        ]
     }
-
-    The purpose of this template is to the contents of the overview.
 }}
 {{#isteacher}}
     {{#showapprovalrequired}}
