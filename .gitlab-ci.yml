@@ -28,7 +28,7 @@ variables:
     - moodle-plugin-ci phpmd
     - moodle-plugin-ci validate
     - moodle-plugin-ci savepoints
-    - moodle-plugin-ci codechecker
+    - moodle-plugin-ci codechecker --max-warnings 1000
     - moodle-plugin-ci phpdoc
     - moodle-plugin-ci mustache
     - moodle-plugin-ci grunt
