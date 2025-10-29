@@ -200,12 +200,20 @@ class privacy_test extends base {
         // User 1 submits to assign1 and teamassign1 and uploads in pubupload1!
         $this->add_submission($this->user1, $this->assign, 'Textsubmission in assign1 by user1!', true);
         $this->add_submission($this->user1, $this->teamassign, 'Textsubmission in teamassign1 by user1!', true);
-        $this->create_upload($this->user1->id, $this->pubupload->get_instance()->id, 'upload-no-1.txt',
-                'THis is the first upload here!');
+        $this->create_upload(
+            $this->user1->id,
+            $this->pubupload->get_instance()->id,
+            'upload-no-1.txt',
+            'THis is the first upload here!'
+        );
         // User 3 also submits to general assign & uploads in general privatestudentfolder!
         $this->add_submission($this->user3, $this->assign2, 'Textsubmission for assign2 by user3!', true);
-        $this->create_upload($this->user3->id, $this->pubupload2->get_instance()->id, 'upload-no-2.txt',
-                'This is another upload in another privatestudentfolder');
+        $this->create_upload(
+            $this->user3->id,
+            $this->pubupload2->get_instance()->id,
+            'upload-no-2.txt',
+            'This is another upload in another privatestudentfolder'
+        );
 
         // Then we check, if user 1 appears only in pubimport1, pubupload1 and pubteamimport1!
         $contextlist = provider::get_contexts_for_userid($this->user1->id);
@@ -215,8 +223,11 @@ class privacy_test extends base {
         $this->assertEmpty(array_diff($usercontextids, $contextlist->get_contextids()));
 
         // User 3 is in a group with user 1 and submits to teamassign2!
-        $this->add_submission($this->user3, $this->teamassign2,
-                'Another text submission, but this time valid for the whole group!');
+        $this->add_submission(
+            $this->user3,
+            $this->teamassign2,
+            'Another text submission, but this time valid for the whole group!'
+        );
 
         // Now user 1 is also in pubteamimport2!
         $usercontextids[] = $this->pubteamimport2->get_context()->id;
@@ -240,8 +251,12 @@ class privacy_test extends base {
         // User 1 submits to assign1 and teamassign1 and uploads in pubupload1!
         $this->add_submission($this->user1, $this->assign, 'Textsubmission in assign1 by user1!', true);
         $this->add_submission($this->user1, $this->teamassign, 'Textsubmission in teamassign1 by user1!', true);
-        $this->create_upload($this->user1->id, $this->pubupload->get_instance()->id, 'upload-no-1.txt',
-                'This is the first upload here!');
+        $this->create_upload(
+            $this->user1->id,
+            $this->pubupload->get_instance()->id,
+            'upload-no-1.txt',
+            'This is the first upload here!'
+        );
 
         $uploadcm = get_coursemodule_from_instance('privatestudentfolder', $this->pubupload->get_instance()->id);
         $uploadctx = context_module::instance($uploadcm->id);
@@ -288,7 +303,7 @@ class privacy_test extends base {
     public function test_export_user_data_student() {
         // Stop here and mark this test as incomplete.
         self::markTestIncomplete(
-                'This test has not been implemented yet.'
+            'This test has not been implemented yet.'
         );
     }
 
@@ -298,7 +313,7 @@ class privacy_test extends base {
     public function test_export_user_data_teacher() {
         // Stop here and mark this test as incomplete.
         self::markTestIncomplete(
-                'This test has not been implemented yet.'
+            'This test has not been implemented yet.'
         );
     }
 
@@ -308,7 +323,7 @@ class privacy_test extends base {
     public function test_delete_data_for_all_users_in_context() {
         // Stop here and mark this test as incomplete.
         self::markTestIncomplete(
-                'This test has not been implemented yet.'
+            'This test has not been implemented yet.'
         );
     }
 
@@ -318,7 +333,7 @@ class privacy_test extends base {
     public function test_delete_data_for_user() {
         // Stop here and mark this test as incomplete.
         self::markTestIncomplete(
-                'This test has not been implemented yet.'
+            'This test has not been implemented yet.'
         );
     }
 
@@ -337,37 +352,60 @@ class privacy_test extends base {
         $this->add_submission($this->user2, $this->assign, 'Textsubmission in assign1 by user2!', true);
         $this->add_submission($this->user1, $this->teamassign, 'Textsubmission in teamassign1 by user1!', true);
         $this->add_submission($this->user2, $this->teamassign, 'Textsubmission in teamassign1 by user2!', true);
-        $this->create_upload($this->user1->id, $this->pubupload->get_instance()->id, 'upload-no-1.txt',
-                'This is the first upload here!');
-        $this->create_upload($this->user2->id, $this->pubupload->get_instance()->id, 'upload-no-2.txt',
-                'This is the second upload here!');
+        $this->create_upload(
+            $this->user1->id,
+            $this->pubupload->get_instance()->id,
+            'upload-no-1.txt',
+            'This is the first upload here!'
+        );
+        $this->create_upload(
+            $this->user2->id,
+            $this->pubupload->get_instance()->id,
+            'upload-no-2.txt',
+            'This is the second upload here!'
+        );
 
         // Test for the data to be in place!
         self::assertEquals(2, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubimport->get_instance()->id]));
         self::assertEquals(2, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubteamimport->get_instance()->id]));
         self::assertEquals(2, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubupload->get_instance()->id]));
 
-        $userlist = new \core_privacy\local\request\approved_userlist($this->pubimport->get_context(), 'privatestudentfolder',
-                [$this->user1->id]);
+        $userlist = new \core_privacy\local\request\approved_userlist(
+            $this->pubimport->get_context(),
+            'privatestudentfolder',
+            [$this->user1->id]
+        );
         provider::delete_data_for_users($userlist);
         self::assertEquals(1, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubimport->get_instance()->id]));
         self::assertEquals(2, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubteamimport->get_instance()->id]));
         self::assertEquals(2, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubupload->get_instance()->id]));
-        $userlist = new \core_privacy\local\request\approved_userlist($this->pubupload->get_context(), 'privatestudentfolder',
-                [$this->user1->id]);
+        $userlist = new \core_privacy\local\request\approved_userlist(
+            $this->pubupload->get_context(),
+            'privatestudentfolder',
+            [$this->user1->id]
+        );
         provider::delete_data_for_users($userlist);
         self::assertEquals(1, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubimport->get_instance()->id]));
         self::assertEquals(2, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubteamimport->get_instance()->id]));
         self::assertEquals(1, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubupload->get_instance()->id]));
 
-        $userlist = new \core_privacy\local\request\approved_userlist($this->pubteamimport->get_context(), 'privatestudentfolder',
-                [$this->user1->id, $this->user2->id, $this->user3->id]);
+        $userlist = new \core_privacy\local\request\approved_userlist(
+            $this->pubteamimport->get_context(),
+            'privatestudentfolder',
+            [$this->user1->id, $this->user2->id, $this->user3->id]
+        );
         provider::delete_data_for_users($userlist);
-        $userlist = new \core_privacy\local\request\approved_userlist($this->pubupload->get_context(), 'privatestudentfolder',
-                [$this->user1->id, $this->user2->id, $this->user3->id]);
+        $userlist = new \core_privacy\local\request\approved_userlist(
+            $this->pubupload->get_context(),
+            'privatestudentfolder',
+            [$this->user1->id, $this->user2->id, $this->user3->id]
+        );
         provider::delete_data_for_users($userlist);
-        $userlist = new \core_privacy\local\request\approved_userlist($this->pubimport->get_context(), 'privatestudentfolder',
-                [$this->user1->id, $this->user2->id, $this->user3->id]);
+        $userlist = new \core_privacy\local\request\approved_userlist(
+            $this->pubimport->get_context(),
+            'privatestudentfolder',
+            [$this->user1->id, $this->user2->id, $this->user3->id]
+        );
         provider::delete_data_for_users($userlist);
 
         self::assertEquals(0, $DB->count_records('privatestudentfolder_file', ['privatestudentfolder' => $this->pubimport->get_instance()->id]));

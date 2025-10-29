@@ -41,7 +41,6 @@ require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php');
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_privatestudentfolder_allfiles_form extends moodleform {
-
     /**
      * Form definition. Abstract method - always override!
      */

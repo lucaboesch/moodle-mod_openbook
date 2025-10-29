@@ -35,9 +35,7 @@ defined('MOODLE_INTERNAL') || die;
  * @copyright     2025 University of Geneva {@link http://www.unige.ch}
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_privatestudentfolder_report_editdates_integration
-extends report_editdates_mod_date_extractor {
-
+class mod_privatestudentfolder_report_editdates_integration extends report_editdates_mod_date_extractor {
     /**
      * mod_privatestudentfolder_report_editdates_integration constructor.
      * @param object $course the course
@@ -56,16 +54,22 @@ extends report_editdates_mod_date_extractor {
     public function get_settings(cm_info $cm) {
         $privatestudentfolder = $this->mods[$cm->instance];
 
-        return array(
+        return [
                 'allowsubmissionsfromdate' => new report_editdates_date_setting(
-                        get_string('allowsubmissionsfromdate', 'privatestudentfolder'),
-                        $privatestudentfolder->allowsubmissionsfromdate,
-                        self::DATETIME, true, 5),
+                    get_string('allowsubmissionsfromdate', 'privatestudentfolder'),
+                    $privatestudentfolder->allowsubmissionsfromdate,
+                    self::DATETIME,
+                    true,
+                    5
+                ),
                 'duedate' => new report_editdates_date_setting(
-                        get_string('duedate', 'privatestudentfolder'),
-                        $privatestudentfolder->duedate,
-                        self::DATETIME, true, 5),
-                );
+                    get_string('duedate', 'privatestudentfolder'),
+                    $privatestudentfolder->duedate,
+                    self::DATETIME,
+                    true,
+                    5
+                ),
+                ];
     }
 
     /**
@@ -76,9 +80,11 @@ extends report_editdates_mod_date_extractor {
      * @throws coding_exception
      */
     public function validate_dates(cm_info $cm, array $dates) {
-        $errors = array();
-        if ($dates['allowsubmissionsfromdate'] && $dates['duedate']
-                && $dates['duedate'] < $dates['allowsubmissionsfromdate']) {
+        $errors = [];
+        if (
+            $dates['allowsubmissionsfromdate'] && $dates['duedate']
+                && $dates['duedate'] < $dates['allowsubmissionsfromdate']
+        ) {
             $errors['duedate'] = get_string('duedatevalidation', 'privatestudentfolder');
         }
 

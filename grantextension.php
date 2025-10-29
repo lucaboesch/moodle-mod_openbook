@@ -59,12 +59,13 @@ if (!empty($id)) {
 $PAGE->set_url($url);
 
 // Create a new form object.
-$mform = new mod_privatestudentfolder_grantextension_form(null,
-        ['privatestudentfolder' => $privatestudentfolder, 'userids' => $userids]);
+$mform = new mod_privatestudentfolder_grantextension_form(
+    null,
+    ['privatestudentfolder' => $privatestudentfolder, 'userids' => $userids]
+);
 
 if ($mform->is_cancelled()) {
     redirect(new moodle_url('/mod/privatestudentfolder/view.php', ['id' => $cm->id]));
-
 } else if ($data = $mform->get_data()) {
     // Store updated set of files.
     $dataobject = [];

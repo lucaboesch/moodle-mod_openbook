@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php');
 require_once(__DIR__ . '/overrides_form.php');
 
 $id = required_param('id', PARAM_INT); // Course Module ID.
-$overrideid = required_param('overrideid',  PARAM_INT);
+$overrideid = required_param('overrideid', PARAM_INT);
 
 $url = new moodle_url('/mod/privatestudentfolder/overrides_edit.php', ['id' => $id, 'overrideid' => $overrideid]);
 $cm = get_coursemodule_from_id('privatestudentfolder', $id, 0, false, MUST_EXIST);

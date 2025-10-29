@@ -54,12 +54,12 @@ class privatestudentfolder_file_deleted extends \core\event\base {
      */
     public static function create_from_object(\stdClass $cm, $do) {
         // Trigger overview event.
-        $event = self::create(array(
+        $event = self::create([
             'objectid'      => $do->id,
             'context'       => \context_module::instance($cm->id),
             'relateduserid' => $do->userid,
-            'other'         => (Array)$do,
-        ));
+            'other'         => (array)$do,
+        ]);
         return $event;
     }
     // You might need to override get_url() and get_legacy_log_data() if view mode needs to be stored as well.
@@ -69,8 +69,8 @@ class privatestudentfolder_file_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '".$this->data['other']['userid']."' deleted a file with id '".$this->data['other']['id'].
-            "' in privatestudentfolder with id '".$this->data['other']['privatestudentfolder']."'";
+        return "The user with id '" . $this->data['other']['userid'] . "' deleted a file with id '" . $this->data['other']['id'] .
+            "' in privatestudentfolder with id '" . $this->data['other']['privatestudentfolder'] . "'";
     }
 
     /**
@@ -89,7 +89,7 @@ class privatestudentfolder_file_deleted extends \core\event\base {
      */
     public function get_url() {
         $moduleid = get_coursemodule_from_instance('privatestudentfolder', $this->data['other']['privatestudentfolder'])->id;
-        return new \moodle_url("/mod/privatestudentfolder/view.php", array('id'  => $moduleid));
+        return new \moodle_url("/mod/privatestudentfolder/view.php", ['id'  => $moduleid]);
     }
 
     /**

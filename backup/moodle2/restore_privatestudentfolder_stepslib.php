@@ -34,7 +34,6 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_privatestudentfolder_activity_structure_step extends restore_activity_structure_step {
-
     /**
      * Define the structure of the restore workflow.
      *
@@ -49,17 +48,23 @@ class restore_privatestudentfolder_activity_structure_step extends restore_activ
         // Define each element separated.
         $paths[] = new restore_path_element('privatestudentfolder', '/activity/privatestudentfolder');
         if ($userinfo) {
-            $files = new restore_path_element('privatestudentfolder_file',
-                    '/activity/privatestudentfolder/files/file');
+            $files = new restore_path_element(
+                'privatestudentfolder_file',
+                '/activity/privatestudentfolder/files/file'
+            );
             $paths[] = $files;
 
-            $extduedates = new restore_path_element('privatestudentfolder_extduedates',
-                    '/activity/privatestudentfolder/extduedates/extduedate');
+            $extduedates = new restore_path_element(
+                'privatestudentfolder_extduedates',
+                '/activity/privatestudentfolder/extduedates/extduedate'
+            );
 
             $paths[] = $extduedates;
 
-            $overrides = new restore_path_element('privatestudentfolder_overrides',
-                    '/activity/privatestudentfolder/overrides/override');
+            $overrides = new restore_path_element(
+                'privatestudentfolder_overrides',
+                '/activity/privatestudentfolder/overrides/override'
+            );
             $paths[] = $overrides;
         }
 
@@ -240,13 +245,11 @@ class restore_privatestudentfolder_activity_structure_step extends restore_activ
         $rs = $DB->get_recordset('files', [
                 'contextid' => $contextid,
                 'component' => 'mod_privatestudentfolder',
-                'filename' => '.']
-        );
+                'filename' => '.']);
         foreach ($rs as $record) {
             $record->itemid = $this->get_mappingid('user', $record->itemid, $record->itemid); // We may need to update user ID!
             $DB->update_record('files', $record);
         }
         $rs->close();
-
     }
 }

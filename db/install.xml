@@ -27,6 +27,7 @@
         <FIELD NAME="allowedfiletypes" TYPE="char" LENGTH="255" NOTNULL="false" DEFAULT="" SEQUENCE="false"/>
         <FIELD NAME="obtainteacherapproval" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="filesarepersonal" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="openpdffilesinpdfjs" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="autoimport" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="groupapproval" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="notifystatuschange" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="2" SEQUENCE="false" COMMENT="f"/>

@@ -26,6 +26,8 @@
 
 namespace mod_privatestudentfolder\local\filestable;
 
+use core_text;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -130,7 +132,7 @@ class base extends \html_table {
      */
     public function is_file_approved($file) {
         global $OUTPUT;
-        $templatecontext = new \stdClass;
+        $templatecontext = new \stdClass();
         // Now add the specific data to the table!
         $teacherapproval = $this->privatestudentfolder->teacher_approval($file);
         $obtainteacherapproval = $this->privatestudentfolder->get_instance()->obtainteacherapproval;
@@ -152,7 +154,6 @@ class base extends \html_table {
         }
 
         return $teacherapproved;
-
     }
 
     /**
@@ -163,7 +164,7 @@ class base extends \html_table {
      */
     public function get_approval_status_for_file($file) {
         global $OUTPUT;
-        $templatecontext = new \stdClass;
+        $templatecontext = new \stdClass();
         // Now add the specific data to the table!
         $teacherapproval = $this->privatestudentfolder->teacher_approval($file);
         $studentapproval = $this->privatestudentfolder->student_approval($file);
@@ -203,8 +204,7 @@ class base extends \html_table {
         $studentdenied = false;
         $studentpending = false;
 
-        if ( $this->privatestudentfolder->get_filesarepersonal_status() == "0" ) {
-
+        if ($this->privatestudentfolder->get_filesarepersonal_status() == "0") {
             if ($obtainstudentapproval == 1) {
                 if ($studentapproval == 1) {
                     $studentapproved = true;
@@ -224,7 +224,6 @@ class base extends \html_table {
                 $studentapproved = true;
                 $hint .= get_string('student_approved_automatically', 'privatestudentfolder');
             }
-
         }
 
         /* Use $hint string in context */
@@ -246,7 +245,6 @@ class base extends \html_table {
         }
 
         return $OUTPUT->render_from_template('mod_privatestudentfolder/approval_icon', $templatecontext);
-
     }
 
     /**
@@ -288,8 +286,10 @@ class base extends \html_table {
      * @return bool
      */
     public function changepossible() {
-        $result = ($this->changepossible ? true : false) && has_capability('mod/privatestudentfolder:upload',
-                        $this->privatestudentfolder->get_context());
+        $result = ($this->changepossible ? true : false) && has_capability(
+            'mod/privatestudentfolder:upload',
+            $this->privatestudentfolder->get_context()
+        );
         return $result;
     }
 
@@ -305,24 +305,17 @@ class base extends \html_table {
         $data = [];
         $data[] = $OUTPUT->pix_icon(file_file_icon($file), get_mimetype_description($file));
 
-        /* TODO : Traditional view.php link that allows access to file */
+        $filename = $file->get_filename();
+        $maxlen = 65;
 
-        // if ( $this->is_file_approved($file) ) {
-        //     $dlurl = new \moodle_url('/mod/privatestudentfolder/view.php', [
-        //             'id' => $this->privatestudentfolder->get_coursemodule()->id,
-        //             'download' => $file->get_id(),
-        //     ]);
-        //     $data[] = \html_writer::link($dlurl, $file->get_filename());
-        // } else {
-        //     /* TODO : Make it better, show that link cannot be clicked */
-        //     $data[] = $file->get_filename();
-        // }
+        if (strlen($filename) > $maxlen) {
+            $displayname = \core_text::substr($filename, 0, $maxlen - 3) . '...';
+        } else {
+            $displayname = $filename;
+        }
 
-        /* TODO : PDF.js viewer that allows online view of PDF files */
-
-        if ( $this->is_file_approved($file) ) {
-
-            $plugin_url = \moodle_url::make_pluginfile_url(
+        if ($this->is_file_approved($file)) {
+            $pluginurl = \moodle_url::make_pluginfile_url(
                 $file->get_contextid(),
                 $file->get_component(),
                 $file->get_filearea(),
@@ -331,13 +324,36 @@ class base extends \html_table {
                 $file->get_filename(),
                 false
             );
-            $url = $plugin_url->out();
-            $url = 'https://moodle.appbox.camacho.pt/mod/privatestudentfolder/pdfjs-5.4.296-dist/web/viewer.html?file=' . $url;
 
-            $data[] = \html_writer::link($url, $file->get_filename());
+            if ($this->privatestudentfolder->get_openpdffilesinpdfjs_status() == "1" && $file->get_mimetype() == "application/pdf") {
+                $pdfjsurl = new \moodle_url('/mod/privatestudentfolder/pdfjs-5.4.296-dist/web/viewer.html', [
+                    'file' => $pluginurl->out(),
+                ]);
+                $url = $pdfjsurl;
+            } else {
+                $dlurl = new \moodle_url('/mod/privatestudentfolder/view.php', [
+                        'id' => $this->privatestudentfolder->get_coursemodule()->id,
+                        'download' => $file->get_id(),
+                ]);
+                $url = $dlurl;
+            }
+
+            $data[] = \html_writer::link(
+                $url,
+                $displayname,
+                ['target' => '_blank', 'rel' => 'noopener noreferrer', 'title' => $filename]
+            );
         } else {
             /* TODO : Make it better, show that link cannot be clicked */
-            $data[] = $file->get_filename();
+            // $data[] = $displayname;
+
+            // Lien désactivé
+            $data[] = \html_writer::tag('a', $displayname, [
+                'class' => 'disabled-link',
+                'href' => '#',
+                'onclick' => 'return false;',
+                'title' => 'Ce fichier est indisponible',
+            ]);
         }
 
         $data[] = $this->get_approval_status_for_file($file);
@@ -346,5 +362,4 @@ class base extends \html_table {
 
         return $data;
     }
-
 }

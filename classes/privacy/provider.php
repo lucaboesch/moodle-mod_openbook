@@ -45,7 +45,7 @@ require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php');
 /**
  * Privacy class for requesting user data.
  */
-class provider implements metadataprovider, pluginprovider, preference_provider, core_userlist_provider {
+class provider implements core_userlist_provider, metadataprovider, pluginprovider, preference_provider {
     /**
      * Provides meta data that is stored about a user with mod_privatestudentfolder
      *
@@ -111,7 +111,7 @@ class provider implements metadataprovider, pluginprovider, preference_provider,
         } else {
             $enroled = [-1];
         }
-        list($enrolsql, $enrolparams) = $DB->get_in_or_equal($enroled, SQL_PARAMS_NAMED, 'enro');
+        [$enrolsql, $enrolparams] = $DB->get_in_or_equal($enroled, SQL_PARAMS_NAMED, 'enro');
         $params = $params + $enrolparams;
 
         /* The where clause is quite interesting here, because we have to differentiate
@@ -256,13 +256,19 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
 
                 $fs = get_file_storage();
 
-                list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'usr');
+                [$usersql, $userparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'usr');
 
                 // Delete users' files, extended due dates and groupapprovals for this privatestudentfolder!
-                $DB->delete_records_select('privatestudentfolder_extduedates', "privatestudentfolder = :id AND userid ".$usersql,
-                        ['id' => $id] + $userparams);
-                $files = $DB->get_records_select('privatestudentfolder_file', "privatestudentfolder = :id AND userid ".$usersql,
-                        ['id' => $id] + $userparams);
+                $DB->delete_records_select(
+                    'privatestudentfolder_extduedates',
+                    "privatestudentfolder = :id AND userid " . $usersql,
+                    ['id' => $id] + $userparams
+                );
+                $files = $DB->get_records_select(
+                    'privatestudentfolder_file',
+                    "privatestudentfolder = :id AND userid " . $usersql,
+                    ['id' => $id] + $userparams
+                );
 
                 if ($files) {
                     $fileids = array_keys($files);
@@ -270,12 +276,14 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
                         $file = $fs->get_file_by_id($cur->fileid);
                         $file->delete();
                     }
-                    list($filesql, $fileparams) = $DB->get_in_or_equal($fileids, SQL_PARAMS_NAMED, 'file');
-                    $DB->delete_records_select('privatestudentfolder_groupapproval', "(fileid $filesql) AND (userid ".$usersql.")",
-                            $fileparams + $userparams);
+                    [$filesql, $fileparams] = $DB->get_in_or_equal($fileids, SQL_PARAMS_NAMED, 'file');
+                    $DB->delete_records_select(
+                        'privatestudentfolder_groupapproval',
+                        "(fileid $filesql) AND (userid " . $usersql . ")",
+                        $fileparams + $userparams
+                    );
                     $DB->delete_records_list('privatestudentfolder_file', 'id', $fileids);
                 }
-
             }
         }
     }
@@ -298,7 +306,7 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
             return;
         }
 
-        list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
+        [$contextsql, $contextparams] = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
 
         $sql = "SELECT
                     c.id AS contextid,
@@ -364,14 +372,22 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
         $params = ['userid' => $userid, 'name' => 'mod-privatestudentfolder-perpage-%'];
         $userprefs = $DB->get_records_sql($sql, $params);
         foreach ($userprefs as $userpref) {
-            writer::with_context($context)->export_user_preference('mod_privatestudentfolder', $userpref->name, $userpref->value,
-                    get_string('privacy:metadata:privatestudentfolderperpage', 'mod_privatestudentfolder'));
+            writer::with_context($context)->export_user_preference(
+                'mod_privatestudentfolder',
+                $userpref->name,
+                $userpref->value,
+                get_string('privacy:metadata:privatestudentfolderperpage', 'mod_privatestudentfolder')
+            );
         }
         $params['name'] = \mod_privatestudentfolder\local\allfilestable\base::get_table_uniqueid('%');
         $userprefs = $DB->get_records_sql($sql, $params);
         foreach ($userprefs as $userpref) {
-            writer::with_context($context)->export_user_preference('mod_privatestudentfolder', $userpref->name, $userpref->value,
-                    get_string('privacy:metadata:privatestudentfolderperpage', 'mod_privatestudentfolder'));
+            writer::with_context($context)->export_user_preference(
+                'mod_privatestudentfolder',
+                $userpref->name,
+                $userpref->value,
+                get_string('privacy:metadata:privatestudentfolderperpage', 'mod_privatestudentfolder')
+            );
         }
     }
 
@@ -408,8 +424,11 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
         $groupimports = false;
         $emptygroup = false;
         if (($pub->get_instance()->mode == PRIVATESTUDENTFOLDER_MODE_IMPORT) && ($pub->get_instance()->importfrom > 0)) {
-            $assign = $DB->get_record('assign', ['id' => $pub->get_instance()->importfrom],
-                    'name, teamsubmission, preventsubmissionnotingroup');
+            $assign = $DB->get_record(
+                'assign',
+                ['id' => $pub->get_instance()->importfrom],
+                'name, teamsubmission, preventsubmissionnotingroup'
+            );
             $groupimports = $assign->teamsubmission;
             if ($groupimports && !$assign->preventsubmissionnotingroup) {
                 $groups = groups_get_user_groups($pub->get_instance()->course, $user->id);
@@ -542,13 +561,15 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
          * Export resources!
          * We won't use writer::with_context($context)->export_area_files() due to us only needing a subdirectory!
          */
-        $resources = $fs->get_directory_files($context->id,
-                'mod_privatestudentfolder',
-                'attachment',
-                $fsfile->get_itemid(),
-                '/resources/',
-                true,
-                false);
+        $resources = $fs->get_directory_files(
+            $context->id,
+            'mod_privatestudentfolder',
+            'attachment',
+            $fsfile->get_itemid(),
+            '/resources/',
+            true,
+            false
+        );
         if (count($resources) > 0) {
             foreach ($resources as $cur) {
                 writer::with_context($context)->export_custom_file(array_merge($path, [
@@ -667,7 +688,7 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
             return;
         }
 
-        list($ctxsql, $ctxparams) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'ctx');
+        [$ctxsql, $ctxparams] = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'ctx');
 
         // Apparently we can't trust anything that comes via the context.
         // Go go mega query to find out it we have an assign context that matches an existing assignment.
@@ -676,7 +697,7 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
                     JOIN {course_modules} cm ON p.id = cm.instance AND p.course = cm.course
                     JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
                     JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :contextmodule
-                    WHERE ctx.id ".$ctxsql;
+                    WHERE ctx.id " . $ctxsql;
         $params = ['modulename' => 'privatestudentfolder', 'contextmodule' => CONTEXT_MODULE];
 
         if (!$records = $DB->get_records_sql($sql, $params + $ctxparams)) {
@@ -724,9 +745,12 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
                     }
                 }
 
-                list($filesql, $fileparams) = $DB->get_in_or_equal($fileids, SQL_PARAMS_NAMED, 'file');
-                $DB->delete_records_select('privatestudentfolder_groupapproval', 'userid = :userid AND fileid '.$filesql,
-                        ['userid' => $user->id] + $fileparams);
+                [$filesql, $fileparams] = $DB->get_in_or_equal($fileids, SQL_PARAMS_NAMED, 'file');
+                $DB->delete_records_select(
+                    'privatestudentfolder_groupapproval',
+                    'userid = :userid AND fileid ' . $filesql,
+                    ['userid' => $user->id] + $fileparams
+                );
                 if (!$teams) {
                     $DB->delete_records_list('privatestudentfolder_file', 'id', $fileids);
                 }

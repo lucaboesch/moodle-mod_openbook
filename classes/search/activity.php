@@ -25,7 +25,7 @@
  */
 namespace mod_privatestudentfolder\search;
 
-use core_search\base_activity as base_activity;
+use core_search\base_activity;
 
 defined('MOODLE_INTERNAL') || die();
 

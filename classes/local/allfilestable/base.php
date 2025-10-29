@@ -114,11 +114,12 @@ class base extends \table_sql {
         $this->obtainteacherapproval = $instance->obtainteacherapproval;
         $this->obtainstudentapproval = $instance->obtainstudentapproval;
 
-        $this->cm = get_coursemodule_from_instance('privatestudentfolder',
-                                                    $privatestudentfolder->get_instance()->id,
-                                                    0,
-                                                    false,
-                                                    MUST_EXIST
+        $this->cm = get_coursemodule_from_instance(
+            'privatestudentfolder',
+            $privatestudentfolder->get_instance()->id,
+            0,
+            false,
+            MUST_EXIST
         );
         $this->context = \context_module::instance($this->cm->id);
         $this->groupmode = groups_get_activity_groupmode($this->cm);
@@ -129,7 +130,7 @@ class base extends \table_sql {
             $this->filter = $filter;
         }
 
-        list($columns, $headers, $helpicons) = $this->get_columns();
+        [$columns, $headers, $helpicons] = $this->get_columns();
         $this->define_columns($columns);
         $this->define_headers($headers);
         $this->define_help_for_headers($helpicons);
@@ -265,7 +266,7 @@ class base extends \table_sql {
 
         // Also filters out users according to set activitygroupmode & current activitygroup!
         $users = $this->privatestudentfolder->get_users();
-        list($sqluserids, $userparams) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED, 'user');
+        [$sqluserids, $userparams] = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED, 'user');
         $params = $params + $userparams + ['privatestudentfolder' => $this->cm->instance];
 
         $having = '';
@@ -310,9 +311,9 @@ class base extends \table_sql {
     COUNT(a.uid)
 FROM
     (SELECT u.id AS uid, MAX(files.timecreated) AS timemodified FROM $from WHERE $where GROUP BY u.id) a WHERE a.timemodified IS NULL",
-                $params);
+                $params
+            );
         }
-
     }
 
     /**
@@ -322,8 +323,8 @@ FROM
      * @param string $fields Fields
      * @param string $from From
      * @param string $where Where
-     * @param array $params (optional) Parameters
-     * @param string $groupby (optional) GroupBy
+     * @param array|null $params Optional Parameters
+     * @param string $groupby Optional GroupBy
      */
     public function set_sql($fields, $from, $where, ?array $params = null, string $groupby = '') {
         parent::set_sql($fields, $from, $where, $params);
@@ -349,7 +350,7 @@ FROM
                 $this->initialbars($grandtotal > $pagesize);
             }
 
-            list($wsql, $wparams) = $this->get_sql_where();
+            [$wsql, $wparams] = $this->get_sql_where();
             if ($wsql) {
                 if (strrpos($this->countsql, ') a') == (strlen($this->countsql) - 3)) {
                     $this->countsql = substr($this->countsql, 0, -3) .  ' AND ' . $wsql . ') a';
@@ -546,8 +547,13 @@ FROM
         if ($this->is_downloading()) {
             return '';
         } else {
-            return \html_writer::checkbox('selecteduser[' . $values->id . ']', 'selected', false, null,
-                    ['class' => 'userselection']);
+            return \html_writer::checkbox(
+                'selecteduser[' . $values->id . ']',
+                'selected',
+                false,
+                null,
+                ['class' => 'userselection']
+            );
         }
     }
 
@@ -567,8 +573,10 @@ FROM
 
         $extension = $this->privatestudentfolder->user_extensionduedate($values->id);
         if ($extension) {
-            if ((has_capability('mod/privatestudentfolder:grantextension', $this->context) ||
-                    has_capability('mod/privatestudentfolder:approve', $this->context)) && $this->allfilespage) {
+            if (
+                (has_capability('mod/privatestudentfolder:grantextension', $this->context) ||
+                    has_capability('mod/privatestudentfolder:approve', $this->context)) && $this->allfilespage
+            ) {
                 $extensiontxt = \html_writer::empty_tag('br') . "\n" .
                         get_string('extensionto', 'privatestudentfolder') . ': ' . userdate($extension);
             } else {
@@ -581,7 +589,6 @@ FROM
         if ($this->is_downloading()) {
             return strip_tags(parent::col_fullname($values) . $extensiontxt);
         } else {
-
             return  $OUTPUT->user_picture($values) .  parent::col_fullname($values) . $extensiontxt;
         }
     }
@@ -643,14 +650,16 @@ FROM
     public function col_timemodified($values) {
         global $OUTPUT;
 
-        list(, $files, ) = $this->get_files($values->id);
+        [, $files, ] = $this->get_files($values->id);
 
         $filetable = new \html_table();
         $filetable->attributes = ['class' => 'filetable'];
 
         foreach ($files as $file) {
-            if (has_capability('mod/privatestudentfolder:approve', $this->context)
-                    || $this->privatestudentfolder->has_filepermission($file->get_id())) {
+            if (
+                has_capability('mod/privatestudentfolder:approve', $this->context)
+                    || $this->privatestudentfolder->has_filepermission($file->get_id())
+            ) {
                 $filerow = [];
                 $filerow[] = $OUTPUT->pix_icon(file_file_icon($file), get_mimetype_description($file));
 
@@ -680,39 +689,31 @@ FROM
      * @param mixed $values
      */
     public function col_files($values) {
-        list(, $files, ) = $this->get_files($values->id);
+        [, $files, ] = $this->get_files($values->id);
         global $OUTPUT;
         $filetable = new \html_table();
         $filetable->attributes = ['class' => 'filetable'];
 
         foreach ($files as $file) {
-            if ((has_capability('mod/privatestudentfolder:approve', $this->context))
-                || $this->privatestudentfolder->has_filepermission($file->get_id())) {
+            if (
+                (has_capability('mod/privatestudentfolder:approve', $this->context))
+                || $this->privatestudentfolder->has_filepermission($file->get_id())
+            ) {
                 $filerow = [];
                 $filerow[] = $OUTPUT->pix_icon(file_file_icon($file), get_mimetype_description($file));
 
-                /* Create a plugin.php file url */
-                /* Generate file URL using plugin's mechanics */
-
-                // var_dump($file);
-
                 $mycmid = $this->cm->id;
-                // var_dump($mycmid);
-                $mydownload = $file->get_id();
-                // var_dump($mydownload);
 
-                $url = new \moodle_url('/mod/privatestudentfolder/view.php', ['id' => $mycmid, 'download' => $file->get_id()]);
+                $filename = $file->get_filename();
+                $maxlen = 65;
 
-                // var_dump($file->get_id());
-                // var_dump($file->get_contextid());
-                // var_dump($file->get_component());
-                // var_dump($file->get_filearea());
-                // var_dump($file->get_itemid());
-                // var_dump($file->get_filepath());
-                // var_dump($file->get_filename());
+                if (strlen($filename) > $maxlen) {
+                    $displayname = \core_text::substr($filename, 0, $maxlen - 3) . '...';
+                } else {
+                    $displayname = $filename;
+                }
 
-                /* Generate file URL using pluginfile.php mechanics */
-                $plugin_url = \moodle_url::make_pluginfile_url(
+                $pluginurl = \moodle_url::make_pluginfile_url(
                     $file->get_contextid(),
                     $file->get_component(),
                     $file->get_filearea(),
@@ -722,19 +723,21 @@ FROM
                     false
                 );
 
-                // var_dump($plugin_url);
+                if ($this->privatestudentfolder->get_openpdffilesinpdfjs_status() == "1" && $file->get_mimetype() == "application/pdf") {
+                    $pdfjsurl = new \moodle_url('/mod/privatestudentfolder/pdfjs-5.4.296-dist/web/viewer.html', [
+                        'file' => $pluginurl->out(),
+                    ]);
+                    $url = $pdfjsurl;
+                } else {
+                    $url = new \moodle_url('/mod/privatestudentfolder/view.php', ['id' => $mycmid, 'download' => $file->get_id()]);
+                }
 
-                /* TODO: Move link to other place */
-                $url = $plugin_url->out();
-
-                echo '<br /><a href="https://moodle.appbox.camacho.pt/mod/pdfjsfolder/pdfjs-5.1.91-dist/web/viewer.html?file=' . $url . '">viewer link</a>';
-
-                // echo '<iframe src="' . $url . '" width="800" height="600">';
-
-                // var_dump($plugin_url->out());
-
-                $filerow[] = \html_writer::link($url, $file->get_filename()) .
-                    $this->add_onlinetext_preview($values->id, $file->get_id());
+                $filerow[] = \html_writer::link(
+                    $url,
+                    $displayname,
+                    ['target' => '_blank', 'rel' => 'noopener noreferrer', 'title' => $filename]
+                )
+                . $this->add_onlinetext_preview($values->id, $file->get_id(), []);
 
                 $filetable->data[] = $filerow;
             }
@@ -759,14 +762,16 @@ FROM
      * @return string Return user time of submission.
      */
     public function col_studentapproval($values) {
-        list(, $files, ) = $this->get_files($values->id);
+        [, $files, ] = $this->get_files($values->id);
 
         $table = new \html_table();
         $table->attributes = ['class' => 'statustable'];
 
         foreach ($files as $file) {
-            if (has_capability('mod/privatestudentfolder:approve', $this->context)
-                    || $this->privatestudentfolder->has_filepermission($file->get_id())) {
+            if (
+                has_capability('mod/privatestudentfolder:approve', $this->context)
+                    || $this->privatestudentfolder->has_filepermission($file->get_id())
+            ) {
                 switch ($this->privatestudentfolder->student_approval($file)) {
                     case 1:
                         $symbol = $this->valid;
@@ -798,15 +803,16 @@ FROM
      */
     public function col_teacherapproval($values) {
 
-        list(, $files, ) = $this->get_files($values->id);
+        [, $files, ] = $this->get_files($values->id);
 
         $table = new \html_table();
         $table->attributes = ['class' => 'permissionstable'];
 
         foreach ($files as $file) {
-            if ($this->privatestudentfolder->has_filepermission($file->get_id())
-                    || has_capability('mod/privatestudentfolder:approve', $this->context)) {
-
+            if (
+                $this->privatestudentfolder->has_filepermission($file->get_id())
+                    || has_capability('mod/privatestudentfolder:approve', $this->context)
+            ) {
                 $checked = $this->privatestudentfolder->teacher_approval($file);
                 // Null if none found, DB-entry otherwise!
                 // TODO change that conversions and queue the real values! Everywhere!
@@ -832,7 +838,7 @@ FROM
      * @return string Return user time of submission.
      */
     public function col_visibleforstudents($values) {
-        list(, $files, ) = $this->get_files($values->id);
+        [, $files, ] = $this->get_files($values->id);
 
         $table = new \html_table();
         $table->attributes = ['class' => 'statustable'];
@@ -860,7 +866,7 @@ FROM
      */
     public function col_privatestudentfolderstatus($values) {
 
-        list(, $files, ) = $this->get_files($values->id);
+        [, $files, ] = $this->get_files($values->id);
 
         $table = new \html_table();
         $table->attributes = ['class' => 'statustable'];
@@ -891,9 +897,10 @@ FROM
 
             // teacherapproval!
 
-            if ($this->obtainteacherapproval && ($this->privatestudentfolder->has_filepermission($file->get_id())
-                || has_capability('mod/privatestudentfolder:approve', $this->context))) {
-
+            if (
+                $this->obtainteacherapproval && ($this->privatestudentfolder->has_filepermission($file->get_id())
+                || has_capability('mod/privatestudentfolder:approve', $this->context))
+            ) {
                 $checked = $this->privatestudentfolder->teacher_approval($file);
                 // Null if none found, DB-entry otherwise!
                 // TODO change that conversions and queue the real values! Everywhere!
@@ -979,5 +986,4 @@ FROM
     public static function get_table_uniqueid($instanceid) {
         return 'mod-privatestudentfolder-allfiles-' . $instanceid;
     }
-
 }

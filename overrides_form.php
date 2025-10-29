@@ -32,7 +32,6 @@ require_once($CFG->libdir . '/formslib.php');
  * Class for Private Student Folder overrides
  */
 class privatestudentfolder_overrides_form extends moodleform {
-
     /** @var object $_privatestudentfolder */
     private $_privatestudentfolder;
 
@@ -61,11 +60,11 @@ class privatestudentfolder_overrides_form extends moodleform {
             foreach ($groups as $group) {
                 $groupsclean[$group->id] = $group->name;
             }
-            $options = array(
+            $options = [
                 'multiple' => false,
                 'noselectionstring' => get_string('override:group:choose', 'privatestudentfolder'),
 
-            );
+            ];
             $mform->addElement('autocomplete', 'groupid', get_string('group'), $groupsclean, $options);
             $mform->addRule('groupid', null, 'required', null, 'client');
         } else {
@@ -83,10 +82,10 @@ class privatestudentfolder_overrides_form extends moodleform {
                 }
                 $usersclean[$user->id] = fullname($user);
             }
-            $options = array(
+            $options = [
                 'multiple' => false,
                 'noselectionstring' => get_string('override:user:choose', 'privatestudentfolder'),
-            );
+            ];
             $mform->addElement('autocomplete', 'userid', get_string('user'), $usersclean, $options);
             $mform->addRule('userid', null, 'required', null, 'client');
         }
@@ -143,5 +142,4 @@ class privatestudentfolder_overrides_form extends moodleform {
         }
         $this->add_action_buttons(true);
     }
-
 }

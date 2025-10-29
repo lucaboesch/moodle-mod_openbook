@@ -54,12 +54,12 @@ class privatestudentfolder_file_imported extends \core\event\base {
      */
     public static function file_added(\stdClass $cm, $do) {
         // Trigger overview event.
-        $event = self::create(array(
+        $event = self::create([
             'objectid'      => (int)$do->privatestudentfolder,
             'context'       => \context_module::instance($cm->id),
             'relateduserid' => $do->userid,
-            'other'         => (Array)$do,
-        ));
+            'other'         => (array)$do,
+        ]);
         return $event;
     }
     // You might need to override get_url() and get_legacy_log_data() if view mode needs to be stored as well.
@@ -69,9 +69,9 @@ class privatestudentfolder_file_imported extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The ".$this->data['other']['typ']." with id '".$this->data['relateduserid'].
-            "' added a file with id '".$this->data['other']['fileid'].
-            "' which was imported to privatestudentfolder with id '".$this->data['other']['privatestudentfolder']."'";
+        return "The " . $this->data['other']['typ'] . " with id '" . $this->data['relateduserid'] .
+            "' added a file with id '" . $this->data['other']['fileid'] .
+            "' which was imported to privatestudentfolder with id '" . $this->data['other']['privatestudentfolder'] . "'";
     }
 
     /**
@@ -90,7 +90,7 @@ class privatestudentfolder_file_imported extends \core\event\base {
      */
     public function get_url() {
         $moduleid = get_coursemodule_from_instance('privatestudentfolder', $this->data['other']['privatestudentfolder'])->id;
-        return new \moodle_url("/mod/privatestudentfolder/view.php", array('id'  => $moduleid));
+        return new \moodle_url("/mod/privatestudentfolder/view.php", ['id'  => $moduleid]);
     }
 
     /**

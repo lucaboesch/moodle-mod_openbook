@@ -40,7 +40,6 @@ require_once($CFG->dirroot . '/mod/privatestudentfolder/backup/moodle2/restore_p
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_privatestudentfolder_activity_task extends restore_activity_task {
-
     /**
      * Define (add) particular settings this activity can have.
      */
@@ -54,9 +53,9 @@ class restore_privatestudentfolder_activity_task extends restore_activity_task {
     protected function define_my_steps() {
         // Assignment only has one structure step.
         $this->add_step(new restore_privatestudentfolder_activity_structure_step(
-                            'privatestudentfolder_structure',
-                            'privatestudentfolder.xml')
-                        );
+            'privatestudentfolder_structure',
+            'privatestudentfolder.xml'
+        ));
     }
 
     /**
@@ -82,15 +81,18 @@ class restore_privatestudentfolder_activity_task extends restore_activity_task {
     public static function define_decode_rules() {
         $rules = [];
 
-        $rules[] = new restore_decode_rule('PRIVATESTUDENTFOLDERVIEWBYID',
-                '/mod/privatestudentfolder/view.php?id=$1',
-                'course_module');
-        $rules[] = new restore_decode_rule('PRIVATESTUDENTFOLDERINDEX',
-                '/mod/privatestudentfolder/index.php?id=$1',
-                'course_module');
+        $rules[] = new restore_decode_rule(
+            'PRIVATESTUDENTFOLDERVIEWBYID',
+            '/mod/privatestudentfolder/view.php?id=$1',
+            'course_module'
+        );
+        $rules[] = new restore_decode_rule(
+            'PRIVATESTUDENTFOLDERINDEX',
+            '/mod/privatestudentfolder/index.php?id=$1',
+            'course_module'
+        );
 
         return $rules;
-
     }
 
     /**
@@ -128,5 +130,4 @@ class restore_privatestudentfolder_activity_task extends restore_activity_task {
 
         return $rules;
     }
-
 }

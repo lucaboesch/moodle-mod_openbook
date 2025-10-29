@@ -17,9 +17,28 @@
 {{!
     @template mod_privatestudentfolder/overview
 
-    Private Student Folder's overview template.
+    Private Student Folder's overrides template.
 
-    The purpose of this template is to the contents of the overview.
+    The purpose of this template is to the contents of the overrides.
+    
+    Example context (json):
+    {
+        "isteacher": true,
+        "showapprovalrequired": true,
+        "viewall_approvalneeded_url": "https://example.com/mod/privatestudentfolder/approvalneeded.php",
+        "myfilesform": "<form>...teacher files form...</form>",
+        "mode": "Individual",
+        "filesarepersonal": "Yes",
+        "obtainteacherapproval": "Yes",
+        "obtainstudentapprovaltitle": "Student approval required",
+        "obtainstudentapproval": "No",
+        "studentcount": 25,
+        "allfiles_empty": false,
+        "allfiles_url": "https://example.com/mod/privatestudentfolder/files.php",
+        "allfilescount": 17,
+        "approvalrequiredcount": 3,
+        "assign": "<tr><th>Custom info</th><td>Some value</td></tr>"
+    }
 }}
 {{#isteacher}}
     {{#showapprovalrequired}}

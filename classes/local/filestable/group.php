@@ -52,10 +52,10 @@ class group extends base {
             'privatestudentfolder' => $this->privatestudentfolder->get_instance()->id,
             'fileid' => $file->get_id(),
         ]);
-        $templatecontext = new \stdClass;
+        $templatecontext = new \stdClass();
         // Now add the specific data to the table!
         $teacherapproval = $this->privatestudentfolder->teacher_approval($file);
-        list($studentapproval, $approvaldetails) = $this->privatestudentfolder->group_approval($pubfileid);
+        [$studentapproval, $approvaldetails] = $this->privatestudentfolder->group_approval($pubfileid);
 
         $obtainteacherapproval = $this->privatestudentfolder->get_instance()->obtainteacherapproval;
         $obtainstudentapproval = $this->privatestudentfolder->get_instance()->obtainstudentapproval;
@@ -66,7 +66,6 @@ class group extends base {
         $hint = '';
 
         if ($obtainstudentapproval == 1) {
-
             $pendingstudents = [];
             $rejectedstudents = [];
             $approvedstudents = [];
@@ -80,9 +79,9 @@ class group extends base {
                     $approvedstudents[] = fullname($cur);
                 }
             }
-            $rejected = get_string('rejected', 'privatestudentfolder') . ': ' . implode(', ', $rejectedstudents) .'. ';
-            $pending = get_string('pending', 'privatestudentfolder') . ': ' . implode(', ', $pendingstudents) .'. ';
-            $approved = get_string('approved', 'privatestudentfolder') . ': ' . implode(', ', $approvedstudents) .'. ';
+            $rejected = get_string('rejected', 'privatestudentfolder') . ': ' . implode(', ', $rejectedstudents) . '. ';
+            $pending = get_string('pending', 'privatestudentfolder') . ': ' . implode(', ', $pendingstudents) . '. ';
+            $approved = get_string('approved', 'privatestudentfolder') . ': ' . implode(', ', $approvedstudents) . '. ';
 
             if ($studentapproval == 1) {
                 $studentapproved = true;
@@ -117,7 +116,6 @@ class group extends base {
                     }
                 }
             }
-
         } else {
             $studentapproved = true;
             $hint = get_string('student_approved_automatically', 'privatestudentfolder');

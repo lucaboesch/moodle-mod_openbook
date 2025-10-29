@@ -41,7 +41,6 @@ require_once($CFG->dirroot . '/mod/privatestudentfolder/locallib.php');
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_privatestudentfolder_mod_form extends moodleform_mod {
-
     /** @var object $_teamassigns */
     private $_teamassigns;
 
@@ -85,10 +84,22 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
         }
 
         $modearray = [];
-        $modearray[] =& $mform->createElement('radio', 'mode', '', get_string('modeupload', 'privatestudentfolder'),
-                PRIVATESTUDENTFOLDER_MODE_UPLOAD, $disabled);
-        $modearray[] =& $mform->createElement('radio', 'mode', '', get_string('modeimport', 'privatestudentfolder'),
-                PRIVATESTUDENTFOLDER_MODE_IMPORT, $disabled);
+        $modearray[] =& $mform->createElement(
+            'radio',
+            'mode',
+            '',
+            get_string('modeupload', 'privatestudentfolder'),
+            PRIVATESTUDENTFOLDER_MODE_UPLOAD,
+            $disabled
+        );
+        $modearray[] =& $mform->createElement(
+            'radio',
+            'mode',
+            '',
+            get_string('modeimport', 'privatestudentfolder'),
+            PRIVATESTUDENTFOLDER_MODE_IMPORT,
+            $disabled
+        );
         $mform->addGroup($modearray, 'modegrp', get_string('mode', 'privatestudentfolder'), [' '], false);
         $mform->addHelpButton('modegrp', 'mode', 'privatestudentfolder');
         if ($filecount === 0) {
@@ -178,10 +189,32 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
             '1' => get_string('filesarepersonal_yes', 'privatestudentfolder'),
         ];
 
-        $mform->addElement('select', 'filesarepersonal',
-            get_string('filesarepersonal', 'privatestudentfolder'), $options, $attributes);
+        $mform->addElement(
+            'select',
+            'filesarepersonal',
+            get_string('filesarepersonal', 'privatestudentfolder'),
+            $options,
+            $attributes
+        );
         $mform->setDefault('filesarepersonal', get_config('privatestudentfolder', 'filesarepersonal'));
         $mform->addHelpButton('filesarepersonal', 'filesarepersonal', 'privatestudentfolder');
+
+        // Open PDF files in PDF.js
+        $attributes = [];
+        $options = [
+            '0' => get_string('openpdffilesinpdfjs_no', 'privatestudentfolder'),
+            '1' => get_string('openpdffilesinpdfjs_yes', 'privatestudentfolder'),
+        ];
+
+        $mform->addElement(
+            'select',
+            'openpdffilesinpdfjs',
+            get_string('openpdffilesinpdfjs', 'privatestudentfolder'),
+            $options,
+            $attributes
+        );
+        $mform->setDefault('openpdffilesinpdfjs', get_config('privatestudentfolder', 'openpdffilesinpdfjs'));
+        $mform->addHelpButton('openpdffilesinpdfjs', 'openpdffilesinpdfjs', 'privatestudentfolder');
 
         // Teacher approval.
         $attributes = [];
@@ -190,8 +223,13 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
             '1' => get_string('obtainapproval_required', 'privatestudentfolder'),
         ];
 
-        $mform->addElement('select', 'obtainteacherapproval',
-            get_string('obtainteacherapproval', 'privatestudentfolder'), $options, $attributes);
+        $mform->addElement(
+            'select',
+            'obtainteacherapproval',
+            get_string('obtainteacherapproval', 'privatestudentfolder'),
+            $options,
+            $attributes
+        );
         $mform->setDefault('obtainteacherapproval', get_config('privatestudentfolder', 'obtainteacherapproval'));
         $mform->addHelpButton('obtainteacherapproval', 'obtainteacherapproval', 'privatestudentfolder');
 
@@ -231,7 +269,7 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
             $options,
             $attributes
         );
-        $mform->setDefault('obtaingroupapproval',  get_config('privatestudentfolder', 'obtaingroupapproval'));
+        $mform->setDefault('obtaingroupapproval', get_config('privatestudentfolder', 'obtaingroupapproval'));
         $mform->addHelpButton('obtaingroupapproval', 'obtaingroupapproval', 'privatestudentfolder');
 
         $mform->addElement(
@@ -257,8 +295,12 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
         $mform->setType('alwaysshowdescription', PARAM_BOOL);
 
         // Apply availability restrictions.
-        $mform->addElement('select', 'availabilityrestriction', get_string('availabilityrestriction', 'privatestudentfolder'),
-                [get_string('no'), get_string('yes')]);
+        $mform->addElement(
+            'select',
+            'availabilityrestriction',
+            get_string('availabilityrestriction', 'privatestudentfolder'),
+            [get_string('no'), get_string('yes')]
+        );
         $mform->setDefault('availabilityrestriction', get_config('privatestudentfolder', 'availabilityrestriction'));
         $mform->addHelpButton('availabilityrestriction', 'availabilityrestriction', 'privatestudentfolder');
 
@@ -347,7 +389,6 @@ class mod_privatestudentfolder_mod_form extends moodleform_mod {
                 }
             }
         }
-
     }
 
     /**
