@@ -1,10 +1,10 @@
-Private Student Folder 
+Openbook Resource Folder
 =====================
 
-This file is part of the mod_privatestudentfolder plugin for Moodle - <http://moodle.org/>
+This file is part of the mod_openbook plugin for Moodle - <http://moodle.org/>
 
-*Author:*     University of Geneva, E-Learning Team
-*Copyright:*  [University of Geneva](https://www.unige.ch)
+*Author:*     André Camacho (<andre.camacho@unige.ch>), Luca Bösch (<luca.boesch@bfh.ch>)
+*Copyright:*  2025 University of Geneva, www.unige.ch
 *License:*    [GNU GPL v3 or later](https://www.gnu.org/copyleft/gpl.html)
 
 This plugin has started as a fork of the mod_privatestudentfolder plugin for Moodle
@@ -25,7 +25,7 @@ Usage
 
 A possible teaching scenario could look like this: 
 
-* A teacher opens the Private Student Folder activity for submission. He chooses if submissions are aproved automatically. He also chooses if submissions are private (cannot be shared between students), can be shared between students (with student aproval) or are shared automatically.
+* A teacher opens the Openbook Resource Folder activity for submission. He chooses if submissions are aproved automatically. He also chooses if submissions are private (cannot be shared between students), can be shared between students (with student aproval) or are shared automatically.
 
 * Students submit documents during the submission period. They also choose wether if they want to share the documents with peers or not (if sharing and student approval are enabled).
 
@@ -37,7 +37,7 @@ A possible teaching scenario could look like this:
 Installation
 ------------
 
-* Copy the module code directly to the mod/privatestudentfolder directory.
+* Copy the module code directly to the mod/openbook directory.
 * Log into Moodle as administrator.
 * Open the administration area (http://your-moodle-site/admin) to start the installation automatically.
 
@@ -52,15 +52,15 @@ Documentation
 -------------
 
 You can find documentation for the plugin on :
-* [Github](https://github.com/acamacho-unige/moodle-mod_privatestudentfolder).
-* [Moodle Plugin Repository](https://moodle.org/plugins/privatestudentfolder)
+* [Github](https://github.com/a-camacho/moodle-mod_openbook/issues).
+* [Moodle Plugin Repository]()
 
 Bug Reports / Support
 ---------------------
 
 We try our best to deliver bug-free plugins, but we can not test the plugin for every platform,
 database, PHP and Moodle version. If you find any bug please report it on
-[GitHub](https://github.com/acamacho-unige/moodle-mod_privatestudentfolder). Please
+[GitHub](https://moodle.org/plugins/privatestudentfolder). Please
 provide a detailed bug description, including the plugin and Moodle version and, if applicable, a
 screenshot.
 
