@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains the class for fetching the important dates in mod_assign for a given module instance and a user.
+ * Contains the class for fetching the important dates in mod_openbook for a given module instance and a user.
  *
  * @package       mod_openbook
  * @author        University of Geneva, E-Learning Team
@@ -31,10 +31,10 @@ namespace mod_openbook;
 use core\activity_dates;
 
 /**
- * Class for fetching the important dates in mod_assign for a given module instance and a user.
+ * Class for fetching the important dates in mod_openbook for a given module instance and a user.
  *
- * @copyright 2021 Shamim Rezaie <shamim@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2025 Luca Bösch <luca.boesch@bfh.ch>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class dates extends activity_dates {
     /**
@@ -52,7 +52,6 @@ class dates extends activity_dates {
         $openbook = new \openbook($this->cm, $course, $context);
         $instance = $openbook->get_instance();
 
-        $textsuffix = ($instance->mode == OPENBOOK_MODE_IMPORT) ? "_import" : "_upload";
         $dates = [];
 
         $override = $openbook->override_get_currentuserorgroup();
@@ -63,13 +62,15 @@ class dates extends activity_dates {
         }
         if ($instance->allowsubmissionsfromdate) {
             $dates[] = [
-                'label' => get_string('allowsubmissionsfromdate' . $textsuffix, 'openbook') . ':',
+                'dataid' => 'timeopen',
+                'label' => get_string('allowsubmissionsfromdate', 'openbook') . ':',
                 'timestamp' => $instance->allowsubmissionsfromdate,
             ];
         }
         if ($instance->duedate) {
             $dates[] = [
-                'label' => get_string('duedate' . $textsuffix, 'openbook') . ':',
+                'dataid' => 'timeclose',
+                'label' => get_string('duedate_upload', 'openbook') . ':',
                 'timestamp' => $instance->duedate,
             ];
         }
@@ -90,12 +91,14 @@ class dates extends activity_dates {
             }
             if ($instance->approvalfromdate) {
                 $dates[] = [
+                    'dataid' => 'approvalopen',
                     'label' => get_string('approvalfromdate', 'openbook') . ':',
                     'timestamp' => $instance->approvalfromdate,
                 ];
             }
             if ($instance->approvaltodate) {
                 $dates[] = [
+                    'dataid' => 'approvalclose',
                     'label' => get_string('approvaltodate', 'openbook') . ':',
                     'timestamp' => $instance->approvaltodate,
                 ];
