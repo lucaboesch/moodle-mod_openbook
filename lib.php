@@ -64,6 +64,11 @@ function openbook_add_instance($openbook) {
     return $record->id;
 }
 
+// For versions of Moodle prior to 5.1, we need to define that constant here.
+if (!defined('FEATURE_MOD_OTHERPURPOSE')) {
+    define('FEATURE_MOD_OTHERPURPOSE', 'mod_otherpurpose');
+}
+
 /**
  * Return the list if Moodle features this module supports
  *
@@ -93,6 +98,8 @@ function openbook_supports($feature) {
         case FEATURE_IDNUMBER:
             return true;
         case FEATURE_MOD_PURPOSE:
+            return MOD_PURPOSE_CONTENT;
+        case FEATURE_MOD_OTHERPURPOSE:
             return MOD_PURPOSE_COLLABORATION;
         default:
             return null;
