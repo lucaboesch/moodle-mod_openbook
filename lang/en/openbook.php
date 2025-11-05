@@ -275,8 +275,8 @@ $string['status:approvedrevoke'] = 'Revoked';
 $string['giveapproval'] = 'Give approval';
 $string['overdue'] = 'Deadline of editing period passed';
 $string['approval_required'] = 'Decision pending';
-$string['openbookstatus'] = 'Publication';
-$string['openbookstatus_help'] = 'The status of the publication represents the approval of the teacher and the final publication: <ul><li><i class="fa fa-check text-success fa-fw"></i> File is published and therefore visible for all participants</li><li><i class="fa fa-times text-danger fa-fw"></i> File is not published (approval has not yet been given or has been rejected) and therefore not visible</li></ul>';
+$string['openbookstatus'] = 'Approval';
+$string['openbookstatus_help'] = 'The status of the file represents the approval of the teacher: <ul><li><i class="fa fa-check text-success fa-fw"></i><i class="fa fa-share-from-square text-success fa-fw"></i> File is approved, has been shared, and is therefore visible for all participants</li><li><i class="fa fa-check text-success fa-fw"></i><i class="fa fa-user text-success fa-fw"></i> File is approved and is visible for the participant only</li><li><i class="fa fa-times text-danger fa-fw"></i> File is not approved (approval has not yet been given or has been rejected) and therefore not visible</li></ul>';
 
 $string['allfiles'] = 'File submissions';
 $string['publicfiles'] = 'Shared files';
