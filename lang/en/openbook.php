@@ -98,7 +98,7 @@ $string['filesarepersonal_yes'] = 'Yes (files are personal)';
 $string['filesarepersonal_no'] = 'No (files can be shared between students)';
 $string['filesarepersonal_admin'] = 'Files are personal';
 $string['filesarepersonal_admin_desc'] = 'This setting determines the default visibility setting for student files.';
-$string['filesarepersonal_help'] = 'This option determines if submitted files remain private to the owner: <br><ul><li><strong>Yes</strong> - files are private and personal.</li><li><strong>No</strong> - Files can be shared between students, if they are aproved by needed parties.</li></ul>';
+$string['filesarepersonal_help'] = 'This option determines if submitted files remain private to the owner: <br><ul><li><strong>Yes</strong> - files are private and personal.</li><li><strong>No</strong> - Files can be shared between students, if they are approved by needed parties.</li></ul>';
 
 $string['openpdffilesinpdfjs'] = 'Enable PDF.js';
 $string['openpdffilesinpdfjs_yes'] = 'Yes';
@@ -211,7 +211,7 @@ $string['add_uploads'] = 'Add files';
 $string['edit_uploads'] = 'Edit/upload files';
 $string['edit_timeover'] = 'Files can be edited only during the editing period.';
 $string['approval_timeover'] = 'You don\'t have any file waiting for sharing approval or approval time is over.';
-$string['approval_timeover_description'] = 'Sharing aproval';
+$string['approval_timeover_description'] = 'Sharing approval';
 $string['noentries'] = 'No entries';
 $string['nofiles'] = 'No files available';
 $string['nothing_to_show_users'] = 'Nothing to display - no students available';
