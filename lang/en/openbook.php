@@ -146,7 +146,7 @@ $string['reset_userdata'] = 'All data';
 $string['configautoimport'] = 'If you prefer to have student submissions be automatically imported into student folder instances. This feature can be enabled/disabled for each student folder instance separately.';
 $string['availability'] = 'Editing period (upload or approval)';
 $string['submissionsettings'] = 'Submission settings';
-$string['allowsubmissionsfromdate'] = 'From';
+$string['allowsubmissionsfromdate'] = 'Upload from';
 $string['allowsubmissionsfromdate_help'] = 'If this option is enabled, participants cannot submit their file submissions before this date. If the option is disabled, participants can start submitting right away.';
 $string['allowsubmissionsfromdatesummary'] = 'This assignment will accept submissions from <strong>{$a}</strong>';
 $string['allowsubmissionsanddescriptionfromdatesummary'] = 'The assignment details and submission form will be available from <strong>{$a}</strong>';
@@ -194,9 +194,7 @@ $string['noopenbooksincourse'] = 'There is no student folder instance in this co
 
 // Strings from the File view.php.
 $string['allowsubmissionsfromdate_upload'] = 'Upload from';
-$string['allowsubmissionsfromdate_import'] = 'Approval from';
-$string['duedate_upload'] = 'Upload to';
-$string['duedate_import'] = 'Approval to';
+$string['duedate_upload'] = 'Upload until';
 $string['cutoffdate_upload'] = 'Last upload to';
 $string['cutoffdate_import'] = 'Last approval to';
 $string['extensionto'] = 'Extension to';
@@ -218,6 +216,7 @@ $string['nothing_to_show_users'] = 'Nothing to display - no students available';
 $string['nothing_to_show_groups'] = 'Nothing to display - no groups available';
 $string['notice'] = '<strong>Notice: </strong>';
 $string['datalogapprovalstudent'] = '(Students {$a->approving} out of {$a->needed}) {$a->approval}';
+$string['viewallxsubmissions'] = 'View all {$a} submissions';
 
 $string['notice_upload_filesarepersonal_teacherrequired'] = 'All files you upload here will be personal and visible to you only <strong>after the approval of teachers.</strong> Teachers reserve the right to reject the publication of your files at any time.';
 $string['notice_upload_filesarepersonal_teachernotrequired'] = 'All files you upload here will be personal and visible to you <strong>automatically.</strong>';
@@ -296,6 +295,8 @@ $string['visibleforstudents_yes'] = 'This file is published (visible for student
 $string['visibleforstudents_no'] = 'This file is not published (not visible for students).';
 $string['resetstudentapproval'] = 'Revert student approval';
 $string['savestudentapprovalwarning'] = 'Are you sure you want to save these changes? The publication status cannot be changed once it is set.';
+$string['studentswhosubmitted'] = 'Students who submitted';
+$string['submitted'] = 'Submitted';
 
 $string['go'] = 'Go';
 $string['withselected'] = 'With selected...';
