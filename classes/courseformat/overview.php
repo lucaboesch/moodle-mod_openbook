@@ -128,7 +128,7 @@ class overview extends \core_courseformat\activityoverviewbase {
         $content = new action_link(
             url: new \moodle_url('/mod/openbook/view.php', ['id' => $this->cm->id, 'allfilespage' => 1]),
             text: get_string('allfiles', 'openbook'),
-            attributes: ['class' => button::BODY_OUTLINE->classes()],
+            attributes: ['class' => button::SECONDARY_OUTLINE->classes()],
         );
 
         return new overviewitem(
@@ -190,7 +190,12 @@ class overview extends \core_courseformat\activityoverviewbase {
             return null;
         }
 
-        $groupids = array_keys($this->get_groups_for_filtering());
+        if (is_callable([$this, 'get_groups_for_filtering'])) {
+            $groupids = array_keys($this->get_groups_for_filtering());
+        } else {
+            $groupids = [];
+        }
+
         $studentswhoresponded = $this->manager->count_all_users_answered($groupids);
 
         return new overviewitem(
