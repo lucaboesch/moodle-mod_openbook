@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// phpcs:disable moodle.Files.MoodleInternal.MoodleInternalGlobalState
+// phpcs:disable moodle.Files.RequireLogin.Missing
+
+global $CFG;
+
 /**
  * Displays a list of all mod_openbook instances in course
  *
@@ -24,9 +29,6 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
-
-// phpcs:ignore moodle.Files.RequireLogin.Missing
 require_once("../../config.php");
 require_once($CFG->dirroot . '/mod/openbook/locallib.php');
 
