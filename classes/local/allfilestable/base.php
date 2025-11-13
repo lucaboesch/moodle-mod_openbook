@@ -767,7 +767,7 @@ FROM
                     $this->openbook->get_openpdffilesinpdfjs_status() == "1" &&
                     $file->get_mimetype() == "application/pdf"
                 ) {
-                    $pdfjsurl = new \moodle_url('/mod/openbook/pdfjs-5.4.296-dist/web/viewer.html', [
+                    $pdfjsurl = new \moodle_url('/mod/openbook/pdfjs-5.4.394-dist/web/viewer.html', [
                         'file' => $pluginurl->out(),
                     ]);
                     $url = $pdfjsurl;
