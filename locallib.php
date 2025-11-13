@@ -2869,6 +2869,13 @@ class openbook {
     }
 
     /**
+     * Get current status of uselegacyviewer
+     */
+    public function get_uselegacyviewer_status() {
+        return $this->instance->uselegacyviewer;
+    }
+
+    /**
      * Get current status of filesarepersonal
      */
     public function get_filesarepersonal_status() {
