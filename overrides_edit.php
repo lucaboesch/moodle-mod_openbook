@@ -64,12 +64,12 @@ if ($overridesform->is_cancelled()) {
     // Determine which override updated event to fire.
     $eventparams['objectid'] = $overrideresult->overrideid;
 
-        $eventparams['relateduserid'] = $formdata->userid;
-        if ($overrideresult->newoverride) {
-            $event = \mod_openbook\event\user_override_created::create($eventparams);
-        } else {
-            $event = \mod_openbook\event\user_override_updated::create($eventparams);
-        }
+    $eventparams['relateduserid'] = $formdata->userid;
+    if ($overrideresult->newoverride) {
+        $event = \mod_openbook\event\user_override_created::create($eventparams);
+    } else {
+        $event = \mod_openbook\event\user_override_updated::create($eventparams);
+    }
 
     // Trigger the override updated event.
     $event->trigger();

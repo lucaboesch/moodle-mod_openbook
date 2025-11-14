@@ -103,14 +103,11 @@ class backup_openbook_activity_structure_step extends backup_activity_structure_
 
         if ($userinfo) {
             // Build the tree.
-            $openbook->add_child($extduedates);
-            $extduedates->add_child($extduedate);
             $openbook->add_child($overrides);
             $overrides->add_child($override);
             $openbook->add_child($files);
             $files->add_child($file);
 
-            $extduedate->set_source_table('openbook_extduedates', ['openbook' => backup::VAR_PARENTID]);
             $override->set_source_table('openbook_overrides', ['openbook' => backup::VAR_PARENTID]);
 
             $file->set_source_table('openbook_file', ['openbook' => backup::VAR_PARENTID]);
@@ -118,7 +115,6 @@ class backup_openbook_activity_structure_step extends backup_activity_structure_
             $file->annotate_files('mod_openbook', 'attachment', null);
 
             // Define id annotations.
-            $extduedate->annotate_ids('user', 'userid');
             $override->annotate_ids('user', 'userid');
             $override->annotate_ids('group', 'groupid');
             $file->annotate_ids('user', 'userid');

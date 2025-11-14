@@ -74,11 +74,6 @@ class provider implements core_userlist_provider, metadataprovider, pluginprovid
                 'timemodified' => 'privacy:metadata:timemodified',
         ];
 
-        $collection->add_database_table(
-            'openbook_extduedates',
-            $openbookextduedates,
-            'privacy:metadata:extduedates',
-        );
         $collection->add_database_table('openbook_file', $openbookfile, 'privacy:metadata:files');
         $collection->add_database_table(
             'openbook_groupapproval',
@@ -95,60 +90,44 @@ class provider implements core_userlist_provider, metadataprovider, pluginprovid
     }
 
     /**
-     * Returns all of the contexts that has information relating to the userid.
+     * Get the list of contexts that contain user information for the specified user.
      *
-     * @param  int $userid The user ID.
-     * @return contextlist an object with the contexts related to a userid.
+     * @param int $userid the userid.
+     * @return contextlist the list of contexts containing user info for the user.
      */
     public static function get_contexts_for_userid(int $userid): contextlist {
-        global $DB;
+        $contextlist = new contextlist();
+
+        // Fetch all openbook files.
+        $sql = "SELECT c.id
+                  FROM {context} c
+            INNER JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+            INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+            INNER JOIN {openbook} ob ON ob.id = cm.instance
+            INNER JOIN {openbook_file} obf ON obf.openbook = ob.id
+                 WHERE obf.userid = :userid";
 
         $params = [
-                'modulename' => 'openbook',
-                'contextlevel' => CONTEXT_MODULE,
-                'userid' => $userid,
-                'guserid' => $userid,
-                'extuserid' => $userid,
-                'fuserid' => $userid,
+            'modname'       => 'openbook',
+            'contextlevel'  => CONTEXT_MODULE,
+            'userid'        => $userid,
         ];
+        $contextlist->add_from_sql($sql, $params);
 
-        $enroled = enrol_get_all_users_courses($userid);
-        if (!empty($enroled)) {
-            $enroled = array_keys($enroled);
-        } else {
-            $enroled = [-1];
-        }
-        [$enrolsql, $enrolparams] = $DB->get_in_or_equal($enroled, SQL_PARAMS_NAMED, 'enro');
-        $params = $params + $enrolparams;
+        // Fetch all openbook overrides.
+        $sql = "SELECT c.id
+                  FROM {context} c
+            INNER JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+            INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+            INNER JOIN {openbook} ob ON ob.id = cm.instance
+            INNER JOIN {openbook_overrides} oo ON oo.openbook = ob.id
+                 WHERE oo.userid = :userid";
 
-        /* The where clause is quite interesting here, because we have to differentiate
-         * if there was a mod_assign to import from with teamsubmission enabled or not.
-         * If we imported from an assign instance with teamsubmissions the userid-fields often contains the group's id.
-         * If we uploaded or imported from a none-teamsubmission-assign instance we have the userid fields populated with user's
-         * ids.
-         * Did I also mention the possibility of imports from teamsubmission-assigns which won't prevent users without groups be
-         * counted as special "standard group"? We also consider these here!
-         *
-         * I know it's not the best design, but when implementing the teamsubmission-imports we had not much time to add another
-         * field to reference group-ids.
-         * TODO: split {openbook_file}.userid to a userid and a groupid field or rename it at least to itemid! */
-        $sql = "
-   SELECT DISTINCT ctx.id
-     FROM {course_modules} cm
-     JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
-     JOIN {openbook} p ON cm.instance = p.id
-     JOIN {context} ctx ON cm.id = ctx.instanceid AND ctx.contextlevel = :contextlevel
-LEFT JOIN {openbook_extduedates} ext ON p.id = ext.openbook
-LEFT JOIN {openbook_file} f ON p.id = f.openbook
-LEFT JOIN {openbook_groupapproval} ga ON f.id = ga.fileid
-LEFT JOIN {assign} a ON p.importfrom = a.id
-LEFT JOIN {groups} g ON g.courseid = p.course
-LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
-    WHERE ((p.importfrom > 0 AND a.teamsubmission > 0)
-           AND ((gm.userid = :userid AND (ext.userid = gm.groupid OR f.userid = gm.groupid))
-               OR (gm.userid IS NULL AND f.userid = 0 AND a.preventsubmissionnotingroup = 0 AND g.courseid $enrolsql)))
-           OR ((p.importfrom <= 0 OR a.teamsubmission = 0) AND (ext.userid = :extuserid OR f.userid = :fuserid))";
-        $contextlist = new contextlist();
+        $params = [
+            'modname'       => 'openbook',
+            'contextlevel'  => CONTEXT_MODULE,
+            'userid'        => $userid,
+        ];
         $contextlist->add_from_sql($sql, $params);
 
         return $contextlist;
@@ -173,63 +152,13 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
                 'upload' => OPENBOOK_MODE_UPLOAD,
         ];
 
-        // Get all who uploaded/have files imported!
-        // First get all regular uploads.
+        // Get all who uploaded!
         $sql = "SELECT f.userid
                   FROM {context} ctx
                   JOIN {course_modules} cm ON cm.id = ctx.instanceid
                   JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
                   JOIN {openbook} p ON p.id = cm.instance
                   JOIN {openbook_file} f ON p.id = f.openbook
-                 WHERE ctx.id = :contextid AND ctx.contextlevel = :contextlevel AND p.mode = :upload";
-        $userlist->add_from_sql('userid', $sql, $params);
-
-        unset($params['upload']);
-        $params['import'] = OPENBOOK_MODE_IMPORT;
-        // Second get all imported file's users.
-        $sql = "SELECT gm.userid
-                  FROM {context} ctx
-                  JOIN {course_modules} cm ON cm.id = ctx.instanceid
-                  JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
-                  JOIN {openbook} p ON p.id = cm.instance
-                  JOIN {openbook_file} f ON p.id = f.openbook
-             LEFT JOIN {assign} a ON p.importfrom = a.id
-             LEFT JOIN {groups} g ON g.courseid = p.course AND f.userid = g.id
-             LEFT JOIN {groups_members} gm ON g.id = gm.groupid
-                 WHERE ctx.id = :contextid AND ctx.contextlevel = :contextlevel AND p.mode = :import
-                       AND (p.importfrom > 0 AND a.teamsubmission > 0)";
-        $userlist->add_from_sql('userid', $sql, $params);
-        $sql = "SELECT f.userid
-                  FROM {context} ctx
-                  JOIN {course_modules} cm ON cm.id = ctx.instanceid
-                  JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
-                  JOIN {openbook} p ON p.id = cm.instance
-                  JOIN {openbook_file} f ON p.id = f.openbook
-             LEFT JOIN {assign} a ON p.importfrom = a.id
-                 WHERE ctx.id = :contextid AND ctx.contextlevel = :contextlevel AND p.mode = :import
-                       AND (p.importfrom > 0 AND a.teamsubmission = 0)";
-        $userlist->add_from_sql('userid', $sql, $params);
-        // phpcs:disable moodle.Commenting.TodoComment
-        // TODO: std-Group-Members may be missing here!
-
-        // Get all who got an extension!
-        $sql = "SELECT e.userid
-                  FROM {context} ctx
-                  JOIN {course_modules} cm ON cm.id = ctx.instanceid
-                  JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
-                  JOIN {openbook} p ON p.id = cm.instance
-                  JOIN {openbook_extduedates} e ON p.id = e.openbook
-                 WHERE ctx.id = :contextid AND ctx.contextlevel = :contextlevel";
-        $userlist->add_from_sql('userid', $sql, $params);
-
-        // Get all who gave (group) approval!
-        $sql = "SELECT ga.userid
-                  FROM {context} ctx
-                  JOIN {course_modules} cm ON cm.id = ctx.instanceid
-                  JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
-                  JOIN {openbook} p ON p.id = cm.instance
-                  JOIN {openbook_file} f ON p.id = f.openbook
-                  JOIN {openbook_groupapproval} ga ON p.id = ga.fileid
                  WHERE ctx.id = :contextid AND ctx.contextlevel = :contextlevel";
         $userlist->add_from_sql('userid', $sql, $params);
     }
@@ -266,12 +195,7 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
 
                 [$usersql, $userparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'usr');
 
-                // Delete users' files, extended due dates and groupapprovals for this openbook!
-                $DB->delete_records_select(
-                    'openbook_extduedates',
-                    "openbook = :id AND userid " . $usersql,
-                    ['id' => $id] + $userparams
-                );
+                // Delete users' files for this openbook!
                 $files = $DB->get_records_select(
                     'openbook_file',
                     "openbook = :id AND userid " . $usersql,
@@ -284,12 +208,6 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
                         $file = $fs->get_file_by_id($cur->fileid);
                         $file->delete();
                     }
-                    [$filesql, $fileparams] = $DB->get_in_or_equal($fileids, SQL_PARAMS_NAMED, 'file');
-                    $DB->delete_records_select(
-                        'openbook_groupapproval',
-                        "(fileid $filesql) AND (userid " . $usersql . ")",
-                        $fileparams + $userparams
-                    );
                     $DB->delete_records_list('openbook_file', 'id', $fileids);
                 }
             }
@@ -604,11 +522,8 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
                         $fs->delete_area_files($context->id, 'mod_openbook', 'attachment', $cur->userid);
                     }
 
-                    $DB->delete_records_list('openbook_groupapproval', 'fileid', $fileids);
                     $DB->delete_records_list('openbook_file', 'id', $fileids);
                 }
-
-                $DB->delete_records('openbook_extduedates', ['openbook' => $id]);
             }
         }
     }
@@ -657,12 +572,6 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
 
             $teams = false;
             $emptygroup = false;
-            if ($pub->mode === OPENBOOK_MODE_IMPORT) {
-                $assign = $DB->get_record('assign', ['id' => $pub->importfrom]);
-                $teams = $assign->teamsubmission;
-                $usergroups = groups_get_user_groups($pub->course, $user->id);
-                $emptygroup = $teams && !$assign->preventsubmissionnotingroup && ($usergroups === [0 => []]);
-            }
 
             if ($emptygroup) {
                 $files = $DB->get_records('openbook_file', ['openbook' => $pub->id, 'userid' => 0]);
@@ -689,19 +598,10 @@ LEFT JOIN {groups_members} gm ON g.id = gm.groupid AND gm.userid = :guserid
                         groups_remove_member($cur->userid, $user->id);
                     }
                 }
-
-                [$filesql, $fileparams] = $DB->get_in_or_equal($fileids, SQL_PARAMS_NAMED, 'file');
-                $DB->delete_records_select(
-                    'openbook_groupapproval',
-                    'userid = :userid AND fileid ' . $filesql,
-                    ['userid' => $user->id] + $fileparams
-                );
                 if (!$teams) {
                     $DB->delete_records_list('openbook_file', 'id', $fileids);
                 }
             }
-
-            $DB->delete_records('openbook_extduedates', ['openbook' => $pub->id, 'userid' => $user->id]);
         }
     }
 }

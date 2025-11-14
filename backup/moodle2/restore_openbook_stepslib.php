@@ -54,13 +54,6 @@ class restore_openbook_activity_structure_step extends restore_activity_structur
             );
             $paths[] = $files;
 
-            $extduedates = new restore_path_element(
-                'openbook_extduedates',
-                '/activity/openbook/extduedates/extduedate'
-            );
-
-            $paths[] = $extduedates;
-
             $overrides = new restore_path_element(
                 'openbook_overrides',
                 '/activity/openbook/overrides/override'
@@ -123,25 +116,6 @@ class restore_openbook_activity_structure_step extends restore_activity_structur
 
         // Note - the old contextid is required in order to be able to restore files stored in
         // sub plugin file areas attached to the submissionid.
-    }
-
-    /**
-     * Process a user_flags restore
-     *
-     * @param object $data The data in object form
-     * @return void
-     */
-    protected function process_openbook_extduedates($data) {
-        global $DB;
-
-        $data = (object)$data;
-
-        $data->openbook = $this->get_new_parentid('openbook');
-
-        $data->userid = $this->get_mappingid('user', $data->userid);
-        // Flags mailed and locked need no translation on restore.
-
-        $DB->insert_record('openbook_extduedates', $data);
     }
 
     /**

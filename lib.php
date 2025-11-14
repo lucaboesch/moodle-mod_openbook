@@ -154,8 +154,6 @@ function openbook_delete_instance($id) {
         return false;
     }
 
-    $DB->delete_records('openbook_extduedates', ['openbook' => $openbook->id]);
-
     $fs = get_file_storage();
 
     $fs->delete_area_files($openbook->id, 'mod_openbook', 'attachment');
@@ -239,8 +237,6 @@ function openbook_reset_userdata($data) {
         $openbooks = $DB->get_records('openbook', ['course' => $data->courseid]);
 
         foreach ($openbooks as $openbook) {
-            $DB->delete_records('openbook_extduedates', ['openbook' => $openbook->id]);
-
             $filerecords = $DB->get_records('openbook_file', ['openbook' => $openbook->id]);
 
             $fs = get_file_storage();
