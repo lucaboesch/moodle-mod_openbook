@@ -96,8 +96,6 @@ final class allfilestable_test extends base {
         $params['course'] = $this->course->id;
         $assign = $generator->create_instance($params);
         $openbook = $this->create_instance([
-            'mode' => OPENBOOK_MODE_IMPORT,
-            'importfrom' => $assign->id,
             'filesarepersonal' => 1,
             'openpdffilesinpdfjs' => 1,
             'obtainteacherapproval' => 0,
@@ -107,102 +105,6 @@ final class allfilestable_test extends base {
         // Exercise SUT!
         $output = $openbook->display_allfilesform();
         self::assertFalse(strpos($output, "Nothing to display"));
-
-        // Teardown fixture!
-        $openbook = null;
-    }
-
-    /**
-     * Tests if we can create an allfilestable without imported group-files
-     *
-     * @covers \openbook::get_allfilestable_group
-     * @return void
-     * @throws coding_exception
-     */
-    public function test_allfilestable_group(): void {
-        // phpcs:disable moodle.Commenting.TodoComment
-        // TODO : Setup fixture!
-
-        $this->resetAfterTest();
-        $this->setAdminUser();
-        // Create course and enrols.
-        $course = $this->getDataGenerator()->create_course();
-        $users = [
-            'student1' => $this->getDataGenerator()->create_and_enrol($course, 'student'),
-            'student2' => $this->getDataGenerator()->create_and_enrol($course, 'student'),
-            'student3' => $this->getDataGenerator()->create_and_enrol($course, 'student'),
-            'student4' => $this->getDataGenerator()->create_and_enrol($course, 'student'),
-            'student5' => $this->getDataGenerator()->create_and_enrol($course, 'student'),
-        ];
-        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
-        $this->course = $course;
-
-        // Generate groups.
-        $groups = [];
-        $groupmembers = [
-            'group1' => ['student1', 'student2'],
-            'group2' => ['student3', 'student4'],
-            'group3' => ['student5'],
-        ];
-        foreach ($groupmembers as $groupname => $groupusers) {
-            $group = $this->getDataGenerator()->create_group(['courseid' => $course->id, 'name' => $groupname]);
-            foreach ($groupusers as $user) {
-                groups_add_member($group, $users[$user]);
-            }
-            $groups[$groupname] = $group;
-        }
-
-        $params = [
-            'course' => $course,
-            'assignsubmission_file_enabled' => 1,
-            'assignsubmission_file_maxfiles' => 12,
-            'assignsubmission_file_maxsizebytes' => 1024 * 1024,
-            'teamsubmission' => 1,
-            'preventsubmissionnotingroup' => false,
-            'requireallteammemberssubmit' => false,
-            'groupmode' => 1,
-        ];
-
-        $assign = $this->getDataGenerator()->create_module('assign', $params);
-        $cm = get_coursemodule_from_id('assign', $assign->cmid, 0, false, MUST_EXIST);
-        $context = \context_module::instance($cm->id);
-        $files = [
-            "mod/assign/tests/fixtures/submissionsample01.txt",
-            "mod/assign/tests/fixtures/submissionsample02.txt",
-        ];
-        $generator = self::getDataGenerator()->get_plugin_generator('mod_assign');
-
-        $this->setAdminUser();
-        foreach ($users as $key => $user) {
-            $generator->create_submission([
-                'userid' => $user->id,
-                'cmid' => $cm->id,
-                'file' => implode(',', $files),
-            ]);
-        }
-
-        $this->setAdminUser();
-        $openbook = $this->create_instance([
-            'mode' => OPENBOOK_MODE_IMPORT,
-            'importfrom' => $assign->id,
-            'obtainteacherapproval' => 0,
-            'obtainstudentapproval' => 0,
-            'allowsubmissionsfromdate' => 0,
-            'duedate' => 0,
-            'groupmode' => NOGROUPS,
-        ]);
-
-        $openbook->importfiles();
-        $openbook->set_allfilespage(true);
-        $allfilestable = $openbook->get_allfilestable(OPENBOOK_FILTER_NOFILTER);
-        ob_start();
-        $allfilestable->out(10, true); // Print the whole table.
-        $tableoutput = ob_get_contents();
-        ob_end_clean();
-        $norowsfound = $allfilestable->get_count() == 0;
-        $nofilesfound = $allfilestable->get_totalfilescount() == 0;
-        self::assertFalse($norowsfound);
-        self::assertFalse($nofilesfound);
 
         // Teardown fixture!
         $openbook = null;

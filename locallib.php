@@ -2111,7 +2111,6 @@ class openbook {
             (!isset($formdata->approvaltodate) || $formdata->approvaltodate == 0) &&
             (!isset($formdata->securewindowfromdate) || $formdata->securewindowfromdate == 0) &&
             (!isset($formdata->securewindowtodate) || $formdata->securewindowtodate == 0)
-
         ) {
             return null;
         }
