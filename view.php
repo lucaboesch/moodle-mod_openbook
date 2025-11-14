@@ -293,8 +293,11 @@ $templatecontext->filesarepersonal = $openbookinstance->filesarepersonal == 1
                                                 ? get_string('filesarepersonal_yes', 'openbook')
                                                 : get_string('filesarepersonal_no', 'openbook');
 
-$mode = $openbook->get_mode();
 $templatecontext->myfilestitle = get_string('myfiles', 'openbook');
+
+if (has_capability('moodle/course:update', context_course::instance($course->id))) {
+    $templatecontext->myfilestitle = get_string('teacherfiles', 'openbook');
+}
 
 /* Get restricted files table (only documents that have been aproved) */
 
@@ -306,6 +309,8 @@ $templatecontext->myfiles = $filestable->data;
 $templatecontext->hasmyfiles = count($templatecontext->myfiles) > 0;
 $templatecontext->myfilesform = $filesform->render();
 
+
+
 if (!$allfilespage) {
     echo $OUTPUT->render_from_template('mod_openbook/overview', $templatecontext);
 }
@@ -314,7 +319,7 @@ if (has_capability('mod/openbook:approve', $context) || $openbookinstance->files
     echo $allfilesform;
 } else {
     /* TODO: Make sure all files are not avalaible, no just hidden */
-    echo 'All files table not showing because files are personal.';
+    echo get_string('allfilesnotshowing', 'openbook');
 }
 
 echo $OUTPUT->footer();

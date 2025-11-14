@@ -207,7 +207,7 @@ if ($mform->is_cancelled()) {
         }
     }
 
-    // Update competion status - if filescount == 0 => activity not completed, else => activity completed.
+    // Update completion status - if filescount == 0 => activity not completed, else => activity completed.
 
     $completion = new completion_info($course);
     if ($completion->is_enabled($cm) && $openbook->get_instance()->completionupload) {

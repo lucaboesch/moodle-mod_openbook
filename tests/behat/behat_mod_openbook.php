@@ -117,4 +117,13 @@ class behat_mod_openbook extends behat_base {
         $openbook = $this->get_openbook_by_name($name);
         return get_coursemodule_from_instance('openbook', $openbook->id, $openbook->course);
     }
+
+    /**
+     * Automatically confirms Javascript dialog prompts.
+     *
+     * @Given /^I enable auto-accept for confirm dialogs$/
+     */
+    public function i_enable_auto_accept_confirm_for_confirm_dialogs(): void {
+        $this->getSession()->executeScript('window.confirm = () => true;');
+    }
 }

@@ -67,7 +67,6 @@ class mod_openbook_generator extends testing_module_generator {
             'importfrom' => -1,
             'autoimport' => 1,
             'obtainstudentapproval' => 1,
-            'groupapproval' => 0, // Equals OPENBOOK_APPROVAL_ALL!
             'maxfiles' => 5,
             'maxbytes' => 2,
             'allowedfiletypes' => '',

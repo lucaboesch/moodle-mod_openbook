@@ -50,14 +50,21 @@ class mod_openbook_upload_form extends moodleform {
             $text = get_string('published_immediately', 'openbook');
         }
 
-        $mform->addElement('header', 'myfiles', get_string('myfiles', 'openbook'));
+        $headerstring = get_string('myfiles', 'openbook');
+        if (has_capability('mod/openbook:uploadcommonteacherfile', $openbook->get_context())) {
+            $headerstring = get_string('teacherfiles', 'openbook');
+        }
 
-        $mform->addElement('static', 'guideline', get_string('guideline', 'openbook'), $text);
+        $mform->addElement('header', 'myfiles', $headerstring);
+
+        if (!has_capability('mod/openbook:uploadcommonteacherfile', $openbook->get_context())) {
+            $mform->addElement('static', 'guideline', get_string('guideline', 'openbook'), $text);
+        }
 
         $mform->addElement(
             'filemanager',
             'attachment_filemanager',
-            get_string('myfiles', 'openbook'),
+            $headerstring,
             null,
             $attachmentoptions,
         );
@@ -96,6 +103,11 @@ class mod_openbook_upload_form extends moodleform {
         $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'cmid');
         $mform->setType('cmid', PARAM_INT);
+        if (has_capability('mod/openbook:uploadcommonteacherfile', $openbook->get_context())) {
+            $mform->addElement('hidden', 'commonteacherfile');
+            $mform->setType('commonteacherfile', PARAM_BOOL);
+            $mform->setConstant('commonteacherfile', 1);
+        }
 
         // Buttons.
         $this->add_action_buttons(true, get_string('save_changes', 'openbook'));
