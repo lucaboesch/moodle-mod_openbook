@@ -56,7 +56,7 @@ $string['eventopenbookduedateextended'] = 'Openbook resource folder due-date ext
 $string['eventopenbookapprovalchanged'] = 'Openbook resource folder file approval changed';
 
 $string['modulenameplural'] = 'Openbook resource folders';
-$string['pluginadministration'] = 'Openbook resource folder folder administration';
+$string['pluginadministration'] = 'Openbook resource folder administration';
 $string['openbook:addinstance'] = 'Add a new Openbook resource folder';
 $string['openbook:view'] = 'View Openbook resource folder';
 $string['openbook:upload'] = 'Upload files to a Openbook resource folder';
@@ -94,7 +94,6 @@ $string['email:filechange_upload:header'] = '<b>{$a->username}</b> has uploaded 
 $string['email:filechange_upload:subject'] = 'File(s) uploaded';
 $string['email:filechange:footer'] = '</ul><br />Please check if your permission for Openbook resource folder is required.';
 
-$string['uploaded'] = 'Uploaded';
 $string['approvalchange'] = 'Openbook resource folder status changed';
 
 $string['approvalsettings'] = 'Openbook resource folder settings';
@@ -157,10 +156,10 @@ $string['availability'] = 'Editing period (upload or approval)';
 $string['submissionsettings'] = 'Submission settings';
 $string['allowsubmissionsfromdate'] = 'Upload from';
 $string['allowsubmissionsfromdate_help'] = 'If this option is enabled, participants cannot submit their file submissions before this date. If the option is disabled, participants can start submitting right away.';
-$string['allowsubmissionsfromdatesummary'] = 'This assignment will accept submissions from <strong>{$a}</strong>';
-$string['allowsubmissionsanddescriptionfromdatesummary'] = 'The assignment details and submission form will be available from <strong>{$a}</strong>';
+$string['allowsubmissionsfromdatesummary'] = 'This Openbook resource folder will accept submissions from <strong>{$a}</strong>';
+$string['allowsubmissionsanddescriptionfromdatesummary'] = 'The Openbook resource folder details and submission form will be available from <strong>{$a}</strong>';
 $string['alwaysshowdescription'] = 'Always show description';
-$string['alwaysshowdescription_help'] = 'If disabled, the assignment description above will only become visible to students at the "Upload/Approval from" date.';
+$string['alwaysshowdescription_help'] = 'If disabled, the Openbook resource folder description above will only become visible to students at the "Upload/Approval from" date.';
 
 $string['duedate'] = 'To';
 $string['duedate_help'] = 'If this option is enabled, participants cannot submit their file submissions after this date. If the option is disabled, participants can submit forever.';
